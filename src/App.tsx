@@ -1,6 +1,6 @@
 import { ElementRef, useEffect, useRef, useState } from 'react'
 import './App.css'
-import { register, unregister } from '@tauri-apps/api/globalShortcut';
+import { register } from '@tauri-apps/api/globalShortcut';
 import useWebsocket from './hooks/useWebsocket.ts';
 import { BaseDirectory, writeBinaryFile, readBinaryFile } from '@tauri-apps/api/fs';
 import useConfig from './hooks/useConfig.ts';
@@ -94,49 +94,6 @@ function App() {
     saveConfig(newConfig)
   }
 
-  useEffect(() => {
-    if (selectedSound && !configOpen) {
-      setSelectedSound(null)
-
-      console.log(volume)
-
-      config().then(config => {
-        const oldSound = config.sounds[selectedSound]
-
-        if (!oldSound) return
-
-        const sound = {
-          ...config.sounds[selectedSound],
-          keybind,
-          config: {
-            ...config.sounds[selectedSound]?.config || {},
-            volume
-          }
-        }
-
-        if (oldSound.keybind != sound.keybind) {
-          if (oldSound.keybind) {
-            unregister(oldSound.keybind).then(() => {
-              if (sound.keybind) {
-                register(sound.keybind, () => play(sound))
-              }
-            })
-          } else if (sound.keybind) {
-            register(sound.keybind, () => play(sound))
-          }
-        }
-
-        const newConfig = {
-          ...config,
-          sounds: config.sounds ? { ...config.sounds, [selectedSound]: sound } : { [selectedSound]: sound }
-        }
-
-        setSounds(Object.values(newConfig.sounds))
-        saveConfig(newConfig)
-      })
-    }
-  }, [configOpen])
-
   const play = (sound: SoundEntry) => {
     const isCachedStart = Date.now()
     websocket.emit("isCached", sound.file, (isCached: boolean) => {
@@ -144,7 +101,7 @@ function App() {
       log(isCached ? `${sound.name} is cached` : `${sound.name} is not cached`, `(${isCachedTime / 1000}s)`)
       if (isCached) {
         websocket.emit("playSound", sound.file, {
-          volume: sound.config?.volume / 100 ?? 1
+          volume: (sound.config?.volume / 100 ?? 1) * 0.75
         })
       } else {
         log(`Caching ${sound.name}`)
@@ -157,7 +114,7 @@ function App() {
             const cachingTime = Date.now() - cachingStart
             log(`${sound.name} cached in ${cachingTime / 1000}s`)
             websocket.emit("playSound", sound.file, {
-              volume: sound.config?.volume / 100 ?? 1
+              volume: (sound.config?.volume / 100 ?? 1) * 0.75
             })
           })
         })
@@ -166,7 +123,7 @@ function App() {
   }
 
   return (
-    <AppContext.Provider value={{ keybind, setKeybind, volume, setVolume, selectedSound, sounds, setSounds }}>
+    <AppContext.Provider value={{ keybind, setKeybind, volume, setVolume, selectedSound, setSelectedSound, sounds, setSounds, play }}>
       <ToastContainer />
       <ConfigModal open={configOpen} setOpen={setConfigOpen} />
       <SettingsModal open={settingsOpen} setOpen={setSettingsOpen} />

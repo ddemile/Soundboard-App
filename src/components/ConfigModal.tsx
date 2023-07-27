@@ -1,16 +1,19 @@
 import { useEffect, Dispatch, SetStateAction, useContext, ChangeEvent, useState, useRef, ElementRef } from "react";
 import { removeFile, BaseDirectory } from '@tauri-apps/api/fs';
+import { register, unregister } from '@tauri-apps/api/globalShortcut';
 import AppContext from "../contexts/AppContext.tsx";
 import useConfig from "../hooks/useConfig.ts";
 import Modal from "./Modal.tsx";
+import useLog from "../hooks/useLog.ts";
 
 export default function ConfigModal({ open, setOpen }: { open: boolean, setOpen: Dispatch<SetStateAction<boolean>> }) {
-    const { keybind, setKeybind, volume, setVolume, selectedSound, sounds, setSounds } = useContext(AppContext)!
+    const { keybind, setKeybind, volume, setVolume, selectedSound, setSelectedSound, sounds, setSounds, play } = useContext(AppContext)!
     const { config: getConfig, saveConfig } = useConfig()
     const [config, setConfig] = useState<any>({})
     const nameRef = useRef<ElementRef<"h3">>(null)
     const [name, setName] = useState("")
-    
+    const log = useLog()
+
     useEffect(() => {
         getConfig().then((config) => {
             setConfig(config)
@@ -40,26 +43,51 @@ export default function ConfigModal({ open, setOpen }: { open: boolean, setOpen:
     }
 
     const handleClose = () => {
-        if (selectedSound) {
-            const sound = config?.sounds[selectedSound]
-            const newConfig = { ...config }
-            console.log(name)
-            console.log(!!sound, sound)
-            if (sound) {
-                sound.name = name;
-                console.log(sound.file)
-                newConfig.sounds[sound.file] = sound;
-                console.log(newConfig.sounds[sound.file])
-                console.log(newConfig.sounds)
-                saveConfig(newConfig)
-                setSounds(newConfig.sounds)
+        if (selectedSound && selectedSound in config?.sounds) {
+            const oldSound = config?.sounds[selectedSound]
+            const newConfig = structuredClone(config)
+            const newSound = newConfig?.sounds[selectedSound]
+
+            if (newSound && oldSound) {
+                newSound.name = name;
+                newSound.keybind = keybind;
+                newConfig.sounds[newSound.file] = newSound;
+
+                if (oldSound.name != newSound.name) log(`${newSound.file}: ${oldSound?.name} > ${newSound.name}`)
+
+                if (oldSound.keybind != newSound.keybind) {
+                    if (oldSound.keybind) {
+                        unregister(oldSound.keybind).then(() => {
+                            if (newSound.keybind) {
+                                register(newSound.keybind, () => play(newSound))
+                            }
+                        })
+                    } else if (newSound.keybind) {
+                        register(newSound.keybind, () => play(newSound))
+                    }
+                }
+
+                if (oldSound.keybind != newSound.keybind || oldSound.name != newSound.name) {
+                    setSelectedSound(null)
+                    saveConfig(newConfig)
+                    setConfig(newConfig)
+                    setSounds(Object.values(newConfig.sounds))
+                }
             }
         }
     }
 
-    return <Modal open={open} setOpen={setOpen} onClose={handleClose}>
-        {selectedSound && config && <h3 ref={nameRef} spellCheck={false} onInput={(e) => setName(e.currentTarget.textContent ?? "")} contentEditable className="text-xl font-semibold">{name}</h3>}
-        {selectedSound && config && <h4 className="text-sm">{config.sounds[selectedSound]?.file}</h4>}
+    return <Modal open={open} setOpen={setOpen} onClose={handleClose} onOpen={() => getConfig().then(config => setConfig(config))}>
+        {selectedSound && config && <h3
+            className="text-xl font-semibold"
+            onChange={(e) => setName(e.currentTarget.textContent ?? "")}
+            onBlur={(e) => setName(e.currentTarget.textContent ?? "")}
+            contentEditable
+            spellCheck={false}
+            itemType="h3"
+            dangerouslySetInnerHTML={{ __html: name }}
+        />}
+        {selectedSound && config && config.sounds[selectedSound] && <h4 className="text-sm">{config.sounds[selectedSound]?.file}</h4>}
         <div className="flex gap-2.5 flex-col">
             <div className="flex flex-col">
                 <label className="text-left">Keybind</label>
@@ -76,7 +104,7 @@ export default function ConfigModal({ open, setOpen }: { open: boolean, setOpen:
                         removeFile(config.sounds[selectedSound].file, {
                             dir: BaseDirectory.AppCache
                         })
-                    
+
                         console.log(config.sounds[selectedSound])
 
                         delete config.sounds[selectedSound]

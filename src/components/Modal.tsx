@@ -1,6 +1,6 @@
 import { Dispatch, MouseEventHandler, SetStateAction, useEffect, useRef, DialogHTMLAttributes, PropsWithChildren, useState, ElementRef } from "react"
 
-export default function Modal(props: PropsWithChildren<{ open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, onClose?: () => void } & DialogHTMLAttributes<HTMLDialogElement>>) {
+export default function Modal(props: PropsWithChildren<{ open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, onClose?: () => void, onOpen?: () => void } & DialogHTMLAttributes<HTMLDialogElement>>) {
     const dialogRef = useRef<ElementRef<"dialog">>(null)
     const [htmlProps, setHtmlProps] = useState<DialogHTMLAttributes<HTMLDialogElement>>({})
     const [isFirstUpdate, setIsFirstUpdate] = useState(true)
@@ -15,6 +15,10 @@ export default function Modal(props: PropsWithChildren<{ open: boolean, setOpen:
     useEffect(() => {
         if (!props.open && !isFirstUpdate && props.onClose) {
             props.onClose()
+        }
+
+        if (props.open && !isFirstUpdate && props.onOpen) {
+            props.onOpen()
         }
 
         if (dialogRef.current) {
