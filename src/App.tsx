@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import SettingsModal from './components/SettingsModal.tsx';
 import useLog from './hooks/useLog.ts';
+import UploadModal from './components/UploadModal.tsx';
 
 export type SoundEntry = {
   name: string,
@@ -32,6 +33,7 @@ function App() {
   const [configOpen, setConfigOpen] = useState<boolean>(false)
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false)
   const [selectedSound, setSelectedSound] = useState<string | null>(null)
+  const [uploadModalOpen, setUploadModalOpen] = useState<boolean>(false)
   const log = useLog({ })
 
   const fetchSounds = () => {
@@ -70,8 +72,6 @@ function App() {
         const content = await readFileContent(file)
         if (content instanceof ArrayBuffer) {
           await writeBinaryFile(file.name, content, { dir: BaseDirectory.AppCache })
-
-          if (!newConfig.sounds) newConfig.sounds = {}
 
           const sound = {
             name: file.name.split(".")[0],
@@ -126,8 +126,9 @@ function App() {
     <AppContext.Provider value={{ keybind, setKeybind, volume, setVolume, selectedSound, setSelectedSound, sounds, setSounds, play }}>
       <ToastContainer />
       <ConfigModal open={configOpen} setOpen={setConfigOpen} />
+      <UploadModal open={uploadModalOpen} setOpen={setUploadModalOpen} />
       <SettingsModal open={settingsOpen} setOpen={setSettingsOpen} />
-      <button className='right-0 top-0 absolute bg-transparent aspect-square text-3xl p-1 m-0.5' onClick={() => setSettingsOpen(true)}>
+      <button className={`right-0 top-0 absolute bg-transparent aspect-square text-3xl p-1 m-0.5 border-none outline-none focus:outline-none ${settingsOpen && "[&>svg]:rotate-45"} [&>svg]:transition-all`} onClick={() => setSettingsOpen(true)}>
         <TbSettingsFilled />
       </button>
       {Array.isArray(sounds) && sounds.length > 0 ?
@@ -148,7 +149,12 @@ function App() {
             )}
             <li className='bg-main max-w-[200px] flex gap-1 items-center p-1 rounded-3xl justify-center'>
               <input id='upload' type="file" ref={inputRef} hidden onChange={handleUpload} multiple={true} accept='audio/*' />
-              <label className='bg-stone-900 rounded-full aspect-square p-1' htmlFor="upload"><BsPlus /></label>
+              <label className='bg-stone-900 rounded-full aspect-square p-1' onClick={(e) => {
+                if (e.shiftKey) {
+                  e.preventDefault()
+                  setUploadModalOpen(true)
+                }
+              }} htmlFor="upload"><BsPlus /></label>
             </li>
           </ul>
           <button className='flex items-center justify-center m-auto w-12 aspect-square rounded-full bg-stone-900 [&>*>svg]:text-[25px]' onClick={() => websocket.emit("stopSound")}><span><BsStopFill /></span></button>

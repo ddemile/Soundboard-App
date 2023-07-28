@@ -77,11 +77,12 @@ export default function ConfigModal({ open, setOpen }: { open: boolean, setOpen:
         }
     }
 
-    return <Modal open={open} setOpen={setOpen} onClose={handleClose} onOpen={() => getConfig().then(config => setConfig(config))}>
+    return <Modal open={open} setOpen={setOpen} onClose={handleClose} onOpen={() => { getConfig().then(config => setConfig(config)) }}>
         {selectedSound && config && <h3
             className="text-xl font-semibold"
             onChange={(e) => setName(e.currentTarget.textContent ?? "")}
             onBlur={(e) => setName(e.currentTarget.textContent ?? "")}
+            ref={nameRef}
             contentEditable
             spellCheck={false}
             itemType="h3"
@@ -98,7 +99,7 @@ export default function ConfigModal({ open, setOpen }: { open: boolean, setOpen:
                 <input className="border-2 border-[#3a3a3a] rounded-sm" type="range" max={200} min={0} name="volume" value={volume ?? 100} onChange={handleChange} />
             </div>
             {selectedSound && config && <>
-                <div className="option-container flex flex-col">
+                <div className="flex flex-col">
                     <button onClick={() => {
                         setOpen(false)
                         removeFile(config.sounds[selectedSound].file, {

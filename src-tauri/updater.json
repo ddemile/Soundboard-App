@@ -16,8 +16,8 @@
             "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-amd64.AppImage.tar.gz"
         },
         "windows-x86_64": {
-            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQYzM1SjV3d0NsQ28vUDNlcEVqNUdWOTEydUdrVFlhQzNUVm83aXRYR1R2VTZJYSs4U3o1a1RpNXNvaXlPdm5TcjRyS0FBUGNaUDVsMEN4K3U1RkZzZkFnPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjkwNTIyMTk1CWZpbGU6U291bmRib2FyZF8wLjEuMF94NjRfZW4tVVMubXNpLnppcApXREFQN2JrTGcxUlhjRWJPdStJM2g0Q2dYRWxnUlR6dm9Rd0RyWDRSVmsvZ2daWFczcEwvZENhVytXVko4b2IrRVFQUmpDSnBHNmgrakZiSm1nSTRBQT09Cg==",
-            "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-x64.msi.zip"
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQY3g1aWpteUxqTjBVT3lsck85d3oyMkx6a2QxYTR2ZDZFbTNQRitLMGZtcWRob1o5L0UrL3laaHR0bVJJeEk0RXBJbXlHK0ViOE5qTjA0SHBZeHA4TGdnPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjkwNTM3ODE0CWZpbGU6U291bmRib2FyZF8wLjEuMV94NjRfZW4tVVMubXNpLnppcApoTHN3dmNrSC9DTXc2THJXUDZtOU16eDUwYnd3ajJDZkVtMXVGR2srQ1BNVlZxaXFDaUlkUWVqSm03dGhWVjV6Wm84ZmJjK2xSbndnVktNZmI5NlVDZz09Cg==",
+            "url": "https://github.com/username/reponame/releases/download/v0.1.1/app-x64.msi.zip"
         }
     }
 }
