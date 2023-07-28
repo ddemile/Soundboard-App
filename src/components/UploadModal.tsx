@@ -37,16 +37,11 @@ export default function UploadModal({ open, setOpen }: { open: boolean, setOpen:
             }
         } catch {
             const instants = await fetchMyInstantSounds(query)
-            console.log(instants)
             setInstants(instants)
         }
     }
 
     const handleUpload = async (instant: any) => {
-        console.log(instant)
-        console.log("Id link: ", instant.url)
-
-
         const sound = await fetchMyInstantSound(instant.url);
 
 

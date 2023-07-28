@@ -1,7 +1,7 @@
 {
-    "version": "v0.2.0",
+    "version": "v0.2.1",
     "notes": "(Beta) Better upload menu",
-    "pub_date": "2023-07-28T11:48:05Z",
+    "pub_date": "2023-07-28T16:16:15Z",
     "platforms": {
         "darwin-x86_64": {
             "signature": "Content of app.tar.gz.sig",
@@ -16,8 +16,8 @@
             "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-amd64.AppImage.tar.gz"
         },
         "windows-x86_64": {
-            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQYzVpb3h4YjNPNWFRMnpjMWR2Yk5NNk5XUzlHVzNEUFRnMi9BQVg1aTVXOFZWNTlMaXhrRjRIR1c5SzhwTnJjbVEzOUw3QkhOTUJCWnN6cncvcnBmbVEwPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjkwNTU4NjUyCWZpbGU6U291bmRib2FyZF8wLjIuMF94NjRfZW4tVVMubXNpLnppcAo3eVFxL2JFVUI0ZVJnRmFHbDZQdXdzamRVTjY5ek1JSGh4QUlBa0EwRHFNaWZFUUZvTkJkNnUvMVhpeWtIdndaQXFhWkE2QU1tNkRicG9YZkdHWE9Edz09Cg==",
-            "url": "https://github.com/ddemile/Soundboard-App/releases/download/0.2.0/Soundboard_0.2.0_x64.msi.zip"
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQY3lMQWpsTDhKY2lwbkx4UHpqUWcrenltSU9JTGcxMTQzZktwT1FKYnBmSjhCd2UwNEp6TVlwQkd3dE5QeEcvQUhrTWhabENrVlhCSHJTUEE4WnB1OEFFPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjkwNTYxMDg0CWZpbGU6U291bmRib2FyZF8wLjIuMV94NjRfZW4tVVMubXNpLnppcAo4ZWJ1bWUxL3ptSFpxbWw1Y002eS9kSElVOHhVMEhlU3QxMjJ5eFhlTU1lbVdWQ3VHQkprbFBIcUgzdEgySVVyT2ZsRkNCY3ZFbkpTSEpqRk9BOWVCQT09Cg==",
+            "url": "https://github.com/ddemile/Soundboard-App/releases/download/0.2.1/Soundboard_0.2.1_x64.msi.zip"
         }
     }
 }
