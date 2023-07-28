@@ -1,4 +1,5 @@
 import { Dispatch, MouseEventHandler, SetStateAction, useEffect, useRef, DialogHTMLAttributes, PropsWithChildren, useState, ElementRef } from "react"
+import { twMerge } from "tailwind-merge"
 
 export default function Modal(props: PropsWithChildren<{ open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, onClose?: () => void, onOpen?: () => void } & DialogHTMLAttributes<HTMLDialogElement>>) {
     const dialogRef = useRef<ElementRef<"dialog">>(null)
@@ -35,5 +36,5 @@ export default function Modal(props: PropsWithChildren<{ open: boolean, setOpen:
         }
     }
 
-    return <dialog {...htmlProps} onClick={handleClick} style={props.open ? {} : { display: "none" }} className="bg-main rounded-xl p-2" ref={dialogRef} onClose={() => props.setOpen(false)}>{props.children}</dialog>
+    return <dialog {...htmlProps} onClick={handleClick} style={props.open ? {} : { display: "none" }} className={twMerge("bg-main rounded-xl p-2", htmlProps.className)}  ref={dialogRef} onClose={() => props.setOpen(false)}>{props.children}</dialog>
 }

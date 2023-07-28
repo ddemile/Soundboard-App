@@ -19,7 +19,8 @@
     "react-dom": "experimental",
     "react-icons": "^4.10.1",
     "react-toastify": "^9.1.3",
-    "socket.io-client": "^4.7.1"
+    "socket.io-client": "^4.7.1",
+    "tailwind-merge": "^1.14.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.4.0",
