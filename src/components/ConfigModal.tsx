@@ -51,6 +51,12 @@ export default function ConfigModal({ open, setOpen }: { open: boolean, setOpen:
             if (newSound && oldSound) {
                 newSound.name = name;
                 newSound.keybind = keybind;
+
+                if (oldSound.config?.volume != volume) {
+                    newSound.config ??= {}
+                    newSound.config.volume = volume
+                }
+
                 newConfig.sounds[newSound.file] = newSound;
 
                 if (oldSound.name != newSound.name) log(`${newSound.file}: ${oldSound?.name} > ${newSound.name}`)
@@ -67,7 +73,7 @@ export default function ConfigModal({ open, setOpen }: { open: boolean, setOpen:
                     }
                 }
 
-                if (oldSound.keybind != newSound.keybind || oldSound.name != newSound.name) {
+                if (oldSound.keybind != newSound.keybind || oldSound.name != newSound.name || oldSound.config?.volume != newSound.config?.volume) {
                     setSelectedSound(null)
                     saveConfig(newConfig)
                     setConfig(newConfig)

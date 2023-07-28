@@ -28,11 +28,13 @@ export default async function fetchMyInstantSound(url: string) {
 
     if (!relativePath) return null;
 
-    const sound = await axios.get(proxy(`https://www.myinstants.com${relativePath}`, "arraybuffer"), { responseType: "arraybuffer" })
+    const sound = await axios.get(proxy(`https://www.myinstants.com/${relativePath}`, "arraybuffer"), { responseType: "arraybuffer" })
 
     return {
         data: sound.data,
         title,
-        fileName: await basename(relativePath)
+        fileName: await basename(relativePath),
+        url,
+        downloadUrl: `https://www.myinstants.com/${relativePath}`
     }
 }
