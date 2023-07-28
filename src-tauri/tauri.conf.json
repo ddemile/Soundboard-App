@@ -64,14 +64,22 @@
       "csp": null
     },
     "updater": {
-      "active": false
+      "active": true,
+      "endpoints": [
+        "https://raw.githubusercontent.com/ddemile/Soundboard-App/main/src-tauri/updater.json"
+      ],
+      "dialog": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDczOEY2MTgwRjE1NEVFRjkKUldUNTdsVHhnR0dQYzhUaTdRN2psUTQ4cEhzRGFCbG9qcTJzNlg5UzN3alBIQmN4dzVVekF0NjIK",
+      "windows": {
+        "installMode": "passive"
+      }
     },
     "windows": [
       {
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "Soundboard Audio & Groove-Ready Output Module",
+        "title": "Soundboard Audio & Groove-Ready Output Module (v0.1.0)",
         "width": 800
       }
     ]

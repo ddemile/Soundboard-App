@@ -1,0 +1,23 @@
+{
+    "version": "v0.1.0",
+    "notes": "First version (Beta)",
+    "pub_date": "2023-07-28T05:27:17Z",
+    "platforms": {
+        "darwin-x86_64": {
+            "signature": "Content of app.tar.gz.sig",
+            "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-x86_64.app.tar.gz"
+        },
+        "darwin-aarch64": {
+            "signature": "Content of app.tar.gz.sig",
+            "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-aarch64.app.tar.gz"
+        },
+        "linux-x86_64": {
+            "signature": "Content of app.AppImage.tar.gz.sig",
+            "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-amd64.AppImage.tar.gz"
+        },
+        "windows-x86_64": {
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQYzM1SjV3d0NsQ28vUDNlcEVqNUdWOTEydUdrVFlhQzNUVm83aXRYR1R2VTZJYSs4U3o1a1RpNXNvaXlPdm5TcjRyS0FBUGNaUDVsMEN4K3U1RkZzZkFnPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjkwNTIyMTk1CWZpbGU6U291bmRib2FyZF8wLjEuMF94NjRfZW4tVVMubXNpLnppcApXREFQN2JrTGcxUlhjRWJPdStJM2g0Q2dYRWxnUlR6dm9Rd0RyWDRSVmsvZ2daWFczcEwvZENhVytXVko4b2IrRVFQUmpDSnBHNmgrakZiSm1nSTRBQT09Cg==",
+            "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-x64.msi.zip"
+        }
+    }
+}
