@@ -13,6 +13,13 @@ import { ToastContainer, toast } from 'react-toastify';
 import SettingsModal from './components/SettingsModal.tsx';
 import useLog from './hooks/useLog.ts';
 import UploadModal from './components/UploadModal.tsx';
+import {
+  onUpdaterEvent,
+} from '@tauri-apps/api/updater'
+await onUpdaterEvent(({ error, status }) => {
+  // This will log all updater events, including status updates and errors.
+  console.log('Updater event', error, status)
+})
 
 export type SoundEntry = {
   name: string,
