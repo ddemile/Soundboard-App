@@ -16,6 +16,7 @@ import UploadModal from './components/UploadModal.tsx';
 import {
   onUpdaterEvent,
 } from '@tauri-apps/api/updater'
+import { useCookies } from 'react-cookie';
 await onUpdaterEvent(({ error, status }) => {
   // This will log all updater events, including status updates and errors.
   console.log('Updater event', error, status)
@@ -41,7 +42,8 @@ function App() {
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false)
   const [selectedSound, setSelectedSound] = useState<string | null>(null)
   const [uploadModalOpen, setUploadModalOpen] = useState<boolean>(false)
-  const log = useLog({ })
+  const [_cookies, setCookie] = useCookies(["token", "user"]);
+  const log = useLog()
 
   const fetchSounds = () => {
     config().then(config => {
@@ -64,6 +66,24 @@ function App() {
 
   useEffect(() => {
     fetchSounds()
+
+    const callback = ({ data }: MessageEvent<any>) => {
+      log("Login callback received")
+      if (data.token && data.maxAge && data.user) {
+        setCookie("token", data.token, {
+          maxAge: data.maxAge
+        })
+        setCookie("user", data.user, {
+          maxAge: data.maxAge
+        })
+      }
+    }
+
+    window.addEventListener("message", callback)
+
+    return () => {
+      window.removeEventListener("message", callback)
+    }
   }, [])
 
   const handleUpload = async () => {
@@ -140,7 +160,7 @@ function App() {
       </button>
       {Array.isArray(sounds) && sounds.length > 0 ?
         <>
-          <ul className='mb-2 grid gap-2.5 grid-cols-2 list-none lg:grid-cols-3'>
+          <ul className='mb-2 grid gap-2.5 grid-cols-2 list-none sm:grid-cols-3'>
             {Array.isArray(sounds) && sounds.map(sound =>
               <li key={sound.file} className='bg-main max-w-[200px] flex gap-1 items-center p-1 rounded-3xl justify-between'>
                 <button className='bg-stone-900 rounded-full aspect-square p-1' onClick={() => play(sound)}>

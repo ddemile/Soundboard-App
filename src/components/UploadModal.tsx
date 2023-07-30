@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 import AppContext from '../contexts/AppContext.tsx'
 import useLog from '../hooks/useLog.ts'
 import fetchMyInstantSounds from '../utils/fetchMyInstantSounds.ts'
-import { BsPlayFill } from 'react-icons/bs'
+import { BsPlayFill, BsStopCircleFill } from 'react-icons/bs'
 
 export default function UploadModal({ open, setOpen }: { open: boolean, setOpen: Dispatch<SetStateAction<boolean>> }) {
     const { setSounds } = useContext(AppContext)!
@@ -82,11 +82,38 @@ export default function UploadModal({ open, setOpen }: { open: boolean, setOpen:
                     e.preventDefault()
                     handleSearch()
                 }}>
-                    <input placeholder='Type the link of a sound' type="text" name="keybind" className="p-1 w-full rounded-sm border-2 border-[#3a3a3a]" value={query} onChange={(e) => setQuery(e.target.value)} />
+                    <input placeholder='Type the link of a sound' type="text" name="search" className="p-1 w-full rounded-sm border-2 border-[#3a3a3a]" value={query} onChange={(e) => setQuery(e.target.value)} />
                 </form>
                 <ul className='h-full w-full grid grid-rows-[min-content] lg:grid-cols-7 md:grid-cols-4 sm:grid-cols-2 gap-4'>
                     {instants.map((instant: any, index: number) => instant && <li className='flex flex-col items-center bg-zinc-800 rounded-2xl' key={index}>
-                        <div style={{ color: instant?.color ?? "#ffffff" }} className='text-4xl cursor-pointer rounded-full aspect-square flex justify-center items-center w-10'><BsPlayFill /></div>
+                        <audio id={instant.fileName.replaceAll(".", '')}></audio>
+                        <div onClick={() => {
+                            const newInstants = structuredClone(instants)
+                            const newInstant = newInstants.find(({ fileName }: any) => fileName == instant.fileName)
+
+                            const audio: HTMLAudioElement = document.querySelector(`#${instant.fileName.replaceAll(".", '')}`)!
+
+                            if (audio?.currentTime > 0) {
+                                audio.pause()
+                                audio.currentTime = 0;
+                                newInstant.playing = false;
+                                return setInstants(newInstants)
+                            }
+
+                            audio.src = instant.downloadUrl
+                            audio.addEventListener("ended", () => {
+                                setInstants((instants: any[]) => {
+                                    const newInstants = structuredClone(instants)
+                                    const newInstant = newInstants.find(({ fileName }: any) => fileName == instant.fileName)
+                                    audio.currentTime = 0;
+                                    newInstant.playing = false
+                                    return newInstants
+                                })
+                            })
+                            audio.play()
+                            newInstant.playing = true
+                            setInstants(newInstants)
+                        }} style={{ color: instant?.color ?? "#ffffff" }} className='text-4xl cursor-pointer rounded-full aspect-square flex justify-center items-center w-10'>{instant.playing ?<BsStopCircleFill /> :<BsPlayFill />}</div>
                         <span className='text-ellipsis line-clamp-2'>{instant.title}</span>
                         <button className='mt-auto bg-zinc-900 rounded-none items-center p-1 flex w-full rounded-b-2xl justify-center' onClick={() => handleUpload(instant)}>
                             Download

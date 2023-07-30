@@ -94,7 +94,7 @@ export default function ConfigModal({ open, setOpen }: { open: boolean, setOpen:
             itemType="h3"
             dangerouslySetInnerHTML={{ __html: name }}
         />}
-        {selectedSound && config && config.sounds[selectedSound] && <h4 className="text-sm">{config.sounds[selectedSound]?.file}</h4>}
+        {selectedSound && config?.sounds && selectedSound in config.sounds && <h4 className="text-sm">{config.sounds[selectedSound]?.file}</h4>}
         <div className="flex gap-2.5 flex-col">
             <div className="flex flex-col">
                 <label className="text-left">Keybind</label>

@@ -36,8 +36,6 @@ export default async function fetchMyInstantSounds(search?: string) {
 
         const { backgroundColor: color } = fetchStyle($(instant).children(".small-button-background").attr("style")!)
 
-        console.log(color, "color")
-
         const inputString = $(instant).children(".small-button").attr("onclick");
 
         if (!inputString) return
