@@ -1,6 +1,6 @@
 {
-    "version": "v0.2.1",
-    "notes": "(Beta) Better upload menu",
+    "version": "v0.3.0",
+    "notes": "(Beta) New keybind system",
     "pub_date": "2023-07-28T16:16:15Z",
     "platforms": {
         "darwin-x86_64": {
@@ -16,8 +16,8 @@
             "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-amd64.AppImage.tar.gz"
         },
         "windows-x86_64": {
-            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQY3lMQWpsTDhKY2lwbkx4UHpqUWcrenltSU9JTGcxMTQzZktwT1FKYnBmSjhCd2UwNEp6TVlwQkd3dE5QeEcvQUhrTWhabENrVlhCSHJTUEE4WnB1OEFFPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjkwNTYxMDg0CWZpbGU6U291bmRib2FyZF8wLjIuMV94NjRfZW4tVVMubXNpLnppcAo4ZWJ1bWUxL3ptSFpxbWw1Y002eS9kSElVOHhVMEhlU3QxMjJ5eFhlTU1lbVdWQ3VHQkprbFBIcUgzdEgySVVyT2ZsRkNCY3ZFbkpTSEpqRk9BOWVCQT09Cg==",
-            "url": "https://github.com/ddemile/Soundboard-App/releases/download/0.2.1/Soundboard_0.2.1_x64.msi.zip"
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQYzdSa1V2N3hOYnlUZ2ZVRnlRY3c2V0paeE9LTThkVTF6VTJwSjFQMnVoUzNvWVpPNXpwSHkzTnFqVzBtZTI0YmZCVVpPaWlid3I0L1VSSXJIdHNnbWdJPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjkwODgyNjYxCWZpbGU6U291bmRib2FyZF8wLjMuMF94NjRfZW4tVVMubXNpLnppcApBVGMzM0V6emllaFNPVkVjcjAzRUxiNWlLbnQvazFSM2ZTWmRqaUgwT1MzR1ZYWU1XSVpSL1NhYnpuVmxyY3o1RHhRZ2p4Mi9lZXVtUjNSSkttT2JEZz09Cg==",
+            "url": "https://github.com/ddemile/Soundboard-App/releases/download/0.3.0/Soundboard_0.3.0_x64.msi.zip"
         }
     }
 }
