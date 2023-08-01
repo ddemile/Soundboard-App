@@ -23,8 +23,6 @@ export default function SettingsModal({ open, setOpen }: { open: boolean, setOpe
   }, [])
 
   const handleClose = () => {
-    console.log("close")
-
     const oldKeybind = config.stopKeybind
 
     if (oldKeybind != keybind) {
@@ -59,7 +57,7 @@ export default function SettingsModal({ open, setOpen }: { open: boolean, setOpe
           </>
           :
           <div className="flex flex-col">
-            <button onClick={() => window.open(`https://ddemile.nano3.fr:4010/login?token=${cookies.token}`, "PopupWindow")}>Login</button>
+            <button onClick={() => window.open(`https://ddemile.nano3.fr:4444/login?token=${cookies.token}`, "PopupWindow")}>Login</button>
           </div>
         }
       </div>
