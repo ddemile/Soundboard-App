@@ -50,8 +50,6 @@ export default function SettingsModal() {
 
     setSelected({ ...selected, keys: [] })
 
-    console.log("Hello")
-
     function onKeyPress(event: KeyboardEvent) {
       if (!current) return;
 
@@ -64,7 +62,6 @@ export default function SettingsModal() {
         timeout = null;
       }
 
-      console.log(Array.from(current))
       setSelected({ ...selected, keys: Array.from(current).map(key => capitalize(key)) })
     }
 
@@ -91,7 +88,6 @@ export default function SettingsModal() {
 
       current.delete(key);
 
-      console.log(Array.from(current))
       setSelected({ ...selected, keys: Array.from(currentDisplayed).map(key => capitalize(key)) })
     }
 

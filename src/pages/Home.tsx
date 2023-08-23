@@ -84,7 +84,6 @@ function Home() {
     if (acceptedFiles.length < 1) return;
 
     open({ files: acceptedFiles })
-    console.log(acceptedFiles)
   }, [])
 
   return (

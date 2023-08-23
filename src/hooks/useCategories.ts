@@ -60,14 +60,9 @@ export default create<CategoriesState>()((set, get) => ({
         const category = structuredClone(categories.find(category => category.name == categoryName))
 
         if (category) {
-            console.log(`Update sound: ${soundFile} ${categoryName} ${newProps}`)
-            console.log(newProps)
-
             const soundIndex = category.sounds.findIndex(sound => sound.file == soundFile)
             const sounds = category.sounds
             sounds[soundIndex] = { ...sounds[soundIndex], ...newProps }
-
-            console.log(sounds)
 
             updateCategory(category.name, { sounds: category.sounds })
         }
