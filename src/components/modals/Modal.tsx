@@ -1,7 +1,7 @@
-import { Dispatch, MouseEventHandler, SetStateAction, useEffect, useRef, DialogHTMLAttributes, PropsWithChildren, useState, ElementRef } from "react"
+import { MouseEventHandler, useEffect, useRef, DialogHTMLAttributes, PropsWithChildren, useState, ElementRef } from "react"
 import { twMerge } from "tailwind-merge"
 
-export default function Modal(props: PropsWithChildren<{ open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, onClose?: () => void, onOpen?: () => void } & DialogHTMLAttributes<HTMLDialogElement>>) {
+export default function Modal(props: PropsWithChildren<{ open: boolean, setOpen: (isOpen: boolean) => void, onClose?: () => void, onOpen?: () => void } & DialogHTMLAttributes<HTMLDialogElement>>) {
     const dialogRef = useRef<ElementRef<"dialog">>(null)
     const [htmlProps, setHtmlProps] = useState<DialogHTMLAttributes<HTMLDialogElement>>({})
     const [isFirstUpdate, setIsFirstUpdate] = useState(true)
@@ -36,5 +36,9 @@ export default function Modal(props: PropsWithChildren<{ open: boolean, setOpen:
         }
     }
 
-    return <dialog {...htmlProps} onClick={handleClick} style={props.open ? {} : { display: "none" }} className={twMerge("bg-main rounded-xl p-2", htmlProps.className)}  ref={dialogRef} onClose={() => props.setOpen(false)}>{props.children}</dialog>
+
+    // Discord sizes: Width>440px Height>645px
+    return <dialog {...htmlProps} onClick={handleClick} style={props.open ? {} : { opacity: 0 }} className={twMerge(`rounded-lg w-[440px] transition-all`, htmlProps.className)} ref={dialogRef} onClose={() => props.setOpen(false)}>
+        {props.children}
+    </dialog>
 }

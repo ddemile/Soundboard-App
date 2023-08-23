@@ -1,5 +1,5 @@
 import { createContext, Dispatch, SetStateAction } from 'react';
-import { SoundEntry } from '../App.tsx';
+import { SoundEntry } from '../pages/Home.tsx';
 
 const AppContext = createContext<{
     keybind: string | undefined,

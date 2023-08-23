@@ -80,7 +80,8 @@
         "height": 600,
         "resizable": true,
         "title": "Soundboard Audio & Groove-Ready Output Module (v0.3.0)",
-        "width": 800
+        "width": 800,
+        "fileDropEnabled": false
       }
     ]
   }

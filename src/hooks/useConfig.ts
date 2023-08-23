@@ -19,7 +19,7 @@ export default function useConfig() {
                 }))
             } catch (e) {
                 console.log(e)
-                return {}
+                throw new Error("Invalid config")
             }
 
         },
@@ -32,7 +32,7 @@ export default function useConfig() {
                 log("Config updated")
             }
 
-            await writeFile("config.json", JSON.stringify(config), { dir: BaseDirectory.AppConfig })
+            await writeFile("config.json", JSON.stringify(config, null, 4), { dir: BaseDirectory.AppConfig })
 
             log("Config updated")
         }

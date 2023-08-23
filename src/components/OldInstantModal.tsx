@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
-import Modal from './Modal.tsx'
+import Modal from './modals/Modal.tsx'
 import useConfig from '../hooks/useConfig.ts'
 import fetchMyInstantSound from '../utils/fetchMyInstantSound.ts'
 import { BaseDirectory, writeBinaryFile } from '@tauri-apps/api/fs'
@@ -8,6 +8,8 @@ import AppContext from '../contexts/AppContext.tsx'
 import useLog from '../hooks/useLog.ts'
 import fetchMyInstantSounds from '../utils/fetchMyInstantSounds.ts'
 import { BsPlayFill, BsStopCircleFill } from 'react-icons/bs'
+import ProgressBar from './ProgressBar.tsx'
+import downloadMyInstantSound from '../utils/downloadMyInstantSound.ts'
 
 export default function UploadModal({ open, setOpen }: { open: boolean, setOpen: Dispatch<SetStateAction<boolean>> }) {
     const { setSounds } = useContext(AppContext)!
@@ -42,12 +44,40 @@ export default function UploadModal({ open, setOpen }: { open: boolean, setOpen:
     }
 
     const handleUpload = async (instant: any) => {
-        const sound = await fetchMyInstantSound(instant.url);
+        if (!instant) return;
 
+        const { fileName, title } = instant
 
-        if (!sound) return;
+        const data = await downloadMyInstantSound(instant, async (progressEvent) => {
+            setInstants((_newInstants: any[]) => {
+                const newInstants = structuredClone(_newInstants)
 
-        const { data, fileName, title } = sound
+                if (!progressEvent.total) return newInstants;
+
+                let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+    
+                const { fileName, title } = instant;
+                        
+                const sound = {
+                    name: title,
+                    file: fileName,
+                    keybind: "" 
+                }
+
+                let savedInstant = newInstants.find((_instant: any) => _instant.fileName == instant.fileName)
+
+                if (!savedInstant) {
+                    newInstants.push(sound)
+                    savedInstant = newInstants.find((_instant: any) => _instant.fileName == instant.fileName)
+                }
+
+                if (percentCompleted == 100) log(`Downloaded: ${fileName}`)
+                    
+                savedInstant.downloadProgress = percentCompleted;
+
+                return newInstants
+            })
+        });
 
         const newConfig = await getConfig()
 
@@ -66,7 +96,7 @@ export default function UploadModal({ open, setOpen }: { open: boolean, setOpen:
             newConfig.sounds[fileName] = sound;
             log(`${sound.name} uploaded`)
             toast(`${sound.name} uploaded`, { type: "success" })
-            setOpen(false)
+            // setOpen(false)
             setQuery("")
         }
 
@@ -115,7 +145,8 @@ export default function UploadModal({ open, setOpen }: { open: boolean, setOpen:
                             setInstants(newInstants)
                         }} style={{ color: instant?.color ?? "#ffffff" }} className='text-4xl cursor-pointer rounded-full aspect-square flex justify-center items-center w-10'>{instant.playing ?<BsStopCircleFill /> :<BsPlayFill />}</div>
                         <span className='text-ellipsis line-clamp-2'>{instant.title}</span>
-                        <button className='mt-auto bg-zinc-900 rounded-none items-center p-1 flex w-full rounded-b-2xl justify-center' onClick={() => handleUpload(instant)}>
+                        {<ProgressBar className='mt-auto' progressPercentage={instant.downloadProgress ?? 0} />}
+                        <button className='bg-zinc-900 rounded-none items-center p-1 flex w-full rounded-b-2xl justify-center' onClick={() => handleUpload(instant)}>
                             Download
                         </button>
                     </li>)}
