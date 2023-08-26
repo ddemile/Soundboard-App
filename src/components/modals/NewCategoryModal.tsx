@@ -19,6 +19,7 @@ export default function NewCategoryModal() {
 
     const handleCreate = () => {
         setCategories([ ...categories, category ])
+        setCategory({ ...category,  name: "" })
         save()
         close()
     }

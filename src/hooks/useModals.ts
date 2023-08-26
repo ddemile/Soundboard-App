@@ -9,7 +9,7 @@ interface ModalState {
     setProps: (props: Props) => void,
     open: (props?: Props) => void,
     close: () => void,
-    set: (data: Partial<ModalState>) => void 
+    set: (data: Partial<ModalState>) => void
 }
 
 interface ModalsState {

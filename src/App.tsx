@@ -1,35 +1,42 @@
-import { useEffect, useState } from 'react'
-import './App.css'
-import { register } from '@tauri-apps/api/globalShortcut';
-import useWebsocket from './hooks/useWebsocket.ts';
 import { BaseDirectory, readBinaryFile } from '@tauri-apps/api/fs';
-import { TbSettingsFilled } from "react-icons/tb"
-import useConfig from './hooks/useConfig.ts';
-import AppContext from './contexts/AppContext.tsx';
-import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from 'react-toastify';
-import useLog from './hooks/useLog.ts';
+import { register, unregisterAll } from '@tauri-apps/api/globalShortcut';
+import { invoke } from '@tauri-apps/api/tauri';
 import {
   onUpdaterEvent,
-} from '@tauri-apps/api/updater'
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-import { useCookies } from 'react-cookie';
-import Navbar from './components/Navbar.tsx';
-import Home, { CategoryData, SoundEntry } from './pages/Home.tsx';
+} from '@tauri-apps/api/updater';
+import { useEffect, useState } from 'react';
 import "react-contexify/dist/ReactContexify.css";
+import { useCookies } from 'react-cookie';
+import {
+  RouterProvider,
+  createBrowserRouter,
+} from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './App.css';
+import Navbar from './components/Navbar.tsx';
 import SoundContextMenu from './components/contextMenus/SoundContextMenu.tsx';
-import useCategories from './hooks/useCategories.ts';
-import Discover from './pages/Discover.tsx';
 import SettingsModal from './components/modals/SettingsModal.tsx';
+import AppContext from './contexts/AppContext.tsx';
+import useCategories from './hooks/useCategories.ts';
+import useConfig from './hooks/useConfig.ts';
+import useLog from './hooks/useLog.ts';
 import useModal from './hooks/useModal.ts';
+import useWebsocket from './hooks/useWebsocket.ts';
+import Discover from './pages/Discover.tsx';
+import Home, { CategoryData, SoundEntry } from './pages/Home.tsx';
+
+document.addEventListener('DOMContentLoaded', () => {
+  // This will wait for the window to load, but you could
+  // run this function on whatever trigger you want
+  invoke('close_splashscreen')
+})
 
 await onUpdaterEvent(({ error, status }) => {
   // This will log all updater events, including status updates and errors.
   console.log('Updater event', error, status)
 })
+
 
 const router = createBrowserRouter([
   {
@@ -51,8 +58,38 @@ function App() {
   const [volume, setVolume] = useState<number>()
   const [selectedSound, setSelectedSound] = useState<string | null>(null)
   const [_cookies, setCookie] = useCookies(["token", "user"]);
-  const { isOpen, open } = useModal("settings")
+  const { isOpen } = useModal("settings")
+  const { categories } = useCategories()
   const log = useLog()
+
+  const registerAll = async () => {
+    const { stopKeybind } = await config()
+
+    await unregisterAll()
+
+    log("Updating shortcuts")
+
+    if (isOpen) return;
+
+    for await (const category of categories) {
+      category.sounds.forEach(async (sound: SoundEntry) => {
+        if (sound.keybind) {
+          await register(sound.keybind, () => play(sound))
+        }
+      })
+    }
+
+    if (stopKeybind) {
+      setKeybind(stopKeybind)
+      register(stopKeybind, () => {
+        websocket.emit("stopSound")
+      })
+    }
+  }
+
+  useEffect(() => {
+    registerAll()
+  }, [categories, isOpen])
 
   const fetchSounds = () => {
     config().then(config => {
@@ -81,22 +118,6 @@ function App() {
       }
 
       setCategories(config.categories)
-
-      for (const category of config.categories) {
-        category.sounds.forEach((sound: SoundEntry) => {
-          if (sound.keybind) {
-            log(`Registering: ${sound.keybind}`)
-            register(sound.keybind, () => play(sound))
-          }
-        })
-      }
-
-      if (config.stopKeybind) {
-        setKeybind(config.stopKeybind)
-        register(config.stopKeybind, () => {
-          websocket.emit("stopSound")
-        })
-      }
     })
   }
 
@@ -157,9 +178,6 @@ function App() {
       <ToastContainer />
       <SoundContextMenu />
       <SettingsModal />
-      <button className={`right-0 bottom-0 absolute bg-transparent aspect-square text-3xl p-1 m-0.5 border-none outline-none focus:outline-none ${isOpen && "[&>svg]:rotate-45"} [&>svg]:transition-all`} onClick={() => open()}>
-        <TbSettingsFilled />
-      </button>
       <div className='h-screen flex flex-col'>
         <Navbar />
         <RouterProvider router={router} />

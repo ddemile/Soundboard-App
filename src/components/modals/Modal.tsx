@@ -38,7 +38,7 @@ export default function Modal(props: PropsWithChildren<{ open: boolean, setOpen:
 
 
     // Discord sizes: Width>440px Height>645px
-    return <dialog {...htmlProps} onClick={handleClick} style={props.open ? {} : { opacity: 0 }} className={twMerge(`rounded-lg w-[440px] transition-all`, htmlProps.className)} ref={dialogRef} onClose={() => props.setOpen(false)}>
+    return <dialog {...htmlProps} onClick={handleClick} style={props.open ? {} : { opacity: 0, display: "none" }} className={twMerge(`rounded-lg w-[440px] transition-all`, htmlProps.className)} ref={dialogRef} onClose={() => props.setOpen(false)}>
         {props.children}
     </dialog>
 }

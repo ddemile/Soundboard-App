@@ -1,7 +1,7 @@
 {
-    "version": "v0.3.1",
-    "notes": "(Beta) Complete ui redesign",
-    "pub_date": "2023-08-23T09:10:37.37Z",
+    "version": "v0.3.2",
+    "notes": "(Release) Settings panel addition",
+    "pub_date": "2023-08-26T13:42:23.58Z",
     "platforms": {
         "darwin-x86_64": {
             "signature": "Content of app.tar.gz.sig",
@@ -16,8 +16,8 @@
             "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-amd64.AppImage.tar.gz"
         },
         "windows-x86_64": {
-            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQYzU3VnhMU3lhQTF5SnhNdkhDRWRBQXdSMlBSMGtRRTdsYWNYUnF1UUVZOFovellrbnl3U0VGb0lCY0xaQ0RkZjl5NEwrb09VRm1mLzdjL0JTY2VRZ0FNPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjkyNzgyMjk5CWZpbGU6U291bmRib2FyZF8wLjMuMV94NjRfZW4tVVMubXNpLnppcAoxVnY2YTZPd09SdHJQZXhwZGZkQ3E0eXNyMHFuVU4xT3BqU0xNRDM2dU1KWkNkbENMTUk5TWoyUzVuaXRXdDBkc2pZZkl5b0VSdVQ2RC9TbUlTRDdDdz09Cg==",
-            "url": "https://github.com/ddemile/Soundboard-App/releases/download/0.3.1/Soundboard_0.3.1_x64.msi.zip"
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQY3p6cXRRZ0drVVh2b3FFdUFzeHprYlJyNlhvT3NVcUdQTk5CNjNWa1lQeElSSjVPVnBZdlZ4VllsOXBsWlUybG51bjlNUENld2taaTN0YlZjOGFET0FnPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjkzMDU3NDEzCWZpbGU6U291bmRib2FyZF8wLjMuMl94NjRfZW4tVVMubXNpLnppcAp2bkI2RmJucUJPTDMxeGM4WVlvQ2hJQnh1dkZjeGJ5QkNMUXgxQTc3aXN2YWw0QlNtdHpzUDZubGtGaWJObnhzbDgwMGdaU3lLbWw2aTlZQ0RNazdDUT09Cg==",
+            "url": "https://github.com/ddemile/Soundboard-App/releases/download/0.3.2/Soundboard_0.3.2_x64.msi.zip"
         }
     }
 }

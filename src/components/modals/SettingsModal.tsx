@@ -1,47 +1,32 @@
 import { useEffect, useState } from 'react'
-import Modal from './Modal.tsx'
-import { register, unregister } from '@tauri-apps/api/globalShortcut'
-import useConfig from '../../hooks/useConfig.ts'
-import { AiOutlineClose } from "react-icons/ai"
-import useWebsocket from '../../hooks/useWebsocket.ts'
-import useModal from '../../hooks/useModal.ts'
+import { ToastContainer, toast } from "react-toastify"
 import useCategories from '../../hooks/useCategories.ts'
-import { SoundEntry } from '../../pages/Home.tsx'
 import useLog from '../../hooks/useLog.ts'
+import useModal from '../../hooks/useModal.ts'
+import { SoundEntry } from '../../pages/Home.tsx'
+import Keybinds from '../../pages/settings/Keybinds.tsx'
+import MyAccount from '../../pages/settings/MyAccount.tsx'
+import Modal from './Modal.tsx'
+
+const pages = {
+  keybinds: Keybinds,
+  myAccount: MyAccount
+}
 
 // Experimental (WIP)
 export default function SettingsModal() {
-  const [keybind, setKeybind] = useState<string>("")
-  const { config: getConfig, saveConfig } = useConfig()
-  const [config, setConfig] = useState<any>();
   const { isOpen, setIsOpen } = useModal("settings");
-  const { websocket } = useWebsocket()
   const { categories, updateSound, save } = useCategories()
   const [selected, setSelected] = useState<{ file?: string | null, keys: string[] }>({ file: null, keys: [] })
   const log = useLog()
+  const [page, setPage] = useState<keyof typeof pages>("myAccount")
 
   const sounds = categories.reduce<SoundEntry[]>((accumulator, category) => [...accumulator, ...category.sounds], [])
 
+  const Page = pages[page]
+
   const findSoundCategory = (soundFile: string) => {
     return categories.find(category => category.sounds.some(sound => sound.file == soundFile))
-  }
-
-  useEffect(() => {
-    getConfig().then(config => {
-      setConfig(config);
-
-      if (config.stopKeybind) {
-        setKeybind(config.stopKeybind)
-      }
-    })
-  }, [])
-
-  const saveKeybind = () => {
-    if (selected.file) {
-      updateSound(selected.file, findSoundCategory(selected.file)?.name!, { keybind: selected.keys.map(key => capitalize(key)).join("+") })
-      save()
-    }
-
   }
 
   useEffect(() => {
@@ -66,29 +51,30 @@ export default function SettingsModal() {
     }
 
     let timeout: NodeJS.Timeout | null = null;
-    let keybind: string[] = []
 
     function onKeyRelease(event: KeyboardEvent) {
       if (!current) return;
 
       const key = (event.key || event.code).toUpperCase();
-      
+      const keys = Array.from(currentDisplayed);
+      const keybind = keys.map(key => capitalize(key)).join("+")
+
       if (!timeout) {
-        keybind = Array.from(currentDisplayed)
         timeout = setTimeout(() => {
           if (current.size == 0 && selected.file) {
             timeout = null;
-            log(`Saved: ${keybind.map(key => capitalize(key)).join("+")}`)
-            updateSound(selected.file, findSoundCategory(selected.file)?.name!, { keybind: keybind.map(key => capitalize(key)).join("+") })
-            save()
             setSelected({ ...selected, file: null })
+            if (sounds.map(sound => sound.keybind).includes(keybind)) return toast("A sound has already that keybind bind", { type: "error" })
+            log(`Saved: ${keybind}`)
+            updateSound(selected.file, findSoundCategory(selected.file)?.name!, { keybind })
+            save()
           }
         }, 200)
       }
 
       current.delete(key);
 
-      setSelected({ ...selected, keys: Array.from(currentDisplayed).map(key => capitalize(key)) })
+      setSelected({ ...selected, keys: keys.map(key => capitalize(key)) })
     }
 
     // Add key event listeners
@@ -101,27 +87,21 @@ export default function SettingsModal() {
     }
   }, [selected.file])
 
-  const handleClose = () => {
-    const oldKeybind = config.stopKeybind
-
-    if (oldKeybind != keybind) {
-      if (oldKeybind) {
-        unregister(oldKeybind)
-      }
-
-      if (keybind) {
-        register(keybind, () => {
-          websocket.emit("stopSound")
-        })
-      }
-
-      saveConfig({ ...config, stopKeybind: keybind })
-    }
-  }
 
   return (
-    <Modal open={isOpen} setOpen={setIsOpen} onClose={handleClose}>
-      <h1>W.I.P</h1>
+    <Modal open={isOpen} setOpen={setIsOpen} className='w-full h-full bg-[#303031] flex'>
+      <ToastContainer className={"m-6"} />
+
+      <nav className='border-white border-opacity-20 border-r-2 h-full bg-[#232324] flex p-14 pr-0 flex-col'>
+        <p className='text-left text-sm text-gray-300 px-2 font-semibold'>MAIN SETTINGS</p>
+        <ul className='flex flex-col gap-0.5 text-left mr-1 w-48'>
+          <li className='p-1.5 px-2 hover:bg-opacity-5 hover:bg-white cursor-pointer rounded-md' onClick={() => setPage("myAccount")}>My account</li>
+          <li className='p-1.5 px-2 hover:bg-opacity-5 hover:bg-white cursor-pointer rounded-md' onClick={() => setPage("keybinds")}>Keybinds</li>
+        </ul>
+      </nav>
+      <main className='p-14 px-10 overflow-y-auto h-full inline-block w-full'>
+        <Page />
+      </main>
       {/* <h3 className="text-xl font-semibold">Settings</h3>
       {(cookies.token && cookies.user) && <h5 className='text-sm'>Logged in as {cookies.user.username}</h5>}
       <div className="flex gap-2.5 flex-col">
@@ -141,14 +121,15 @@ export default function SettingsModal() {
           </div>
         }
       </div> */}
-      <ul>
+      {/* <ul>
         {sounds.map(sound => (
           <li key={sound.file} className='flex items-center justify-between'>
             <p>{sound.name}</p>
             <p style={{ border: `1px solid ${sound.file == selected.file ? "red" : "black"}` }} className="flex w-2/3 whitespace-nowrap overflow-hidden text-ellipsis items-center gap-1 rounded-sm bg-zinc-800 p-1 h-8" onClick={() => setSelected({ ...selected, file: sound.file })}>{(sound.file == selected.file ? selected.keys.join("+") : sound.keybind)} <button onClick={(e) => { e.stopPropagation(); setSelected({ ...selected, file: sound.file, keys: [] }); saveKeybind() }} className="ml-auto p-0"><AiOutlineClose /></button></p>
           </li>
         ))}
-      </ul>
+      </ul> */}
+
     </Modal >
   )
 }

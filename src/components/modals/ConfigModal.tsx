@@ -1,11 +1,11 @@
-import { useEffect, useLayoutEffect, ChangeEvent, useState, useRef, ElementRef } from "react";
-import Modal from "./Modal.tsx";
-import useLog from "../../hooks/useLog.ts";
-import { toast } from "react-toastify"
+import { ChangeEvent, ElementRef, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
-import useModal from "../../hooks/useModal.ts";
+import { toast } from "react-toastify";
 import useCategories from "../../hooks/useCategories.ts";
+import useLog from "../../hooks/useLog.ts";
+import useModal from "../../hooks/useModal.ts";
 import Button from "./Button.tsx";
+import Modal from "./Modal.tsx";
 
 export default function ConfigModal() {
     const nameRef = useRef<ElementRef<"h3">>(null)
@@ -20,10 +20,10 @@ export default function ConfigModal() {
     useLayoutEffect(() => {
         setProps(initialProps)
     }, [initialProps])
-    
+
     useEffect(() => {
         const current = new Set<string>()
-        
+
         function onKeyPress(event: KeyboardEvent) {
             if (!current) return;
 
@@ -52,7 +52,7 @@ export default function ConfigModal() {
                     if (current.size == 0) {
                         timeout = null;
                         if (recordingKeys)
-                        setSavedKeys(keybind)
+                            setSavedKeys(keybind)
                         setRecordingKeys(false)
                     }
                 }, 200)
@@ -60,9 +60,9 @@ export default function ConfigModal() {
 
             current.delete(key);
 
-            setKeys(Array.from(current))    
+            setKeys(Array.from(current))
         }
- 
+
         // Add key event listeners
         document.addEventListener("keydown", onKeyPress);
         document.addEventListener("keyup", onKeyRelease);
@@ -85,7 +85,7 @@ export default function ConfigModal() {
         log(`${name}: ${value}`)
 
         if (name == "title") setProps({ ...props, sound: { ...props.sound, name: value } })
-        if (name == "volume ") setProps({ ...props, sound: { ...props.sound, config: { ...(props.sound.config ?? {}), volume: value } } })
+        if (name == "volume") setProps({ ...props, sound: { ...props.sound, config: { ...(props.sound.config ?? {}), volume: value } } })
     }
 
     const handleSave = async () => {

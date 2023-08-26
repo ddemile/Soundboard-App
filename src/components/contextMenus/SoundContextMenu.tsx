@@ -1,7 +1,7 @@
-import { Menu, Item, Separator, Submenu, ItemParams } from 'react-contexify';
+import { Item, ItemParams, Menu, Separator, Submenu } from 'react-contexify';
 import useCategories from "../../hooks/useCategories.ts";
-import { CategoryData, SoundEntry } from "../../pages/Home.tsx";
 import useModal from '../../hooks/useModal.ts';
+import { CategoryData, SoundEntry } from "../../pages/Home.tsx";
 
 export default function SoundContextMenu() {
   const { categories, addSound, removeSound, save } = useCategories()

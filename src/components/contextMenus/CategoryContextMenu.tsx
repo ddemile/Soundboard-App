@@ -1,6 +1,6 @@
-import { Menu, Item, Separator } from 'react-contexify';
-import useModal from '../../hooks/useModal.ts';
+import { Item, Menu, Separator } from 'react-contexify';
 import useCategories from '../../hooks/useCategories.ts';
+import useModal from '../../hooks/useModal.ts';
 
 export default function CategoryContextMenu() {
   const { open } = useModal("edit-category")

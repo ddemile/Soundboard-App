@@ -1,4 +1,4 @@
-import { Menu, Item } from 'react-contexify';
+import { Item, Menu } from 'react-contexify';
 import useModal from '../../hooks/useModal.ts';
 
 export default function HomeContextMenu() {
