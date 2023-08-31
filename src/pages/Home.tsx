@@ -5,6 +5,7 @@ import { IconType } from 'react-icons';
 import * as icons from "react-icons/bs";
 import 'react-toastify/dist/ReactToastify.css';
 import Category from '../components/Category.tsx';
+import MyInstantModal from '../components/OldInstantModal.tsx';
 import CategoryContextMenu from '../components/contextMenus/CategoryContextMenu.tsx';
 import HomeContextMenu, { HOME_CONTEXT_MENU } from '../components/contextMenus/HomeContextMenu.tsx';
 import ConfigModal from '../components/modals/ConfigModal.tsx';
@@ -12,7 +13,7 @@ import NewCategoryModal from '../components/modals/NewCategoryModal.tsx';
 import UploadModal from '../components/modals/UploadModal.tsx';
 import useCategories from '../hooks/useCategories.ts';
 import useModal from '../hooks/useModal.ts';
-import MyInstantModal from '../components/OldInstantModal.tsx';
+
 
 export type SoundEntry = {
   name: string,
@@ -21,7 +22,8 @@ export type SoundEntry = {
   config: {
     volume: number
   },
-  emoji?: string;
+  emoji?: string,
+  emojiName?: string;
 }
 
 export type CategoryData = {

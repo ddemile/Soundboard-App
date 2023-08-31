@@ -15,13 +15,13 @@ export default function MyAccount() {
             <p className="text-4xl font-semibold">{cookies.user.global_name || cookies.user.username}</p>
             <p className="text-xl font-semibold">{cookies.user.username}</p>
           </div>
-          <button className="ml-auto bg-red-500 p-2" onClick={() => { removeCookie("token"); removeCookie("user"); websocket.emit("logout") }}>Logout</button>
+          <button className="ml-auto bg-red-500 rounded-md p-2 px-4" onClick={() => { removeCookie("token"); removeCookie("user"); websocket.emit("logout") }}>Logout</button>
         </div>
         :
         <div className="w-full flex flex-col items-center gap-2">
           <h1 className="text-4xl">You're not logged in, maybe you should to unlock powerful features!</h1>
           <h2>Here is a powerful button</h2>
-          <button className="bg-blue-500 shrink w-min" onClick={() => window.open(`https://ddemile.nano3.fr:4444/login?token=${cookies.token}`, "PopupWindow")}>Login!</button>
+          <button className="bg-blue-500 shrink w-min p-2 rounded-md px-4" onClick={() => window.open(`https://ddemile.nano3.fr:4444/login?token=${cookies.token}`, "PopupWindow")}>Login!</button>
         </div>
       }
     </>

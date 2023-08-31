@@ -10,7 +10,8 @@ export default {
         main: "#222222"
       },
       gridTemplateColumns: {
-        auto: "repeat(auto-fill, [col-start] minmax(150px, 1fr) [col-end])"
+        "150": "repeat(auto-fill, [col-start] minmax(150px, 1fr) [col-end])",
+        "em": "repeat(auto-fill, [col-start] minmax(1em, 1fr) [col-end])"
       }
     },
   },

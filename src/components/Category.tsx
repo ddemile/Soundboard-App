@@ -33,7 +33,7 @@ export default function Category(props: CategoryData & { onExpandToggle: (e: Mou
     return (
         <div>
             <span onContextMenu={(e) => { e.stopPropagation(); show({ id: CATEGORY_CONTEXT_MENU, props, event: e }) }} className='ml-2.5 text-left flex items-center gap-1 font-semibold'><Icon /> {name} <button onClick={(e) => onExpandToggle(e, name)} className='bg-transparent p-0 border-none outline-none focus:outline-none'>{expanded ? <MdOutlineKeyboardArrowDown /> : <MdOutlineKeyboardArrowRight />}</button></span>
-            {expanded && <ul className='mb-2 grid mx-2.5 mt-1 gap-2.5 grid-cols-auto list-none'>
+            {expanded && <ul className='mb-2 grid mx-2.5 mt-1 gap-2.5 grid-cols-150 list-none'>
                 {sounds.map((sound: SoundEntry) =>
                     <li key={sound.file} className='[&>*]:col-start-1 [&>*]:row-start-1 grid rounded-lg overflow-hidden group h-10' onContextMenu={(e) => { e.stopPropagation(); show({ id: SOUND_CONTEXT_MENU, event: e, props: { sound, category: { name, expanded, sounds } } }) }}>
                         <div className='bg-main flex gap-1 items-center p-1 rounded-lg justify-center overflow-ellipsis overflow-hidden'>
