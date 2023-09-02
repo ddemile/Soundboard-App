@@ -26,7 +26,7 @@ export default function Audio() {
       </div>
       {!isEqual(savedAudioConfig, audioConfig) && (
         <div className="absolute bottom-0 right-0 w-full flex justify-center">
-          <div className="px-4 py-3 bg-stone-900 m-2 flex items-center gap-1 rounded-md hover:animate-pulse">
+          <div className="px-4 py-3 bg-stone-900 m-2 flex items-center gap-1 rounded-md animate-pulse">
             <span>You have unsaved modifcations, save them!</span>
             <Button type="discard" onClick={() => setAudioConfig(savedAudioConfig)}>Discard</Button>
             <Button type="validate" onClick={handleSave}>Save</Button>

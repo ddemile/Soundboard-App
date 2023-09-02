@@ -83,6 +83,9 @@
         "width": 800,
         "fileDropEnabled": false
       }
-    ]
+    ],
+    "systemTray": {
+      "iconPath": "icons/icon.png"
+    }
   }
 }

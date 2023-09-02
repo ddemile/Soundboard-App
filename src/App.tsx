@@ -13,6 +13,7 @@ import {
 } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { disable, enable, isEnabled } from "tauri-plugin-autostart-api";
 import './App.css';
 import Navbar from './components/Navbar.tsx';
 import SoundContextMenu from './components/contextMenus/SoundContextMenu.tsx';
@@ -24,8 +25,7 @@ import useConfig from './hooks/useConfig.ts';
 import useLog from './hooks/useLog.ts';
 import useModal from './hooks/useModal.ts';
 import useWebsocket from './hooks/useWebsocket.ts';
-import Discover from './pages/Discover.tsx';
-import Home, { CategoryData, SoundEntry } from './pages/Home.tsx';
+import { CategoryData, SoundEntry } from './pages/Home.tsx';
 import { BASE_API_URL } from './utils/constants.ts';
 import fetchConfig from './utils/readConfig.ts';
 
@@ -40,6 +40,11 @@ await onUpdaterEvent(({ error, status }) => {
   console.log('Updater event', error, status)
 })
 
+if (window.location.hostname == "localhost" && await isEnabled()) disable()
+if (window.location.hostname != "localhost" && !await isEnabled()) enable()
+
+const Home = (await import("./pages/Home.tsx")).default
+const Discover = (await import("./pages/Discover.tsx")).default
 
 const router = createBrowserRouter([
   {

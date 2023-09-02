@@ -65,6 +65,9 @@ dependencies:
   tailwind-merge:
     specifier: ^1.14.0
     version: 1.14.0
+  tauri-plugin-autostart-api:
+    specifier: github:tauri-apps/tauri-plugin-autostart#v1
+    version: github.com/tauri-apps/tauri-plugin-autostart/0e474395d4990587ad5c1db25ed23220fe11764f
   zustand:
     specifier: ^4.4.1
     version: 4.4.1(@types/react@18.2.15)(react@18.2.0)
@@ -2849,4 +2852,12 @@ packages:
       '@types/react': 18.2.15
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
+
+  github.com/tauri-apps/tauri-plugin-autostart/0e474395d4990587ad5c1db25ed23220fe11764f:
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/0e474395d4990587ad5c1db25ed23220fe11764f}
+    name: tauri-plugin-autostart-api
+    version: 0.0.0
+    dependencies:
+      '@tauri-apps/api': 1.4.0
     dev: false

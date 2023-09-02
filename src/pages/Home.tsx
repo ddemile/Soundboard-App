@@ -15,7 +15,6 @@ import useCategories from '../hooks/useCategories.ts';
 import useConfig from '../hooks/useConfig.ts';
 import useModal from '../hooks/useModal.ts';
 
-
 export type SoundEntry = {
   name: string,
   file: `${string}.${string}`,
