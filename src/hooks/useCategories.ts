@@ -2,7 +2,7 @@ import { CategoryData, SoundEntry } from "../pages/Home.tsx";
 import useConfig from "./useConfig.ts";
 
 export default function useCategories() {
-    const { config, updateConfig } = useConfig()
+    const { config, updateConfig, setConfig } = useConfig()
 
     const createCategory = (category: CategoryData) => {
         updateConfig({ categories: [...config.categories, category] })
@@ -21,7 +21,7 @@ export default function useCategories() {
     const deleteCategory = (categoryName: string) => {
         const categories = structuredClone(config.categories.filter(category => category.name != categoryName))
 
-        updateConfig({ categories })
+        setConfig({ ...config, categories })
     }
 
     const addSound = (sound: SoundEntry, categoryName: string) => {

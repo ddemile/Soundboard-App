@@ -65,7 +65,7 @@ export default function NewCategoryModal() {
             </div>
             <div className="bg-zinc-800 p-3 flex justify-end gap-2">
                 <Button onClick={close} type="discard">Discard</Button>
-                <Button onClick={handleCreate} disabled={categories.some(({ name }) => category.name == name) || !category.name} type="validate">Create</Button>
+                <Button onClick={handleCreate} disabled={categories.some(({ name }) => category.name == name) || !category.name.trim()} type="validate">Create</Button>
             </div>
         </div>
 
