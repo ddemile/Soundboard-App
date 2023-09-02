@@ -4,6 +4,7 @@ import { ChangeEvent, FormEvent, useLayoutEffect, useState } from "react"
 import { IoCloseSharp } from "react-icons/io5"
 import { toast } from "react-toastify"
 import useCategories from "../../hooks/useCategories.ts"
+import useConfig from "../../hooks/useConfig.ts"
 import useLog from "../../hooks/useLog.ts"
 import useModal from "../../hooks/useModal.ts"
 import { SoundEntry } from "../../pages/Home.tsx"
@@ -13,7 +14,8 @@ import Modal from "./Modal.tsx"
 export default function UploadModal() {
   const { isOpen, setIsOpen, props, setProps, close } = useModal("upload")
   const [sounds, setSounds] = useState<{ file: File, data: Partial<SoundEntry> }[]>(props.files ? props.files.map((file: File) => ({ file, data: {} })) : [])
-  const { addSound, save, categories } = useCategories()
+  const { addSound, categories } = useCategories()
+  const { saveConfig } = useConfig()
   const log = useLog()
   const [index, setIndex] = useState(0)
   const [emojiSelectorProps, setEmojiSelectorProps] = useState({ open: false, x: 0, y: 0 })
@@ -70,7 +72,7 @@ export default function UploadModal() {
             log(`${sound.name} uploaded`)
             toast(`${sound.name} uploaded`, { type: "success" })
             addSound(sound, props.category ?? "Default")
-            save()
+            saveConfig()
           }
         }
       }

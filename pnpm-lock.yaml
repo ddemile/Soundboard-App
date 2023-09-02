@@ -8,6 +8,9 @@ dependencies:
   '@tauri-apps/api':
     specifier: ^1.4.0
     version: 1.4.0
+  '@types/lodash.defaultsdeep':
+    specifier: ^4.6.7
+    version: 4.6.7
   axios:
     specifier: ^1.4.0
     version: 1.4.0
@@ -20,6 +23,12 @@ dependencies:
   emoji-picker-react:
     specifier: ^4.4.11
     version: 4.4.11(react@18.2.0)
+  lodash.defaultsdeep:
+    specifier: ^4.6.1
+    version: 4.6.1
+  lodash.isequal:
+    specifier: ^4.5.0
+    version: 4.5.0
   react:
     specifier: 18.2.0
     version: 18.2.0
@@ -33,7 +42,7 @@ dependencies:
     specifier: ^4.1.1
     version: 4.1.1(react@18.2.0)
   react-dom:
-    specifier: ^18.2.0
+    specifier: 18.2.0
     version: 18.2.0(react@18.2.0)
   react-dropzone:
     specifier: ^14.2.3
@@ -64,6 +73,9 @@ devDependencies:
   '@tauri-apps/cli':
     specifier: ^1.4.0
     version: 1.4.0
+  '@types/lodash.isequal':
+    specifier: ^4.5.6
+    version: 4.5.6
   '@types/node':
     specifier: ^20.4.2
     version: 20.4.2
@@ -800,6 +812,21 @@ packages:
   /@types/json-schema@7.0.12:
     resolution: {integrity: sha512-Hr5Jfhc9eYOQNPYO5WLDq/n4jqijdHNlDXjuAQkkt+mWdQR+XJToOHrsD4cPaMXpn6KO7y2+wM8AZEs8VpBLVA==}
     dev: true
+
+  /@types/lodash.defaultsdeep@4.6.7:
+    resolution: {integrity: sha512-D+AUxs64qehDMkbfFoskG0XsIOh2CHBGqYfcQcubLbZSFCGKJKS885su3a97huqBNHj+p9of9UZ/uUIP46wUGQ==}
+    dependencies:
+      '@types/lodash': 4.14.197
+    dev: false
+
+  /@types/lodash.isequal@4.5.6:
+    resolution: {integrity: sha512-Ww4UGSe3DmtvLLJm2F16hDwEQSv7U0Rr8SujLUA2wHI2D2dm8kPu6Et+/y303LfjTIwSBKXB/YTUcAKpem/XEg==}
+    dependencies:
+      '@types/lodash': 4.14.197
+    dev: true
+
+  /@types/lodash@4.14.197:
+    resolution: {integrity: sha512-BMVOiWs0uNxHVlHBgzTIqJYmj+PgCo4euloGF+5m4okL3rEYzM2EEv78mw8zWSMM57dM7kVIgJ2QDvwHSoCI5g==}
 
   /@types/node@20.4.2:
     resolution: {integrity: sha512-Dd0BYtWgnWJKwO1jkmTrzofjK2QXXcai0dmtzvIBhcA+RsG5h8R3xlyta0kGOZRNfL9GuRtb1knmPEhQrePCEw==}
@@ -1911,6 +1938,14 @@ packages:
     dependencies:
       p-locate: 5.0.0
     dev: true
+
+  /lodash.defaultsdeep@4.6.1:
+    resolution: {integrity: sha512-3j8wdDzYuWO3lM3Reg03MuQR957t287Rpcxp1njpEa8oDrikb+FwGdW3n+FELh/A6qib6yPit0j/pv9G/yeAqA==}
+    dev: false
+
+  /lodash.isequal@4.5.0:
+    resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
+    dev: false
 
   /lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}

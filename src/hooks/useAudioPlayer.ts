@@ -4,7 +4,7 @@ interface AudioPlayerStore {
     ressources: Record<string, HTMLAudioElement>
     play: ({ id, volume, url }: { id: string, volume?: number, url: string }) => void,
     pause: ({ id }: { id: string }) => void;
-    stop: ({ id }: { id: string }) => void;
+    stop: (props?: { id: string }) => void;
 }
 
 export default create<AudioPlayerStore>()((set, get) => ({
@@ -33,11 +33,23 @@ export default create<AudioPlayerStore>()((set, get) => ({
 
         set({ ressources: { ...ressources, [id]: ressource } })
     },
-    stop({ id }) {
-        const { ressources } = get()
+    stop(props) {
+        if (!props) {
+            Object.values(get().ressources).forEach((ressource) => {
+                ressource.pause()
+                ressource.currentTime = 0
+            })
 
-        delete ressources[id]
+            set({ ressources: {} })
+        } else {
+            const { ressources } = get()
 
-        set({ ressources })
+            ressources[props.id].currentTime = 0
+            ressources[props.id].pause()
+
+            delete ressources[props.id]
+
+            set({ ressources })
+        }
     },
 }))

@@ -1,8 +1,10 @@
 import EmojiPicker, { EmojiStyle, Theme } from "emoji-picker-react";
+import isEqual from "lodash.isequal";
 import { ChangeEvent, ElementRef, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import { toast } from "react-toastify";
 import useCategories from "../../hooks/useCategories.ts";
+import useConfig from "../../hooks/useConfig.ts";
 import useLog from "../../hooks/useLog.ts";
 import useModal from "../../hooks/useModal.ts";
 import Button from "./Button.tsx";
@@ -15,7 +17,8 @@ export default function ConfigModal() {
     const [_keys, setKeys] = useState<string[]>([])
     const { isOpen, setIsOpen, close, props: initialProps } = useModal("config")
     const [props, setProps] = useState(initialProps)
-    const { updateSound, save } = useCategories()
+    const { updateSound } = useCategories()
+    const { saveConfig } = useConfig()
     const [emojiSelectorProps, setEmojiSelectorProps] = useState({ open: false, x: 0, y: 0 })
     const log = useLog()
 
@@ -95,9 +98,15 @@ export default function ConfigModal() {
             const oldSound = initialProps.sound
             const newSound = props.sound
 
-            if (JSON.stringify(oldSound) != JSON.stringify(newSound)) {
+            console.log("Save")
+            console.log(oldSound)
+            console.log(newSound)
+
+            if (!isEqual(oldSound, newSound)) {
+                console.log("DIFFERENT")
+
                 updateSound(oldSound.file, props.category.name, newSound)
-                save()
+                saveConfig()
                 close()
 
                 // newSound.name = name;

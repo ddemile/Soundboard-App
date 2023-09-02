@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { BsDownload, BsPlayFill, BsStopCircleFill } from 'react-icons/bs'
 import { toast } from 'react-toastify'
 import useCategories from '../hooks/useCategories.ts'
-import useConfig from '../hooks/useConfig.ts'
 import useLog from '../hooks/useLog.ts'
 import useModal from '../hooks/useModal.ts'
 import downloadMyInstantSound from '../utils/downloadMyInstantSound.ts'
@@ -13,17 +12,12 @@ import Modal from './modals/Modal.tsx'
 
 export default function MyInstantModal() {
     const [query, setQuery] = useState<string | undefined>("")
-    const { config: getConfig } = useConfig()
     const { categories, addSound } = useCategories()
-    const [_config, setConfig] = useState<any>();
     const log = useLog()
     const [instants, setInstants] = useState<any>([])
     const { isOpen, setIsOpen, props } = useModal("my-instants")
 
     useEffect(() => {
-        getConfig().then(config => {
-            setConfig(config);
-        })
 
         fetchMyInstantSounds().then(instants => setInstants(instants))
     }, [])

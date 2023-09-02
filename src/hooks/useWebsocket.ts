@@ -1,12 +1,13 @@
 import { Socket, io } from "socket.io-client";
 import { create } from "zustand";
+import { WEBSOCKET_URL } from "../utils/constants.ts";
 
 interface WebsocketState {
   websocket: Socket
 }
 
 export default create<WebsocketState>()(() => ({
-  websocket: io("wss://ddemile.nano3.fr:4444", {
+  websocket: io(WEBSOCKET_URL, {
     auth: {
       token: getCookie("token")
     }

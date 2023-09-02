@@ -1,52 +1,59 @@
-import { BaseDirectory, createDir, exists, readTextFile, writeFile } from "@tauri-apps/api/fs";
+import { BaseDirectory, createDir, exists, writeFile } from "@tauri-apps/api/fs";
 import { appConfigDir } from "@tauri-apps/api/path";
+import defaultsDeep from "lodash.defaultsdeep";
+import { create } from "zustand";
+import { CategoryData } from "../pages/Home.tsx";
 import useLog from "./useLog.ts";
 
-export default function useConfig() {
+interface Config {
+    categories: CategoryData[],
+    stopKeybind: string;
+    audio: {
+        useSoundoardAppSounds: boolean
+    }
+}
+
+interface ConfigStore {
+    config: Config,
+    setConfig: (config: object) => void,
+    saveConfig: () => void,
+    updateConfig: (config: Partial<Config>) => void
+}
+
+const defaultConfig = {
+    categories: [],
+    audio: {
+        useSoundoardAppSounds: false,
+    },
+    stopKeybind: ""
+} satisfies Config
+
+export default create<ConfigStore>()((set, get) => ({
+    config: defaultConfig,
+    setConfig: (config) => {
+        set({ config: config as Config })
+    },
+    saveConfig: () => {
+        save(get().config)
+    },
+    updateConfig: (partialConfig) => {
+        set({ config: defaultsDeep(partialConfig, get().config) })
+    }
+}))
+
+async function save(config: object) {
     const log = useLog()
 
-    const getConfig = async () => {
-        if (!(await exists("config.json", { dir: BaseDirectory.AppConfig }))) {
-            if (!(await exists(await appConfigDir()))) await createDir(await appConfigDir());
+    if (!(await exists("config.json", { dir: BaseDirectory.AppConfig }))) {
+        if (!(await exists(await appConfigDir()))) await createDir(await appConfigDir());
 
-            await writeFile("config.json", "{}", { dir: BaseDirectory.AppConfig })
-        }
-
-        try {
-            return JSON.parse(await readTextFile("config.json", {
-                dir: BaseDirectory.AppConfig
-            }))
-        } catch (e) {
-            console.log(e)
-            throw new Error("Invalid config")
-        }
-
-    }
-
-    const saveConfig = async (config: object) => {
-        if (!(await exists("config.json", { dir: BaseDirectory.AppConfig }))) {
-            if (!(await exists(await appConfigDir()))) await createDir(await appConfigDir());
-
-            await writeFile("config.json", "{}", { dir: BaseDirectory.AppConfig })
-
-            log("Config updated")
-        }
-
-        await writeFile("config.json", JSON.stringify(config, null, 4), { dir: BaseDirectory.AppConfig })
+        await writeFile("config.json", "{}", { dir: BaseDirectory.AppConfig })
 
         log("Config updated")
     }
 
-    const updateConfig = async (props: object) => {
-        const config = await getConfig()
-        const newConfig = { ...config, ...props }
-        await saveConfig(newConfig)
-        return newConfig
-    }
+    await writeFile("config.json", JSON.stringify(config, null, 4), { dir: BaseDirectory.AppConfig })
 
-    return {
-        config: getConfig,
-        saveConfig,
-        updateConfig
-    }
+    log("Config updated")
 }
+

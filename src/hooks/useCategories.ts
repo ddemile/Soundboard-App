@@ -1,41 +1,31 @@
-import { create } from "zustand";
 import { CategoryData, SoundEntry } from "../pages/Home.tsx";
 import useConfig from "./useConfig.ts";
 
-interface CategoriesState {
-    categories: CategoryData[];
-    setCategories: (categories: CategoryData[]) => void,
-    updateCategory: (name: string, newProps: Partial<CategoryData>) => void,
-    createCategory: (category: CategoryData) => void,
-    deleteCategory: (categoryName: string) => void,
-    addSound: (sound: SoundEntry, categoryName: string) => void,
-    removeSound: (soundName: string, categoryName: string) => void,
-    updateSound: (soundFile: string, categoryName: string, newProps: Partial<SoundEntry>) => void,
-    save: () => Promise<void>
-}
+export default function useCategories() {
+    const { config, updateConfig } = useConfig()
 
-export default create<CategoriesState>()((set, get) => ({
-    categories: [], 
-    setCategories: (categories) => set({ categories }),
-    updateCategory: (name, newProps) => {
-        const categories = structuredClone(get().categories)
+    const createCategory = (category: CategoryData) => {
+        updateConfig({ categories: [...config.categories, category] })
+    }
+
+    const updateCategory = (name: string, newProps: Partial<CategoryData>) => {
+        const categories = structuredClone(config.categories)
         const categoryIndex = categories.findIndex(category => category.name == name)
         categories[categoryIndex] = { ...categories[categoryIndex], ...newProps }
 
         if (typeof categoryIndex == "number") {
-            set({ categories })
+            updateConfig({ categories })
         }
-    },
-    createCategory: (category) => {
-        set({ categories: [...get().categories, category] })
-    },
-    deleteCategory: (categoryName) => {
-        const categories = structuredClone(get().categories.filter(category => category.name != categoryName))
+    }
 
-        set({ categories })
-    },
-    addSound: (sound, categoryName) => {
-        const { categories, updateCategory } = get()
+    const deleteCategory = (categoryName: string) => {
+        const categories = structuredClone(config.categories.filter(category => category.name != categoryName))
+
+        updateConfig({ categories })
+    }
+
+    const addSound = (sound: SoundEntry, categoryName: string) => {
+        const { categories } = config;
 
         const category = structuredClone(categories.find(category => category.name == categoryName))
 
@@ -43,9 +33,10 @@ export default create<CategoriesState>()((set, get) => ({
             category.sounds.push(sound)
             updateCategory(category.name, { sounds: category.sounds })
         }
-    },
-    removeSound: (soundName, categoryName) => {
-        const { categories, updateCategory } = get()
+    }
+
+    const removeSound = (soundName: string, categoryName: string) => {
+        const { categories } = config
 
         const category = structuredClone(categories.find(category => category.name == categoryName))
 
@@ -53,9 +44,10 @@ export default create<CategoriesState>()((set, get) => ({
             category.sounds = category.sounds.filter(sound => sound.name != soundName)
             updateCategory(category.name, { sounds: category.sounds })
         }
-    },
-    updateSound: (soundFile, categoryName, newProps) => {
-        const { categories, updateCategory } = get()
+    }
+
+    const updateSound = (soundFile: string, categoryName: string, newProps: Partial<SoundEntry>) => {
+        const { categories } = config
 
         const category = structuredClone(categories.find(category => category.name == categoryName))
 
@@ -66,11 +58,15 @@ export default create<CategoriesState>()((set, get) => ({
 
             updateCategory(category.name, { sounds: category.sounds })
         }
-    },
-    save: async () => {
-        const { config: getConfig, saveConfig } = useConfig()
-        const config = await getConfig()
-        config.categories = get().categories
-        await saveConfig(config)
     }
-}))
+
+    return {
+        categories: config.categories,
+        createCategory,
+        deleteCategory,
+        updateCategory,
+        addSound,
+        removeSound,
+        updateSound
+    }
+}

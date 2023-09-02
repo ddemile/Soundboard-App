@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
 import { toast } from 'react-toastify';
 import useCategories from '../../hooks/useCategories.ts';
@@ -20,25 +20,16 @@ const numpadKeys = [
 ]
 
 export default function Keybinds() {
-    const { categories, updateSound, save } = useCategories()
+    const { categories, updateSound } = useCategories()
+    const { updateConfig, config, saveConfig } = useConfig()
     const [selected, setSelected] = useState<{ file?: string | null, keys: string[] }>({ file: null, keys: [] })
-    const { config: getConfig, updateConfig: _updateConfig } = useConfig()
-    const [config, setConfig] = useState<{ stopKeybind: string }>()
     const log = useLog()
 
     const sounds = categories.reduce<SoundEntry[]>((accumulator, category) => [...accumulator, ...category.sounds], [])
 
-    const updateConfig = async (props: object) => {
-        setConfig(await _updateConfig(props))
-    }
-
     const findSoundCategory = (soundFile: string) => {
         return categories.find(category => category.sounds.some(sound => sound.file == soundFile))
     }
-
-    useLayoutEffect(() => {
-        getConfig().then(config => setConfig(config))
-    }, [])
 
     useEffect(() => {
         const current = new Set<string>()
@@ -84,7 +75,7 @@ export default function Keybinds() {
                         log(`Saved: ${keybind}`)
                         if (selected.file == "stop") return updateConfig({ stopKeybind: keybind })
                         updateSound(selected.file, findSoundCategory(selected.file)?.name!, { keybind })
-                        save()
+                        saveConfig()
                     }
                 }, 200)
             }
@@ -117,7 +108,7 @@ export default function Keybinds() {
                         </div>
                         <div className='flex flex-col w-full text-left gap-1'>
                             <p className='text-left text-sm text-gray-300 font-semibold'>SHORTCUT</p>
-                            <p onClick={() => setSelected({ ...selected, file: sound.file })} style={{ outline: selected.file == sound.file ? "2px solid rgb(239 68 68)" : "", boxShadow: selected.file == sound.file ? "0px 0px 5px 3px rgb(239 68 68)" : "" }} className="flex w-full whitespace-nowrap overflow-hidden text-ellipsis items-center gap-1 rounded-sm bg-zinc-800 p-2 h-10">{sound.file == selected.file ? selected.keys.join("+") : sound.keybind} <button onClick={(e) => { e.stopPropagation(); setSelected({ ...selected, file: null }); updateSound(sound.file, findSoundCategory(sound.file)?.name!, { keybind: "" }); save() }} className="ml-auto p-1 rounded-md"><AiOutlineClose /></button></p>
+                            <p onClick={() => setSelected({ ...selected, file: sound.file })} style={{ outline: selected.file == sound.file ? "2px solid rgb(239 68 68)" : "", boxShadow: selected.file == sound.file ? "0px 0px 5px 3px rgb(239 68 68)" : "" }} className="flex w-full whitespace-nowrap overflow-hidden text-ellipsis items-center gap-1 rounded-sm bg-zinc-800 p-2 h-10">{sound.file == selected.file ? selected.keys.join("+") : sound.keybind} <button onClick={(e) => { e.stopPropagation(); setSelected({ ...selected, file: null }); updateSound(sound.file, findSoundCategory(sound.file)?.name!, { keybind: "" }); saveConfig() }} className="ml-auto p-1 rounded-md"><AiOutlineClose /></button></p>
                         </div>
                     </li>
                 ))}
@@ -135,7 +126,6 @@ export default function Keybinds() {
                     </div>
                 </li>
             </ul>
-
         </>
     )
 

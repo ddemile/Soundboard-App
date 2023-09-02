@@ -4,7 +4,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 import {
   onUpdaterEvent,
 } from '@tauri-apps/api/updater';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import "react-contexify/dist/ReactContexify.css";
 import { useCookies } from 'react-cookie';
 import {
@@ -18,6 +18,7 @@ import Navbar from './components/Navbar.tsx';
 import SoundContextMenu from './components/contextMenus/SoundContextMenu.tsx';
 import SettingsModal from './components/modals/SettingsModal.tsx';
 import AppContext from './contexts/AppContext.tsx';
+import useAudioPlayer from './hooks/useAudioPlayer.ts';
 import useCategories from './hooks/useCategories.ts';
 import useConfig from './hooks/useConfig.ts';
 import useLog from './hooks/useLog.ts';
@@ -25,6 +26,8 @@ import useModal from './hooks/useModal.ts';
 import useWebsocket from './hooks/useWebsocket.ts';
 import Discover from './pages/Discover.tsx';
 import Home, { CategoryData, SoundEntry } from './pages/Home.tsx';
+import { BASE_API_URL } from './utils/constants.ts';
+import fetchConfig from './utils/readConfig.ts';
 
 document.addEventListener('DOMContentLoaded', () => {
   // This will wait for the window to load, but you could
@@ -53,17 +56,18 @@ function App() {
   const { websocket } = useWebsocket()
   const { config, saveConfig } = useConfig()
   const [sounds, setSounds] = useState<SoundEntry[]>([])
-  const { setCategories } = useCategories()
+  const { updateConfig } = useConfig()
   const [keybind, setKeybind] = useState<string>()
   const [volume, setVolume] = useState<number>()
   const [selectedSound, setSelectedSound] = useState<string | null>(null)
   const [_cookies, setCookie] = useCookies(["token", "user"]);
   const { isOpen } = useModal("settings")
   const { categories } = useCategories()
+  const player = useAudioPlayer()
   const log = useLog()
 
   const registerAll = async () => {
-    const { stopKeybind } = await config()
+    const { stopKeybind } = config;
 
     await unregisterAll()
 
@@ -87,12 +91,30 @@ function App() {
     }
   }
 
+  useLayoutEffect(() => {
+    if (config.audio.useSoundoardAppSounds) {
+      websocket.on("playSound", (name: string, params?: { volume?: number }) => {
+        const volume = Math.min(100, params?.volume ? params.volume * 100 : 75)
+
+        player.play({ id: `distant-${name}`, url: `${BASE_API_URL}/public/${name}`, volume })
+      })
+
+      websocket.on("stopSound", () => {
+        player.stop()
+      })
+    }
+
+    return () => {
+      websocket.off()
+    }
+  }, [config.audio.useSoundoardAppSounds])
+
   useEffect(() => {
     registerAll()
   }, [categories, isOpen])
 
   const fetchSounds = () => {
-    config().then(config => {
+    fetchConfig().then(config => {
       // Update config to the new format
       if (config.sounds) {
         config.categories ??= []
@@ -113,11 +135,10 @@ function App() {
           } satisfies CategoryData)
           delete config.sounds
         }
-
-        saveConfig(config)
       }
 
-      setCategories(config.categories)
+      updateConfig(config)
+      saveConfig()
     })
   }
 

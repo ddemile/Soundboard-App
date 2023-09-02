@@ -2,6 +2,7 @@ import { ChangeEvent, useState } from "react"
 import * as icons from "react-icons/bs"
 import { IoCloseSharp } from "react-icons/io5"
 import useCategories from "../../hooks/useCategories.ts"
+import useConfig from "../../hooks/useConfig.ts"
 import useModal from "../../hooks/useModal.ts"
 import { CategoryData } from "../../pages/Home.tsx"
 import IconSelector from "../IconSelector.tsx"
@@ -10,7 +11,8 @@ import Modal from "./Modal.tsx"
 
 export default function NewCategoryModal() {
     const { isOpen, setIsOpen, close } = useModal("new-category")
-    const { categories, setCategories, save } = useCategories()
+    const { categories, createCategory } = useCategories()
+    const { saveConfig } = useConfig()
     const [category, setCategory] = useState<CategoryData>({ name: "", expanded: true, sounds: [] })
     const [iconSelectorProps, setIconSelectorProps] = useState({ open: false, x: 0, y: 0 })
     const Icon = icons[category.icon as any as keyof typeof icons] ?? icons.BsSoundwave
@@ -22,9 +24,9 @@ export default function NewCategoryModal() {
     }
 
     const handleCreate = () => {
-        setCategories([...categories, category])
+        createCategory(category)
         setCategory({ ...category, name: "" })
-        save()
+        saveConfig()
         close()
     }
 

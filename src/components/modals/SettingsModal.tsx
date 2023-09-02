@@ -1,29 +1,33 @@
 import { useEffect, useState } from 'react'
 import { ToastContainer, toast } from "react-toastify"
 import useCategories from '../../hooks/useCategories.ts'
+import useConfig from '../../hooks/useConfig.ts'
 import useLog from '../../hooks/useLog.ts'
 import useModal from '../../hooks/useModal.ts'
 import { SoundEntry } from '../../pages/Home.tsx'
+import Audio from '../../pages/settings/Audio.tsx'
 import Keybinds from '../../pages/settings/Keybinds.tsx'
 import MyAccount from '../../pages/settings/MyAccount.tsx'
 import Modal from './Modal.tsx'
 
 const pages = {
   keybinds: Keybinds,
-  myAccount: MyAccount
+  myAccount: MyAccount,
+  audio: Audio
 }
 
 // Experimental (WIP)
 export default function SettingsModal() {
   const { isOpen, setIsOpen } = useModal("settings");
-  const { categories, updateSound, save } = useCategories()
+  const { categories, updateSound } = useCategories()
+  const { saveConfig } = useConfig()
   const [selected, setSelected] = useState<{ file?: string | null, keys: string[] }>({ file: null, keys: [] })
   const log = useLog()
   const [page, setPage] = useState<keyof typeof pages>("myAccount")
 
   const sounds = categories.reduce<SoundEntry[]>((accumulator, category) => [...accumulator, ...category.sounds], [])
 
-  const Page = pages[page]
+  const Page: () => JSX.Element = pages[page]
 
   const findSoundCategory = (soundFile: string) => {
     return categories.find(category => category.sounds.some(sound => sound.file == soundFile))
@@ -67,7 +71,7 @@ export default function SettingsModal() {
             if (sounds.map(sound => sound.keybind).includes(keybind)) return toast("A sound has already that keybind bind", { type: "error" })
             log(`Saved: ${keybind}`)
             updateSound(selected.file, findSoundCategory(selected.file)?.name!, { keybind })
-            save()
+            saveConfig()
           }
         }, 200)
       }
@@ -97,6 +101,7 @@ export default function SettingsModal() {
         <ul className='flex flex-col gap-0.5 text-left mr-1 w-48'>
           <li className='p-1.5 px-2 hover:bg-opacity-5 hover:bg-white cursor-pointer rounded-md' onClick={() => setPage("myAccount")}>My account</li>
           <li className='p-1.5 px-2 hover:bg-opacity-5 hover:bg-white cursor-pointer rounded-md' onClick={() => setPage("keybinds")}>Keybinds</li>
+          <li className='p-1.5 px-2 hover:bg-opacity-5 hover:bg-white cursor-pointer rounded-md' onClick={() => setPage("audio")}>Audio</li>
         </ul>
       </nav>
       <main className='p-14 px-10 overflow-y-auto h-full inline-block w-full'>
