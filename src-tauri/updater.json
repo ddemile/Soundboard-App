@@ -1,7 +1,7 @@
 {
-    "version": "v0.3.3",
-    "notes": "No more B.D.F bot needed, receive the sounds from the app!",
-    "pub_date": "2023-09-02T10:00:18.753Z",
+    "version": "v1.0.0",
+    "notes": "(Release) Official release",
+    "pub_date": "2023-09-03T13:53:49.479Z",
     "platforms": {
         "darwin-x86_64": {
             "signature": "Content of app.tar.gz.sig",
@@ -16,8 +16,8 @@
             "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-amd64.AppImage.tar.gz"
         },
         "windows-x86_64": {
-            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQYzdONHFRSUFqODIvbVFMMFFTdVphV3RTMHBTbW8vRzhPbzdtWjFPUG90eE1VWXlweDFKNVNmc0NCZ1NodFphR0VFL1E0YTBxNDJjYVloRllkZ28wUEF3PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjkzNjQ5MjA4CWZpbGU6U291bmRib2FyZF8wLjMuM194NjRfZW4tVVMubXNpLnppcApncERrWTRYOS9xL1dBZDFMSVU3ZGtvam1kdHQzVDk0dHZrV1pHaEl5Rkgxc1l5d1R6WGdMcFV5dnJWb3B4ODFlNW9aL2hOVzdDWDhMR3UzamMzWlhDZz09Cg==",
-            "url": "https://github.com/ddemile/Soundboard-App/releases/download/0.3.3/Soundboard_0.3.3_x64.msi.zip"
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQY3gvNTdYRWM2cUl5Qkp1VGFReEdPQWoxSmdCL2tvMHdsWVVCazI4Z083YTBGQ1pEQlJuWkVQc2VyNDBCSzFlZXhMV2k4b1owaVFoWVpRUUp5U2xXTWdZPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjkzNzQ5NzgwCWZpbGU6U291bmRib2FyZF8xLjAuMF94NjRfZW4tVVMubXNpLnppcApEUEc1Slk1MmM2NEQzWWRaQ2QxcnJFMUlDdGp0L295VVBjbjNJMjhYNzNMeFhhWjgxUFZnRG94VC9UamZyRklWYVhUbkUvekpFWWN6TnFYeHlFQ2pBQT09Cg==",
+            "url": "https://github.com/ddemile/Soundboard-App/releases/download/1.0.0/Soundboard_1.0.0_x64.msi.zip"
         }
     }
 }

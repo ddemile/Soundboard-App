@@ -1,11 +1,11 @@
 import { ChangeEvent, useState } from "react";
-import { Bs0Circle } from "react-icons/bs";
+import * as bsIcons from "react-icons/bs";
 import { AutoSizer } from "react-virtualized/dist/es/AutoSizer";
 import { Grid } from "react-virtualized/dist/es/Grid";
 
 export default function IconSelector({ onIconClick }: { onIconClick?: ({ name }: { name: string }) => void }) {
     const [value, setValue] = useState("")
-    const [icons] = useState(["dd", Bs0Circle])
+    const [icons] = useState(Object.entries(bsIcons))
     const [filteredIcons, setFilteredIcons] = useState(icons)
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
