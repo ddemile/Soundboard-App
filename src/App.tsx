@@ -25,7 +25,8 @@ import useConfig from './hooks/useConfig.ts';
 import useLog from './hooks/useLog.ts';
 import useModal from './hooks/useModal.ts';
 import useWebsocket from './hooks/useWebsocket.ts';
-import { CategoryData, SoundEntry } from './pages/Home.tsx';
+import Discover from './pages/Discover.tsx';
+import Home, { CategoryData, SoundEntry } from './pages/Home.tsx';
 import { BASE_API_URL } from './utils/constants.ts';
 import fetchConfig from './utils/readConfig.ts';
 
@@ -42,9 +43,6 @@ await onUpdaterEvent(({ error, status }) => {
 
 if (window.location.hostname == "localhost" && await isEnabled()) disable()
 if (window.location.hostname != "localhost" && !await isEnabled()) enable()
-
-const Home = (await import("./pages/Home.tsx")).default
-const Discover = (await import("./pages/Discover.tsx")).default
 
 const router = createBrowserRouter([
   {

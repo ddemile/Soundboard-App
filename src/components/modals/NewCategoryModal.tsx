@@ -54,10 +54,10 @@ export default function NewCategoryModal() {
                                 setIconSelectorProps({ open: true, x: e.pageX, y: e.pageY })
                             }} className="bg-zinc-900 rounded-sm p-2 flex cursor-pointer">
                                 <input className="w-0" />
-                                <div className="flex gap-2">
+                                <span className="flex gap-2">
                                     <span className="flex justify-center items-center"><Icon /></span>
                                     <span>:{category.icon as string || "BsSoundwave"}:</span>
-                                </div>
+                                </span>
                             </p>
                         </div>
                     </li>
