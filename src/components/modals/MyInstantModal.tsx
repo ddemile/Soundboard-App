@@ -2,17 +2,19 @@ import { BaseDirectory, writeBinaryFile } from '@tauri-apps/api/fs'
 import { useEffect, useState } from 'react'
 import { BsDownload, BsPlayFill, BsStopCircleFill } from 'react-icons/bs'
 import { toast } from 'react-toastify'
-import useCategories from '../hooks/useCategories.ts'
-import useLog from '../hooks/useLog.ts'
-import useModal from '../hooks/useModal.ts'
-import downloadMyInstantSound from '../utils/downloadMyInstantSound.ts'
-import fetchMyInstantSound from '../utils/fetchMyInstantSound.ts'
-import fetchMyInstantSounds from '../utils/fetchMyInstantSounds.ts'
-import Modal from './modals/Modal.tsx'
+import useCategories from '../../hooks/useCategories.ts'
+import useConfig from '../../hooks/useConfig.ts'
+import useLog from '../../hooks/useLog.ts'
+import useModal from '../../hooks/useModal.ts'
+import downloadMyInstantSound from '../../utils/downloadMyInstantSound.ts'
+import fetchMyInstantSound from '../../utils/fetchMyInstantSound.ts'
+import fetchMyInstantSounds from '../../utils/fetchMyInstantSounds.ts'
+import Modal from './Modal.tsx'
 
 export default function MyInstantModal() {
     const [query, setQuery] = useState<string | undefined>("")
     const { categories, addSound } = useCategories()
+    const { saveConfig } = useConfig()
     const log = useLog()
     const [instants, setInstants] = useState<any>([])
     const { isOpen, setIsOpen, props } = useModal("my-instants")
@@ -38,7 +40,7 @@ export default function MyInstantModal() {
         }
     }
 
-    const handleDowload = async (instant: any) => {
+    const handleDownload = async (instant: any) => {
         if (!instant) return;
 
         const { fileName, title } = instant
@@ -93,6 +95,7 @@ export default function MyInstantModal() {
             log(`${sound.name} uploaded`)
             toast(`${sound.name} uploaded`, { type: "success" })
             addSound(sound, props.category ?? "Default")
+            saveConfig()
             setQuery("")
         }
     }
@@ -142,7 +145,7 @@ export default function MyInstantModal() {
                             <span className='whitespace-nowrap text-ellipsis overflow-hidden text-left font-semibold'>{instant.title}</span>
                             <span className='whitespace-nowrap text-ellipsis overflow-hidden text-xs'>{instant.fileName}</span>
                         </div>
-                        <span className='ml-auto text-xl cursor-pointer' onClick={() => handleDowload(instant)}><BsDownload /></span>
+                        <span className='ml-auto text-xl cursor-pointer' onClick={() => handleDownload(instant)}><BsDownload /></span>
                     </li>)}
                 </ul>
             </div>

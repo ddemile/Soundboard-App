@@ -9,7 +9,9 @@ interface Config {
     categories: CategoryData[],
     stopKeybind: string;
     audio: {
-        useSoundoardAppSounds: boolean
+        useSoundoardAppSounds: boolean,
+        previewVolume: number,
+        soundsVolume: number
     }
 }
 
@@ -24,6 +26,8 @@ const defaultConfig = {
     categories: [],
     audio: {
         useSoundoardAppSounds: false,
+        previewVolume: 100,
+        soundsVolume: 100
     },
     stopKeybind: ""
 } satisfies Config

@@ -98,13 +98,7 @@ export default function ConfigModal() {
             const oldSound = initialProps.sound
             const newSound = props.sound
 
-            console.log("Save")
-            console.log(oldSound)
-            console.log(newSound)
-
             if (!isEqual(oldSound, newSound)) {
-                console.log("DIFFERENT")
-
                 updateSound(oldSound.file, props.category.name, newSound)
                 saveConfig()
                 close()

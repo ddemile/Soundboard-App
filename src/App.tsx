@@ -65,7 +65,7 @@ function App() {
   const [keybind, setKeybind] = useState<string>()
   const [volume, setVolume] = useState<number>()
   const [selectedSound, setSelectedSound] = useState<string | null>(null)
-  const [_cookies, setCookie] = useCookies(["token", "user"]);
+  const [cookies, setCookie] = useCookies(["token", "user"]);
   const { isOpen } = useModal("settings")
   const { categories } = useCategories()
   const player = useAudioPlayer()
@@ -99,7 +99,7 @@ function App() {
   useLayoutEffect(() => {
     if (config.audio.useSoundoardAppSounds) {
       websocket.on("playSound", (name: string, params?: { volume?: number }) => {
-        const volume = Math.min(100, params?.volume ? params.volume * 100 : 75)
+        const volume = Math.min(100, params?.volume ? params.volume * 100 : 75) * config.audio.soundsVolume / 100
 
         player.play({ id: `distant-${name}`, url: `${BASE_API_URL}/public/${name}`, volume })
       })
@@ -149,6 +149,11 @@ function App() {
 
   useEffect(() => {
     fetchSounds()
+
+    if (cookies.token && cookies.user) {
+      websocket.emit("login", cookies.token)
+      log(`Logged in as ${cookies.user.username}`)
+    }
 
     const callback = ({ data }: MessageEvent<any>) => {
       log("Login callback received")

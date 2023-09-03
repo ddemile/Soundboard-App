@@ -24,7 +24,7 @@ export default function Category(props: CategoryData & { onExpandToggle: (e: Mou
     const { play } = useContext(AppContext)!
     const { show } = useContextMenu()
     const { removeSound, addSound } = useCategories()
-    const { saveConfig } = useConfig()
+    const { saveConfig, config } = useConfig()
     const { open: openUploadModal } = useModal("upload")
     const { open: openInstantsModal } = useModal("my-instants")
     const player = useAudioPlayer()
@@ -46,7 +46,7 @@ export default function Category(props: CategoryData & { onExpandToggle: (e: Mou
         const blob = new Blob([audioData])
         const audioDataURL = URL.createObjectURL(blob);
 
-        player.play({ id: sound.file, url: audioDataURL, volume: 50 })
+        player.play({ id: sound.file, url: audioDataURL, volume: config.audio.previewVolume })
     }
 
     return (
