@@ -2,14 +2,14 @@ import { CategoryData, SoundEntry } from "../pages/Home.tsx";
 import useConfig from "./useConfig.ts";
 
 export default function useCategories() {
-    const { config, updateConfig, setConfig } = useConfig()
+    const { config, getConfig, updateConfig, setConfig } = useConfig()
 
     const createCategory = (category: CategoryData) => {
-        updateConfig({ categories: [...config.categories, category] })
+        updateConfig({ categories: [...getConfig().categories, category] })
     }
 
     const updateCategory = (name: string, newProps: Partial<CategoryData>) => {
-        const categories = structuredClone(config.categories)
+        const categories = structuredClone(getConfig().categories)
         const categoryIndex = categories.findIndex(category => category.name == name)
         categories[categoryIndex] = { ...categories[categoryIndex], ...newProps }
 
@@ -19,13 +19,13 @@ export default function useCategories() {
     }
 
     const deleteCategory = (categoryName: string) => {
-        const categories = structuredClone(config.categories.filter(category => category.name != categoryName))
+        const categories = structuredClone(getConfig().categories.filter(category => category.name != categoryName))
 
-        setConfig({ ...config, categories })
+        setConfig({ ...getConfig(), categories })
     }
 
     const addSound = (sound: SoundEntry, categoryName: string) => {
-        const { categories } = config;
+        const { categories } = getConfig();
 
         const category = structuredClone(categories.find(category => category.name == categoryName))
 
@@ -36,18 +36,18 @@ export default function useCategories() {
     }
 
     const removeSound = (soundName: string, categoryName: string) => {
-        const { categories } = config
+        const { categories } = getConfig()
 
         const category = structuredClone(categories.find(category => category.name == categoryName))
 
         if (category) {
-            category.sounds = category.sounds.filter(sound => sound.name != soundName)
-            updateCategory(category.name, { sounds: category.sounds })
+            const sounds = category.sounds.filter(sound => sound.name != soundName)
+            updateCategory(category.name, { sounds })
         }
     }
 
     const updateSound = (soundFile: string, categoryName: string, newProps: Partial<SoundEntry>) => {
-        const { categories } = config
+        const { categories } = getConfig()
 
         const category = structuredClone(categories.find(category => category.name == categoryName))
 

@@ -1,6 +1,5 @@
 import { BaseDirectory, createDir, exists, writeFile } from "@tauri-apps/api/fs";
 import { appConfigDir } from "@tauri-apps/api/path";
-import defaultsDeep from "lodash.defaultsdeep";
 import { create } from "zustand";
 import { CategoryData } from "../pages/Home.tsx";
 import useLog from "./useLog.ts";
@@ -17,6 +16,7 @@ interface Config {
 
 interface ConfigStore {
     config: Config,
+    getConfig: () => Config,
     setConfig: (config: object) => void,
     saveConfig: () => void,
     updateConfig: (config: Partial<Config>) => void
@@ -34,6 +34,9 @@ const defaultConfig = {
 
 export default create<ConfigStore>()((set, get) => ({
     config: defaultConfig,
+    getConfig: () => {
+        return get().config
+    },
     setConfig: (config) => {
         set({ config: config as Config })
     },
@@ -41,7 +44,7 @@ export default create<ConfigStore>()((set, get) => ({
         save(get().config)
     },
     updateConfig: (partialConfig) => {
-        set({ config: defaultsDeep(partialConfig, get().config) })
+        set({ config: { ...get().config, ...partialConfig } })
     }
 }))
 
