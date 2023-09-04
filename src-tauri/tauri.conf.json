@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Soundboard",
-    "version": "1.0.1"
+    "version": "1.0.2"
   },
   "tauri": {
     "allowlist": {
@@ -79,7 +79,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "Soundboard Audio & Groove-Ready Output Module (v1.0.1)",
+        "title": "Soundboard Audio & Groove-Ready Output Module (v1.0.2)",
         "width": 800,
         "fileDropEnabled": false
       }
