@@ -1,7 +1,7 @@
 {
     "version": "v1.0.3",
     "notes": "(Bug fixes) Little bugs fixes",
-    "pub_date": "2023-09-04T13:38:27.228Z",
+    "pub_date": "2023-09-16T06:22:05.048Z",
     "platforms": {
         "darwin-x86_64": {
             "signature": "Content of app.tar.gz.sig",
