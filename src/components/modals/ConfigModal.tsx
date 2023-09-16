@@ -157,7 +157,7 @@ export default function ConfigModal() {
                 <button onClick={() => setIsOpen(false)} className="absolute right-0 top-0 m-2 border-none outline-none focus:outline-none p-0 bg-transparent text-2xl text-stone-500 hover:text-stone-400 transition-colors">
                     <IoCloseSharp />
                 </button>
-                <p className="font-bold text-2xl mt-1">Modifier le son</p>
+                <p className="font-bold text-2xl mt-1">Edit sound</p>
                 <ul className="flex gap-2 flex-col">
                     <li className="text-left flex gap-4 mt-8">
                         <div className="flex flex-col w-full">

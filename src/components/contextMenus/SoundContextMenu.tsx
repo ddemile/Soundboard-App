@@ -21,10 +21,10 @@ export default function SoundContextMenu() {
   return (
     <Menu id={SOUND_CONTEXT_MENU} theme='dark'>
       <Item onClick={({ props }) => open(props)}>
-        Modifier le son
+        Edit sound
       </Item>
       <Item disabled>
-        Télécharger le son
+        Download sound
       </Item>
       <Separator />
       <Submenu label="Move to">
@@ -32,7 +32,7 @@ export default function SoundContextMenu() {
       </Submenu>
       <Separator />
       <Item onClick={({ props: { sound, category } }) => { removeSound(sound.name, category.name); saveConfig() }}>
-        Supprimer le son
+        Delete sound
       </Item>
     </Menu>
   )

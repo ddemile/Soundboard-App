@@ -89,6 +89,7 @@ function App() {
     if (stopKeybind) {
       setKeybind(stopKeybind)
       register(stopKeybind, () => {
+        log("Stop sound")
         websocket.emit("stopSound")
       })
     }
