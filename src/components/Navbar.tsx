@@ -1,5 +1,7 @@
 import { TbSettingsFilled } from "react-icons/tb"
+import { Link } from "react-router-dom"
 import { twMerge } from "tailwind-merge"
+import logo from "../../src-tauri/icons/icon.png"
 import useModal from "../hooks/useModal.ts"
 
 export default function Navbar() {
@@ -15,15 +17,20 @@ export default function Navbar() {
                     </svg>
                 </button>
                 <div className="hidden w-full md:block md:w-auto" id="navbar-default">
-                    <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0  dark:border-gray-700">
+                    <ul className="font-medium flex flex-col items-center p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0  dark:border-gray-700">
                         <li>
-                            <a href="/" className={twMerge("block py-2 pl-3 pr-4 text-white rounded md:bg-transparent md:p-0 dark:text-white", window.location.pathname == "/" ? "md:text-blue-700 md:dark:text-blue-500" : "md:text-white")} aria-current="page">Home</a>
+                            <Link to={"/"}>
+                                <img src={logo} className="max-h-8"></img>
+                            </Link>
                         </li>
                         <li>
-                            <a href="/discover" className={twMerge("block py-2 pl-3 pr-4 text-white rounded md:bg-transparent md:p-0 dark:text-white", window.location.pathname == "/discover" ? "md:text-blue-700 md:dark:text-blue-500" : "md:text-white")}>Discover</a>
+                            <Link to="/" className={twMerge("block py-2 pl-3 pr-4 text-white rounded md:bg-transparent md:p-0 dark:text-white hover:text-orange-700 dark:hover:text-orange-500 transition-colors", window.location.pathname == "/" ? "md:text-orange-600 md:dark:text-orange-400" : "md:text-white")} aria-current="page">Home</Link>
                         </li>
                         <li>
-                            <a href="#" className={twMerge("block py-2 pl-3 pr-4 text-white rounded md:bg-transparent md:p-0 dark:text-white", window.location.pathname == "/trending" ? "md:text-blue-700 md:dark:text-blue-500" : "md:text-white")}>Trending</a>
+                            <Link to="/discover" className={twMerge("block py-2 pl-3 pr-4 text-white rounded md:bg-transparent md:p-0 dark:text-white hover:text-orange-700 dark:hover:text-orange-500 transition-colors", window.location.pathname == "/discover" ? "md:text-orange-600 md:dark:text-orange-400" : "md:text-white")}>Discover</Link>
+                        </li>
+                        <li>
+                            <Link to="#" className={twMerge("block py-2 pl-3 pr-4 text-white rounded md:bg-transparent md:p-0 dark:text-white hover:text-orange-700 dark:hover:text-orange-500 transition-colors", window.location.pathname == "/trending" ? "md:text-orange-600 md:dark:text-orange-400" : "md:text-white")}>Trending</Link>
                         </li>
                     </ul>
                 </div>

@@ -1,7 +1,7 @@
 import { BaseDirectory, writeBinaryFile } from '@tauri-apps/api/fs'
 import { useEffect, useState } from 'react'
 import { BsDownload, BsPlayFill, BsStopCircleFill } from 'react-icons/bs'
-import { toast } from 'react-toastify'
+import { toast } from 'sonner'
 import useCategories from '../../hooks/useCategories.ts'
 import useConfig from '../../hooks/useConfig.ts'
 import useLog from '../../hooks/useLog.ts'
@@ -32,7 +32,7 @@ export default function MyInstantModal() {
 
                 setInstants([sound])
             } else {
-                toast("Invalid link provided", { type: "error" })
+                toast.error("Invalid link provided")
             }
         } catch {
             const instants = await fetchMyInstantSounds(query)
@@ -77,7 +77,7 @@ export default function MyInstantModal() {
         });
 
         for (const category of categories) {
-            if (category.sounds.some(sound => sound.file == fileName)) return toast(`${fileName} is already in the soundboard`, { type: "error" })
+            if (category.sounds.some(sound => sound.file == fileName)) return toast.error(`${fileName} is already in the soundboard`)
         }
 
         if (data instanceof ArrayBuffer) {
@@ -93,7 +93,7 @@ export default function MyInstantModal() {
             }
 
             log(`${sound.name} uploaded`)
-            toast(`${sound.name} uploaded`, { type: "success" })
+            toast.success(`${sound.name} uploaded`)
             addSound(sound, props.category ?? "Default")
             saveConfig()
             setQuery("")

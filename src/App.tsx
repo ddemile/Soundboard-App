@@ -11,8 +11,7 @@ import {
   RouterProvider,
   createBrowserRouter,
 } from "react-router-dom";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Toaster, toast } from 'sonner';
 import { disable, enable, isEnabled } from "tauri-plugin-autostart-api";
 import './App.css';
 import Navbar from './components/Navbar.tsx';
@@ -47,11 +46,17 @@ if (window.location.hostname != "localhost" && !await isEnabled()) enable()
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <>
+      <Navbar />
+      <Home />
+    </>,
   },
   {
     path: "/discover",
-    element: <Discover />
+    element: <>
+      <Navbar />
+      <Discover />
+    </>
   }
 ]);
 
@@ -186,8 +191,10 @@ function App() {
         })
       } else {
         log(`Caching ${sound.name}`)
-        const readStart = Date.now()
-        readBinaryFile(sound.file, { dir: BaseDirectory.AppCache }).then(content => {
+        const cachePromise = new Promise(async (resolve, reject) => {
+          const readStart = Date.now()
+          const content = await readBinaryFile(sound.file, { dir: BaseDirectory.AppCache }).catch(() => reject("Unable to read file"))
+
           const readTime = Date.now() - readStart
           log(`${sound.file} read in ${readTime / 1000}s`)
           const cachingStart = Date.now()
@@ -197,7 +204,13 @@ function App() {
             websocket.emit("playSound", sound.file, {
               volume: (sound.config?.volume / 100 ?? 1) * 0.75
             })
+            resolve("Cached file")
           })
+        })
+        toast.promise(cachePromise, {
+          error: (e) => `Cannot cache sound: ${e.message}`,
+          loading: `Caching ${sound.name}`,
+          success: `${sound.name} cached`
         })
       }
     })
@@ -205,11 +218,10 @@ function App() {
 
   return (
     <AppContext.Provider value={{ keybind, setKeybind, volume, setVolume, selectedSound, setSelectedSound, sounds, setSounds, play }}>
-      <ToastContainer />
+      <Toaster richColors />
       <SoundContextMenu />
       <SettingsModal />
       <div className='h-screen flex flex-col'>
-        <Navbar />
         <RouterProvider router={router} />
       </div>
     </AppContext.Provider>

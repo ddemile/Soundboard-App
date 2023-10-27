@@ -4,6 +4,8 @@ import Checkbox from "../../components/Checkbox.tsx";
 import Button from "../../components/modals/Button.tsx";
 import useConfig from "../../hooks/useConfig.ts";
 
+const Separator = () => <li className="w-full h-px bg-zinc-600"></li>
+
 export default function Audio() {
   const { config, updateConfig, saveConfig } = useConfig()
   const [savedAudioConfig, setSavedAudioConfig] = useState(config.audio)
@@ -29,7 +31,7 @@ export default function Audio() {
             <input name="volume" onChange={(e) => setAudioConfig({ ...audioConfig, soundsVolume: parseInt(e.target.value) })} value={audioConfig.soundsVolume ?? 100} type="range" className=""></input>
           </div>
         </li>
-        <li className="w-full h-px bg-slate-400"></li>
+        <Separator />
         <li className="flex w-full items-center flex-col">
           <h2 className="text-sm font-bold text-zinc-300 text-left w-full">OTHER</h2>
           <div className="flex w-full items-center justify-between">

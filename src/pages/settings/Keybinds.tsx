@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import useCategories from '../../hooks/useCategories.ts';
 import useConfig from '../../hooks/useConfig.ts';
 import useLog from '../../hooks/useLog.ts';
@@ -71,7 +71,7 @@ export default function Keybinds() {
                     if (current.size == 0 && selected.file) {
                         timeout = null;
                         setSelected({ ...selected, file: null })
-                        if (sounds.map(sound => sound.keybind).includes(keybind)) return toast("A sound has already that keybind bind", { type: "error" })
+                        if (sounds.map(sound => sound.keybind).includes(keybind)) return toast.error("A sound has already that keybind bind")
                         log(`Saved: ${keybind}`)
                         if (selected.file == "stop") {
                             updateConfig({ stopKeybind: keybind })

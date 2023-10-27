@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ToastContainer, toast } from "react-toastify"
+import { Toaster, toast } from "sonner"
 import useCategories from '../../hooks/useCategories.ts'
 import useConfig from '../../hooks/useConfig.ts'
 import useLog from '../../hooks/useLog.ts'
@@ -68,7 +68,7 @@ export default function SettingsModal() {
           if (current.size == 0 && selected.file) {
             timeout = null;
             setSelected({ ...selected, file: null })
-            if (sounds.map(sound => sound.keybind).includes(keybind)) return toast("A sound has already that keybind bind", { type: "error" })
+            if (sounds.map(sound => sound.keybind).includes(keybind)) return toast.error("A sound has already that keybind bind")
             log(`Saved: ${keybind}`)
             updateSound(selected.file, findSoundCategory(selected.file)?.name!, { keybind })
             saveConfig()
@@ -94,7 +94,7 @@ export default function SettingsModal() {
 
   return (
     <Modal open={isOpen} setOpen={setIsOpen} className='w-full h-full bg-[#303031] flex'>
-      <ToastContainer className={"m-6"} />
+      <Toaster className={"m-6"} />
 
       <nav className='border-white border-opacity-20 border-r-2 h-full bg-[#232324] flex p-14 pr-0 flex-col'>
         <p className='text-left text-sm text-gray-300 px-2 font-semibold'>MAIN SETTINGS</p>

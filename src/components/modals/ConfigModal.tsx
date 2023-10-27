@@ -2,7 +2,7 @@ import EmojiPicker, { EmojiStyle, Theme } from "emoji-picker-react";
 import isEqual from "lodash.isequal";
 import { ChangeEvent, ElementRef, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import useCategories from "../../hooks/useCategories.ts";
 import useConfig from "../../hooks/useConfig.ts";
 import useLog from "../../hooks/useLog.ts";
@@ -134,7 +134,7 @@ export default function ConfigModal() {
                 //     setSounds(Object.values(newConfig.sounds))
                 // }
             } else {
-                toast("Nothing has changed", { type: "warning" })
+                toast.error("Nothing has changed")
             }
         }
     }

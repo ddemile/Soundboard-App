@@ -3,13 +3,12 @@ import { useContextMenu } from 'react-contexify';
 import Dropzone from 'react-dropzone';
 import { IconType } from 'react-icons';
 import * as icons from "react-icons/bs";
-import 'react-toastify/dist/ReactToastify.css';
 import Category from '../components/Category.tsx';
 import CategoryContextMenu from '../components/contextMenus/CategoryContextMenu.tsx';
 import HomeContextMenu, { HOME_CONTEXT_MENU } from '../components/contextMenus/HomeContextMenu.tsx';
 import ConfigModal from '../components/modals/ConfigModal.tsx';
-import NewCategoryModal from '../components/modals/NewCategoryModal.tsx';
 import MyInstantModal from '../components/modals/MyInstantModal.tsx';
+import NewCategoryModal from '../components/modals/NewCategoryModal.tsx';
 import UploadModal from '../components/modals/UploadModal.tsx';
 import useCategories from '../hooks/useCategories.ts';
 import useConfig from '../hooks/useConfig.ts';
@@ -48,7 +47,7 @@ function Home() {
   return (
     <Dropzone onDrop={onDrop} noClick={true} accept={{ "audio/*": [] }}>
       {({ getRootProps, getInputProps }) => (
-        <main {...getRootProps()} onContextMenu={(e) => show({ event: e })} className='h-full focus:outline-transparent'>
+        <main {...getRootProps()} onContextMenu={(e) => show({ event: e })} className='h-full focus:outline-transparent mt-1'>
           <input {...getInputProps()} />
 
           <ConfigModal />

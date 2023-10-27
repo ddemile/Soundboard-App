@@ -2,7 +2,7 @@ import { BaseDirectory, writeBinaryFile } from "@tauri-apps/api/fs"
 import EmojiPicker, { EmojiStyle, Theme } from "emoji-picker-react"
 import { ChangeEvent, FormEvent, useLayoutEffect, useState } from "react"
 import { IoCloseSharp } from "react-icons/io5"
-import { toast } from "react-toastify"
+import { toast } from "sonner"
 import useCategories from "../../hooks/useCategories.ts"
 import useConfig from "../../hooks/useConfig.ts"
 import useLog from "../../hooks/useLog.ts"
@@ -54,32 +54,44 @@ export default function UploadModal() {
           const { file, data } = sound;
 
           for (const category of categories) {
-            if (category.sounds.some(sound => sound.file == file.name)) return toast(`${file.name} is already in the soundboard`, { type: "error" })
+            if (category.sounds.some(sound => sound.file == file.name)) return toast.error(`${file.name} is already in the soundboard`)
           }
 
-          const content = await readFileContent(file)
-          if (content instanceof ArrayBuffer) {
-            await writeBinaryFile(file.name, content, { dir: BaseDirectory.AppCache })
+          const uploadPromise: Promise<SoundEntry> = new Promise(async (resolve, reject) => {
+            const content = await readFileContent(file)
+            if (content instanceof ArrayBuffer) {
+              await writeBinaryFile(file.name, content, { dir: BaseDirectory.AppCache })
+  
+              const sound = {
+                name: file.name.split(".")[0],
+                file: file.name as `${string}.${string}`,
+                keybind: "",
+                config: { volume: 100 },
+                ...data
+              } satisfies SoundEntry
+  
+              log(`${sound.name} uploaded`)
+              addSound(sound, props.category ?? "Default")
+              saveConfig()
+              resolve(sound)
+            } else {
+              reject("Invalid file")
+            }
+          })
 
-            const sound = {
-              name: file.name.split(".")[0],
-              file: file.name as `${string}.${string}`,
-              keybind: "",
-              config: { volume: 100 },
-              ...data
-            } satisfies SoundEntry
+          const soundName = file.name.split(".")[0]
 
-            log(`${sound.name} uploaded`)
-            toast(`${sound.name} uploaded`, { type: "success" })
-            addSound(sound, props.category ?? "Default")
-            saveConfig()
-          }
+          toast.promise(uploadPromise, {
+            error: `Cannot upload ${soundName}`,
+            loading: `Uploading ${soundName}`,
+            success: `${soundName} uploaded`
+          })
+
+          await uploadPromise;
         }
       }
       if (sounds.length > 1) {
-        toast("All sounds uploaded", {
-          type: "info"
-        })
+        toast.success("All sounds uploaded")
       }
       close()
     } else {
