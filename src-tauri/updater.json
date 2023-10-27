@@ -1,6 +1,6 @@
 {
-    "version": "v1.0.3",
-    "notes": "(Bug fixes) Little bugs fixes",
+    "version": "v1.0.4",
+    "notes": "Graphical update",
     "pub_date": "2023-09-16T06:22:05.048Z",
     "platforms": {
         "darwin-x86_64": {
@@ -16,8 +16,8 @@
             "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-amd64.AppImage.tar.gz"
         },
         "windows-x86_64": {
-            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQYzBLbFllU3haUFFROHl2UGV1UHM5U2pvTlNCVVNBamNvRDJiZmE1YXR4bE5sVnN4WU8yaXYrZGhyUnhDd0xIR3dTYU5Lc3dvbHBSYTJCbW5CNHVvZGdBPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjk0ODQ1MTQwCWZpbGU6U291bmRib2FyZF8xLjAuM194NjRfZW4tVVMubXNpLnppcAphcEpwWU5weUdYaWRQSkhBZ1Z4YVdBU05lb2p3bXBDTVozMkxmUkgwQ1dORkVTdjY4cHQyUXRxZ2RIcis3N1JCV3BodjJVSHdnSE9NMXdtdlNDenpCZz09Cg==",
-            "url": "https://github.com/ddemile/Soundboard-App/releases/download/1.0.3/Soundboard_1.0.3_x64.msi.zip"
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQY3hENG14WHJodmRDYjl3cXJJYmtGTUFHNEdLdDNjWmRyQnRscU0xdjdlelBkOUluem50MDZCaWdUL2g2cGU5aVZkcTZ1TXprZVFLbjVkRFhrM3ZqVFEwPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjk4NDI3OTI0CWZpbGU6U291bmRib2FyZF8xLjAuNF94NjRfZW4tVVMubXNpLnppcApZeUNnWnR0eFQyTkhRN1VpcHJGYXpqVXlCQUlFQ2pnUmNMVG4xem01aXZ3SVVaQ2F0TjcyMEJWZHN6SW1oTHFpckxWRG9CbjNnQWxFQk9CaHg5Y1BBQT09Cg==",
+            "url": "https://github.com/ddemile/Soundboard-App/releases/download/1.0.4/Soundboard_1.0.4_x64.msi.zip"
         }
     }
 }
