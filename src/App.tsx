@@ -62,7 +62,7 @@ const router = createBrowserRouter([
 
 function App() {
   const { websocket } = useWebsocket()
-  const { config, saveConfig } = useConfig()
+  const { config, saveConfig, getConfig } = useConfig()
   const [sounds, setSounds] = useState<SoundEntry[]>([])
   const { updateConfig } = useConfig()
   const [keybind, setKeybind] = useState<string>()
@@ -73,6 +73,10 @@ function App() {
   const { categories } = useCategories()
   const player = useAudioPlayer()
   const log = useLog()
+
+  useEffect(() => {
+    websocket.emit("web_client_categories", config.categories)
+  }, [config])
 
   const registerAll = async () => {
     const { stopKeybind } = config;
@@ -112,6 +116,18 @@ function App() {
         player.stop()
       })
     }
+
+    websocket.on("init", (auth) => {
+      websocket.auth = { ...websocket.auth, ...auth }
+    })
+
+    websocket.on("web_client_connect", () => {
+      websocket.emit("web_client_categories", getConfig().categories)
+    })
+
+    websocket.on("web_client_play", (sound) => {
+      play(sound)
+    })
 
     return () => {
       websocket.off()

@@ -85,7 +85,8 @@
       }
     ],
     "systemTray": {
-      "iconPath": "icons/icon.png"
+      "iconPath": "icons/icon.png",
+      "title": "Soundboard"
     }
   }
 }

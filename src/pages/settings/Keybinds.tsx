@@ -108,7 +108,7 @@ export default function Keybinds() {
                     <li id={sound.file} key={sound.file} className='flex items-center gap-10'>
                         <div className='flex flex-col w-full text-left gap-1'>
                             <p className='text-left text-sm text-gray-300 font-semibold'>SOUND NAME</p>
-                            <p className='w-full p-2 bg-stone-900 rounded-sm'>{sound.name}</p>
+                            <p className='w-full p-2 bg-stone-900 rounded-sm'>{sound.emoji || "🎵"} {sound.name}</p>
                         </div>
                         <div className='flex flex-col w-full text-left gap-1'>
                             <p className='text-left text-sm text-gray-300 font-semibold'>SHORTCUT</p>

@@ -119,7 +119,7 @@ export default function MyInstantModal() {
                 const newInstants = structuredClone(instants)
                 const newInstant = newInstants.find(({ fileName }: any) => fileName == instant.fileName)
                 audio.currentTime = 0;
-                newInstant.playing = false
+                if (newInstant) newInstant.playing = false
                 return newInstants
             })
         })
