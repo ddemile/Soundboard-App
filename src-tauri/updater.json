@@ -1,6 +1,6 @@
 {
-    "version": "v1.0.5",
-    "notes": "November regular update",
+    "version": "v1.1.0",
+    "notes": "(MAJOR) Cloud sync update",
     "pub_date": "2023-10-27T17:38:22.533Z",
     "platforms": {
         "darwin-x86_64": {

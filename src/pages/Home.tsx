@@ -11,18 +11,19 @@ import MyInstantModal from '../components/modals/MyInstantModal.tsx';
 import NewCategoryModal from '../components/modals/NewCategoryModal.tsx';
 import UploadModal from '../components/modals/UploadModal.tsx';
 import useCategories from '../hooks/useCategories.ts';
-import useConfig from '../hooks/useConfig.ts';
 import useModal from '../hooks/useModal.ts';
 
 export type SoundEntry = {
-  name: string,
+  id: string,
+  title: string,
   file: `${string}.${string}`,
   keybind: string,
   config: {
     volume: number
   },
   emoji?: string,
-  emojiName?: string;
+  emojiName?: string,
+  category?: string
 }
 
 export type CategoryData = {
@@ -34,8 +35,7 @@ export type CategoryData = {
 
 function Home() {
   const { open } = useModal("upload")
-  const { categories, updateCategory } = useCategories();
-  const { saveConfig } = useConfig()
+  const { categories, updateCategory, saveCategories } = useCategories();
   const { show } = useContextMenu({ id: HOME_CONTEXT_MENU })
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -56,7 +56,7 @@ function Home() {
           <CategoryContextMenu />
           <NewCategoryModal />
           <HomeContextMenu />
-          {categories!.map((category) => <Category key={category.name} {...category} onExpandToggle={(_e, name) => { updateCategory(name, { expanded: !category.expanded }); saveConfig() }} />)}
+          {categories!.map((category) => <Category key={category.name} {...category} onExpandToggle={(_e, name) => { updateCategory(name, { expanded: !category.expanded }); saveCategories() }} />)}
           {/* <button className='flex items-center justify-center m-auto w-12 aspect-square rounded-full bg-stone-900 [&>*>svg]:text-[25px]' onClick={() => websocket.emit("stopSound")}><span><BsStopFill /></span></button> */}
         </main>
       )

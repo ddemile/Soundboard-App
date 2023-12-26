@@ -22,7 +22,7 @@ export default function SettingsModal() {
   const { isOpen, setIsOpen } = useModal("settings");
   const { categories, updateSound } = useCategories()
   const { saveConfig } = useConfig()
-  const [selected, setSelected] = useState<{ file?: string | null, keys: string[] }>({ file: null, keys: [] })
+  const [selected, setSelected] = useState<{ id?: string | null, keys: string[] }>({ id: null, keys: [] })
   const log = useLog()
   const [page, setPage] = useState<keyof typeof pages>("myAccount")
   const { websocket } = useWebsocket()
@@ -31,8 +31,8 @@ export default function SettingsModal() {
 
   const Page: () => JSX.Element = pages[page]
 
-  const findSoundCategory = (soundFile: string) => {
-    return categories.find(category => category.sounds.some(sound => sound.file == soundFile))
+  const findSoundCategory = (soundId: string) => {
+    return categories.find(category => category.sounds.some(sound => sound.id == soundId))
   }
 
   useEffect(() => {
@@ -67,12 +67,12 @@ export default function SettingsModal() {
 
       if (!timeout) {
         timeout = setTimeout(() => {
-          if (current.size == 0 && selected.file) {
+          if (current.size == 0 && selected.id) {
             timeout = null;
-            setSelected({ ...selected, file: null })
+            setSelected({ ...selected, id: null })
             if (sounds.map(sound => sound.keybind).includes(keybind)) return toast.error("A sound has already that keybind bind")
             log(`Saved: ${keybind}`)
-            updateSound(selected.file, findSoundCategory(selected.file)?.name!, { keybind })
+            updateSound(selected.id, findSoundCategory(selected.id)?.name!, { keybind })
             saveConfig()
           }
         }, 200)
@@ -91,7 +91,7 @@ export default function SettingsModal() {
       document.removeEventListener("keydown", onKeyPress)
       document.removeEventListener("keyup", onKeyRelease);
     }
-  }, [selected.file])
+  }, [selected.id])
 
 
   return (
@@ -106,7 +106,7 @@ export default function SettingsModal() {
           <li className='p-1.5 px-2 hover:bg-opacity-5 hover:bg-white cursor-pointer rounded-md' onClick={() => setPage("audio")}>Audio</li>
           <li className={`p-1.5 px-2 hover:bg-opacity-5 hover:bg-white cursor-pointer rounded-md ${!(websocket.auth as any)?.webInterfaceCode && "hover:cursor-not-allowed"}`} onClick={() => {
             if (!(websocket.auth as any)?.webInterfaceCode) return
-            navigator.clipboard.writeText(`http://localhost:5174?code=${(websocket.auth as any)?.webInterfaceCode}`)
+            navigator.clipboard.writeText(`https://soundboard.nano3.fr?code=${(websocket.auth as any)?.webInterfaceCode}`)
             toast.success("Link copied")
           }}>Copy web link</li>
         </ul>

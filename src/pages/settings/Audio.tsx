@@ -2,16 +2,20 @@ import isEqual from "lodash.isequal";
 import { useState } from "react";
 import Checkbox from "../../components/Checkbox.tsx";
 import Button from "../../components/modals/Button.tsx";
+import useAudioPlayer from "../../hooks/useAudioPlayer.ts";
 import useConfig from "../../hooks/useConfig.ts";
 
 const Separator = () => <li className="w-full h-px bg-zinc-600"></li>
 
 export default function Audio() {
+  const { globalSetVolume } = useAudioPlayer()
   const { config, updateConfig, saveConfig } = useConfig()
   const [savedAudioConfig, setSavedAudioConfig] = useState(config.audio)
   const [audioConfig, setAudioConfig] = useState(config.audio)
 
   const handleSave = () => {
+    globalSetVolume(([title]) => title.startsWith("distant"), audioConfig.soundsVolume)
+    globalSetVolume(([title]) => title.startsWith("preview"), audioConfig.previewVolume)
     updateConfig({ audio: audioConfig })
     saveConfig()
     setSavedAudioConfig(audioConfig)

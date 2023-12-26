@@ -22,13 +22,13 @@ const numpadKeys = [
 export default function Keybinds() {
     const { categories, updateSound } = useCategories()
     const { updateConfig, config, saveConfig } = useConfig()
-    const [selected, setSelected] = useState<{ file?: string | null, keys: string[] }>({ file: null, keys: [] })
+    const [selected, setSelected] = useState<{ id?: string | null, keys: string[] }>({ id: null, keys: [] })
     const log = useLog()
 
     const sounds = categories.reduce<SoundEntry[]>((accumulator, category) => [...accumulator, ...category.sounds], [])
 
-    const findSoundCategory = (soundFile: string) => {
-        return categories.find(category => category.sounds.some(sound => sound.file == soundFile))
+    const findSoundCategory = (soundId: string) => {
+        return categories.find(category => category.sounds.some(sound => sound.id == soundId))
     }
 
     useEffect(() => {
@@ -68,17 +68,17 @@ export default function Keybinds() {
 
             if (!timeout) {
                 timeout = setTimeout(() => {
-                    if (current.size == 0 && selected.file) {
+                    if (current.size == 0 && selected.id) {
                         timeout = null;
-                        setSelected({ ...selected, file: null })
+                        setSelected({ ...selected, id: null })
                         if (sounds.map(sound => sound.keybind).includes(keybind)) return toast.error("A sound has already that keybind bind")
                         log(`Saved: ${keybind}`)
-                        if (selected.file == "stop") {
+                        if (selected.id == "stop") {
                             updateConfig({ stopKeybind: keybind })
                             saveConfig()
                             return
                         }
-                        updateSound(selected.file, findSoundCategory(selected.file)?.name!, { keybind })
+                        updateSound(selected.id, findSoundCategory(selected.id)?.name!, { keybind })
                         saveConfig()
                     }
                 }, 200)
@@ -97,7 +97,7 @@ export default function Keybinds() {
             document.removeEventListener("keydown", onKeyPress)
             document.removeEventListener("keyup", onKeyRelease);
         }
-    }, [selected.file])
+    }, [selected.id])
 
 
     return (
@@ -105,14 +105,14 @@ export default function Keybinds() {
             <h1 className='text-3xl font-semibold text-left'>Shortcuts</h1>
             <ul className='w-full flex flex-col gap-3 max-w-3xl'>
                 {sounds.map(sound => (
-                    <li id={sound.file} key={sound.file} className='flex items-center gap-10'>
+                    <li id={sound.id} key={sound.id} className='flex items-center gap-10'>
                         <div className='flex flex-col w-full text-left gap-1'>
                             <p className='text-left text-sm text-gray-300 font-semibold'>SOUND NAME</p>
-                            <p className='w-full p-2 bg-stone-900 rounded-sm'>{sound.emoji || "🎵"} {sound.name}</p>
+                            <p className='w-full p-2 bg-stone-900 rounded-sm'>{sound.emoji || "🎵"} {sound.title}</p>
                         </div>
                         <div className='flex flex-col w-full text-left gap-1'>
                             <p className='text-left text-sm text-gray-300 font-semibold'>SHORTCUT</p>
-                            <p onClick={() => setSelected({ ...selected, file: sound.file })} style={{ outline: selected.file == sound.file ? "2px solid rgb(239 68 68)" : "", boxShadow: selected.file == sound.file ? "0px 0px 5px 3px rgb(239 68 68)" : "" }} className="flex w-full whitespace-nowrap overflow-hidden text-ellipsis items-center gap-1 rounded-sm bg-zinc-800 p-2 h-10">{sound.file == selected.file ? selected.keys.join("+") : sound.keybind} <button onClick={(e) => { e.stopPropagation(); setSelected({ ...selected, file: null }); updateSound(sound.file, findSoundCategory(sound.file)?.name!, { keybind: "" }); saveConfig() }} className="ml-auto p-1 rounded-md"><AiOutlineClose /></button></p>
+                            <p onClick={() => setSelected({ ...selected, id: sound.id })} style={{ outline: selected.id == sound.id ? "2px solid rgb(239 68 68)" : "", boxShadow: selected.id == sound.id ? "0px 0px 5px 3px rgb(239 68 68)" : "" }} className="flex w-full whitespace-nowrap overflow-hidden text-ellipsis items-center gap-1 rounded-sm bg-zinc-800 p-2 h-10">{sound.id == selected.id ? selected.keys.join("+") : sound.keybind} <button onClick={(e) => { e.stopPropagation(); setSelected({ ...selected, id: null }); updateSound(sound.id, findSoundCategory(sound.id)?.name!, { keybind: "" }); saveConfig() }} className="ml-auto p-1 rounded-md"><AiOutlineClose /></button></p>
                         </div>
                     </li>
                 ))}
@@ -126,7 +126,7 @@ export default function Keybinds() {
                     </div>
                     <div className='flex flex-col w-full text-left gap-1'>
                         <p className='text-left text-sm text-gray-300 font-semibold'>SHORTCUT</p>
-                        <p onClick={() => setSelected({ ...selected, file: "stop" })} style={{ outline: selected.file == "stop" ? "2px solid rgb(239 68 68)" : "", boxShadow: selected.file == "stop" ? "0px 0px 5px 3px rgb(239 68 68)" : "" }} className="flex w-full whitespace-nowrap overflow-hidden text-ellipsis items-center gap-1 rounded-sm bg-zinc-800 p-2 h-10">{"stop" == selected.file ? selected.keys.join("+") : config?.stopKeybind} <button onClick={(e) => { e.stopPropagation(); setSelected({ ...selected, file: null }); updateConfig({ stopKeybind: "" }); saveConfig() }} className="ml-auto p-1 rounded-md"><AiOutlineClose /></button></p>
+                        <p onClick={() => setSelected({ ...selected, id: "stop" })} style={{ outline: selected.id == "stop" ? "2px solid rgb(239 68 68)" : "", boxShadow: selected.id == "stop" ? "0px 0px 5px 3px rgb(239 68 68)" : "" }} className="flex w-full whitespace-nowrap overflow-hidden text-ellipsis items-center gap-1 rounded-sm bg-zinc-800 p-2 h-10">{"stop" == selected.id ? selected.keys.join("+") : config?.stopKeybind} <button onClick={(e) => { e.stopPropagation(); setSelected({ ...selected, id: null }); updateConfig({ stopKeybind: "" }); saveConfig() }} className="ml-auto p-1 rounded-md"><AiOutlineClose /></button></p>
                     </div>
                 </li>
             </ul>

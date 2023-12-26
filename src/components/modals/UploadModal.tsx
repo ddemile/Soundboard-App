@@ -1,4 +1,3 @@
-import { BaseDirectory, writeBinaryFile } from "@tauri-apps/api/fs"
 import EmojiPicker, { EmojiStyle, Theme } from "emoji-picker-react"
 import { ChangeEvent, FormEvent, useLayoutEffect, useState } from "react"
 import { IoCloseSharp } from "react-icons/io5"
@@ -7,6 +6,7 @@ import useCategories from "../../hooks/useCategories.ts"
 import useConfig from "../../hooks/useConfig.ts"
 import useLog from "../../hooks/useLog.ts"
 import useModal from "../../hooks/useModal.ts"
+import useWebsocket from "../../hooks/useWebsocket.ts"
 import { SoundEntry } from "../../pages/Home.tsx"
 import Button from "./Button.tsx"
 import Modal from "./Modal.tsx"
@@ -14,9 +14,10 @@ import Modal from "./Modal.tsx"
 export default function UploadModal() {
   const { isOpen, setIsOpen, props, setProps, close } = useModal("upload")
   const [sounds, setSounds] = useState<{ file: File, data: Partial<SoundEntry> }[]>(props.files ? props.files.map((file: File) => ({ file, data: {} })) : [])
-  const { addSound, categories } = useCategories()
+  const { categories } = useCategories()
   const { saveConfig } = useConfig()
   const log = useLog()
+  const { websocket } = useWebsocket();
   const [index, setIndex] = useState(0)
   const [emojiSelectorProps, setEmojiSelectorProps] = useState({ open: false, x: 0, y: 0 })
   const sound = sounds[index]
@@ -40,7 +41,7 @@ export default function UploadModal() {
       const sounds = structuredClone(_sounds)
       const sound = sounds.find(_sound => _sound.file.name == file.name)
       if (sound) {
-        sound.data.name = value;
+        sound.data.title = value;
       }
 
       return sounds
@@ -59,21 +60,21 @@ export default function UploadModal() {
 
           const uploadPromise: Promise<SoundEntry> = new Promise(async (resolve, reject) => {
             const content = await readFileContent(file)
-            if (content instanceof ArrayBuffer) {
-              await writeBinaryFile(file.name, content, { dir: BaseDirectory.AppCache })
-  
+            if (content instanceof ArrayBuffer) {  
               const sound = {
-                name: file.name.split(".")[0],
+                title: file.name.split(".")[0],
                 file: file.name as `${string}.${string}`,
                 keybind: "",
                 config: { volume: 100 },
+                category: props.category,
                 ...data
-              } satisfies SoundEntry
-  
-              log(`${sound.name} uploaded`)
-              addSound(sound, props.category ?? "Default")
+              } satisfies Omit<SoundEntry, "id"> & { id?: string }
+
+              await websocket.emitWithAck("uploadSound", sound, content)
+
+              log(`${sound.title} uploaded`)
               saveConfig()
-              resolve(sound)
+              resolve(sound as SoundEntry)
             } else {
               reject("Invalid file")
             }
@@ -158,7 +159,7 @@ export default function UploadModal() {
           <li className="text-left flex gap-4">
             <div className="flex flex-col w-full">
               <label className="text-sm font-bold text-zinc-300">SOUND NAME</label>
-              <input name="name" onChange={handleChange} value={sound?.data?.name ?? sound?.file?.name?.split(".")[0] ?? ""} className="bg-zinc-900 rounded-sm p-2"></input>
+              <input name="name" onChange={handleChange} value={sound?.data?.title ?? sound?.file?.name?.split(".")[0] ?? ""} className="bg-zinc-900 rounded-sm p-2"></input>
             </div>
             <div className="flex flex-col w-full">
               <label className="text-sm font-bold text-zinc-300">EMOJI</label>

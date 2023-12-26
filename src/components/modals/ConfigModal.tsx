@@ -4,7 +4,6 @@ import { ChangeEvent, ElementRef, useEffect, useLayoutEffect, useRef, useState }
 import { IoCloseSharp } from "react-icons/io5";
 import { toast } from "sonner";
 import useCategories from "../../hooks/useCategories.ts";
-import useConfig from "../../hooks/useConfig.ts";
 import useLog from "../../hooks/useLog.ts";
 import useModal from "../../hooks/useModal.ts";
 import Button from "./Button.tsx";
@@ -17,8 +16,7 @@ export default function ConfigModal() {
     const [_keys, setKeys] = useState<string[]>([])
     const { isOpen, setIsOpen, close, props: initialProps } = useModal("config")
     const [props, setProps] = useState(initialProps)
-    const { updateSound } = useCategories()
-    const { saveConfig } = useConfig()
+    const { updateSound, saveCategories } = useCategories()
     const [emojiSelectorProps, setEmojiSelectorProps] = useState({ open: false, x: 0, y: 0 })
     const log = useLog()
 
@@ -89,18 +87,18 @@ export default function ConfigModal() {
 
         log(`${name}: ${value}`)
 
-        if (name == "title") setProps({ ...props, sound: { ...props.sound, name: value } })
+        if (name == "title") setProps({ ...props, sound: { ...props.sound, title: value } })
         if (name == "volume") setProps({ ...props, sound: { ...props.sound, config: { ...(props.sound.config ?? {}), volume: value } } })
     }
 
     const handleSave = async () => {
-        if (props.sound.name) {
+        if (props.sound.title) {
             const oldSound = initialProps.sound
             const newSound = props.sound
 
             if (!isEqual(oldSound, newSound)) {
-                updateSound(oldSound.file, props.category.name, newSound)
-                saveConfig()
+                updateSound(oldSound.id, props.category.name, newSound)
+                saveCategories()
                 close()
 
                 // newSound.name = name;
@@ -162,7 +160,7 @@ export default function ConfigModal() {
                     <li className="text-left flex gap-4 mt-8">
                         <div className="flex flex-col w-full">
                             <label className="text-sm font-bold text-zinc-300">SOUND NAME</label>
-                            <input name="title" onChange={handleChange} value={props.sound?.name} className="bg-zinc-900 rounded-sm p-2"></input>
+                            <input name="title" onChange={handleChange} value={props.sound?.title} className="bg-zinc-900 rounded-sm p-2"></input>
                         </div>
                         <div className="flex flex-col w-full">
                             <label className="text-sm font-bold text-zinc-300">EMOJI</label>

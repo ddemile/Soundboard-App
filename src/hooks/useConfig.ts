@@ -11,15 +11,18 @@ interface Config {
         useSoundoardAppSounds: boolean,
         previewVolume: number,
         soundsVolume: number
-    }
+    },
+    migrated: boolean
 }
 
 interface ConfigStore {
     config: Config,
+    loaded: boolean,
     getConfig: () => Config,
     setConfig: (config: object) => void,
     saveConfig: () => void,
-    updateConfig: (config: Partial<Config>) => void
+    updateConfig: (config: Partial<Config>) => void,
+    setLoaded: (loaded: boolean) => void
 }
 
 const defaultConfig = {
@@ -29,11 +32,13 @@ const defaultConfig = {
         previewVolume: 100,
         soundsVolume: 100
     },
-    stopKeybind: ""
+    stopKeybind: "",
+    migrated: false
 } satisfies Config
 
 export default create<ConfigStore>()((set, get) => ({
     config: defaultConfig,
+    loaded: false,
     getConfig: () => {
         return get().config
     },
@@ -45,6 +50,9 @@ export default create<ConfigStore>()((set, get) => ({
     },
     updateConfig: (partialConfig) => {
         set({ config: { ...get().config, ...partialConfig } })
+    },
+    setLoaded: (loaded) => {
+        set({ loaded })
     }
 }))
 

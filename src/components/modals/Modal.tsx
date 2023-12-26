@@ -1,7 +1,7 @@
-import { MouseEventHandler, useEffect, useRef, DialogHTMLAttributes, PropsWithChildren, useState, ElementRef } from "react"
+import { DialogHTMLAttributes, ElementRef, MouseEventHandler, PropsWithChildren, useEffect, useRef, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
-export default function Modal(props: PropsWithChildren<{ open: boolean, setOpen: (isOpen: boolean) => void, onClose?: () => void, onOpen?: () => void } & DialogHTMLAttributes<HTMLDialogElement>>) {
+export default function Modal(props: PropsWithChildren<{ open: boolean, setOpen: (isOpen: boolean) => void, onClose?: () => void, onOpen?: () => void, closable?: boolean } & DialogHTMLAttributes<HTMLDialogElement>>) {
     const dialogRef = useRef<ElementRef<"dialog">>(null)
     const [htmlProps, setHtmlProps] = useState<DialogHTMLAttributes<HTMLDialogElement>>({})
     const [isFirstUpdate, setIsFirstUpdate] = useState(true)
@@ -31,7 +31,7 @@ export default function Modal(props: PropsWithChildren<{ open: boolean, setOpen:
     }, [props.open])
 
     const handleClick: MouseEventHandler<HTMLDialogElement> = (e) => {
-        if (e.target === dialogRef.current) {
+        if (e.target === dialogRef.current && props.closable != false) {
             props.setOpen(false)
         }
     }

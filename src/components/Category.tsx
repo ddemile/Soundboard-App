@@ -1,5 +1,3 @@
-import { readBinaryFile } from '@tauri-apps/api/fs'
-import { appCacheDir } from "@tauri-apps/api/path"
 import { MouseEvent, useContext } from "react"
 import { useContextMenu } from "react-contexify"
 import { IconType } from "react-icons"
@@ -13,18 +11,16 @@ import useCategories from "../hooks/useCategories.ts"
 import useConfig from '../hooks/useConfig.ts'
 import useModal from "../hooks/useModal.ts"
 import { CategoryData, SoundEntry } from "../pages/Home.tsx"
+import { BASE_API_URL } from '../utils/constants.ts'
 import { CATEGORY_CONTEXT_MENU } from "./contextMenus/CategoryContextMenu.tsx"
 import { SOUND_CONTEXT_MENU } from "./contextMenus/SoundContextMenu.tsx"
-
-
-const appCache = (await appCacheDir()).replace(/\\/g, "/")
 
 export default function Category(props: CategoryData & { onExpandToggle: (e: MouseEvent<HTMLButtonElement>, name: string) => void }) {
     const { name, expanded, sounds, icon, onExpandToggle } = props;
     const { play } = useContext(AppContext)!
     const { show } = useContextMenu()
-    const { removeSound, addSound } = useCategories()
-    const { saveConfig, config } = useConfig()
+    const { removeSound, addSound, saveCategories } = useCategories()
+    const { config } = useConfig()
     const { open: openUploadModal } = useModal("upload")
     const { open: openInstantsModal } = useModal("my-instants")
     const player = useAudioPlayer()
@@ -34,19 +30,13 @@ export default function Category(props: CategoryData & { onExpandToggle: (e: Mou
     const handleFavorite = (sound: SoundEntry) => {
         const categoryName = name == "Favorite" ? "Default" : "Favorite"
 
-        removeSound(sound.name, name)
+        removeSound(sound.title, name)
         addSound(sound, categoryName)
-        saveConfig()
+        saveCategories()
     }
 
     const handleSoundPreview = async (sound: SoundEntry) => {
-        const audioFilePath = `${appCache}${sound.file}`;
-        const audioData = await readBinaryFile(audioFilePath);;
-
-        const blob = new Blob([audioData])
-        const audioDataURL = URL.createObjectURL(blob);
-
-        player.play({ id: sound.file, url: audioDataURL, volume: config.audio.previewVolume })
+        player.play({ id: `preview-${sound.file}`, url: `${BASE_API_URL}/sounds/${sound.id}`, volume: config.audio.previewVolume })
     }
 
     return (
@@ -57,7 +47,7 @@ export default function Category(props: CategoryData & { onExpandToggle: (e: Mou
                     <li key={sound.file} className='[&>*]:col-start-1 [&>*]:row-start-1 grid rounded-lg overflow-hidden group h-10' onContextMenu={(e) => { e.stopPropagation(); show({ id: SOUND_CONTEXT_MENU, event: e, props: { sound, category: { name, expanded, sounds } } }) }}>
                         <div className='bg-main flex gap-1 items-center p-1 rounded-lg justify-center overflow-ellipsis overflow-hidden'>
                             <span className='text-xl'>{sound.emoji ?? "🎵"}</span>
-                            <span className='font-medium line-clamp-2 break-words text-xs'>{sound.name}</span>
+                            <span className='font-medium line-clamp-2 break-words text-xs'>{sound.title}</span>
                         </div>
                         <div className='bg-opacity-0 opacity-0 group-hover:bg-opacity-50 group-hover:opacity-100 bg-black w-full flex items-center justify-between px-1 transition-opacity'>
                             <button className='border-none outline-none focus:outline-none bg-transparent rounded-full aspect-square p-0 [&>*]:text-xl' onClick={() => handleSoundPreview(sound)}>

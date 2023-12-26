@@ -1,31 +1,44 @@
+import { create } from "zustand";
 import { CategoryData, SoundEntry } from "../pages/Home.tsx";
-import useConfig from "./useConfig.ts";
+import { socket } from "./useWebsocket.ts";
 
-export default function useCategories() {
-    const { config, getConfig, updateConfig, setConfig } = useConfig()
+interface CategoryStore {
+    categories: CategoryData[],
+    setCategories: (categories: CategoryData[]) => void
+    createCategory: (category: CategoryData) => void
+    updateCategory: (name: string, newProps: Partial<CategoryData>) => void
+    deleteCategory: (categoryName: string) => void
+    addSound: (sound: SoundEntry, categoryName: string) => void
+    removeSound: (soundName: string, categoryName: string) => void
+    updateSound: (soundFile: string, categoryName: string, newProps: Partial<SoundEntry>) => void,
+    deleteSound: (soundId: string) => void,
+    saveCategories: () => void
+}
 
-    const createCategory = (category: CategoryData) => {
-        updateConfig({ categories: [...getConfig().categories, category] })
-    }
-
-    const updateCategory = (name: string, newProps: Partial<CategoryData>) => {
-        const categories = structuredClone(getConfig().categories)
+export default create<CategoryStore>()((set, get) => ({
+    categories: [],
+    setCategories: (categories) => {
+        set({ categories })
+    },
+    createCategory: (category) => {
+        set({ categories: [ ...get().categories, category ] })
+    },
+    updateCategory: (name, newProps) => {
+        const categories = structuredClone(get().categories)
         const categoryIndex = categories.findIndex(category => category.name == name)
         categories[categoryIndex] = { ...categories[categoryIndex], ...newProps }
 
         if (typeof categoryIndex == "number") {
-            updateConfig({ categories })
+            set({ categories })
         }
-    }
+    },
+    deleteCategory: (categoryName) => {
+        const categories = structuredClone(get().categories.filter(category => category.name != categoryName))
 
-    const deleteCategory = (categoryName: string) => {
-        const categories = structuredClone(getConfig().categories.filter(category => category.name != categoryName))
-
-        setConfig({ ...getConfig(), categories })
-    }
-
-    const addSound = (sound: SoundEntry, categoryName: string) => {
-        const { categories } = getConfig();
+        set({ categories })
+    },
+    addSound: (sound, categoryName) => {
+        const { categories, updateCategory } = get();
 
         const category = structuredClone(categories.find(category => category.name == categoryName))
 
@@ -33,40 +46,38 @@ export default function useCategories() {
             category.sounds.push(sound)
             updateCategory(category.name, { sounds: category.sounds })
         }
-    }
-
-    const removeSound = (soundName: string, categoryName: string) => {
-        const { categories } = getConfig()
+    },
+    removeSound: (soundName, categoryName) => {
+        const { categories, updateCategory } = get()
 
         const category = structuredClone(categories.find(category => category.name == categoryName))
 
         if (category) {
-            const sounds = category.sounds.filter(sound => sound.name != soundName)
+            const sounds = category.sounds.filter(sound => sound.title != soundName)
             updateCategory(category.name, { sounds })
         }
-    }
-
-    const updateSound = (soundFile: string, categoryName: string, newProps: Partial<SoundEntry>) => {
-        const { categories } = getConfig()
+    },
+    updateSound: (soundId: string, categoryName: string, newProps: Partial<SoundEntry>) => {
+        const { categories, updateCategory } = get()
 
         const category = structuredClone(categories.find(category => category.name == categoryName))
 
         if (category) {
-            const soundIndex = category.sounds.findIndex(sound => sound.file == soundFile)
+            const soundIndex = category.sounds.findIndex(sound => sound.id == soundId)
             const sounds = category.sounds
             sounds[soundIndex] = { ...sounds[soundIndex], ...newProps }
 
             updateCategory(category.name, { sounds: category.sounds })
-        }
-    }
 
-    return {
-        categories: config.categories,
-        createCategory,
-        deleteCategory,
-        updateCategory,
-        addSound,
-        removeSound,
-        updateSound
+            socket.emit("update_sound", soundId, newProps)
+        }
+    },
+    deleteSound: (soundId) => {
+        socket.emit("delete_sound", soundId)
+    },
+    saveCategories: () => {
+        const { categories } = get()
+
+        socket.emit("sync_categories", categories)
     }
-}
+}))

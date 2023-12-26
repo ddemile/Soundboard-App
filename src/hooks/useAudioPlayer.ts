@@ -5,6 +5,7 @@ interface AudioPlayerStore {
     play: ({ id, volume, url }: { id: string, volume?: number, url: string }) => void,
     pause: ({ id }: { id: string }) => void;
     stop: (props?: { id: string }) => void;
+    globalSetVolume: (selector: (ressource: [title: string, audio: HTMLAudioElement]) => boolean, volume: number) => void;
 }
 
 export default create<AudioPlayerStore>()((set, get) => ({
@@ -52,4 +53,19 @@ export default create<AudioPlayerStore>()((set, get) => ({
             set({ ressources })
         }
     },
+    globalSetVolume(selector, volume) {
+        const ressources = Object.entries(get().ressources)
+        const selectedRessources = [];
+        
+        for (let ressource of ressources) {
+            if (selector(ressource)) {
+                selectedRessources.push(ressource)
+            }
+        }
+        
+        for (let ressource of selectedRessources) {
+            const [_, audio] = ressource;
+            audio.volume = volume / 100;
+        }    
+    }
 }))

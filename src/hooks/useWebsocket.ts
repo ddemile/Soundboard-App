@@ -6,12 +6,14 @@ interface WebsocketState {
   websocket: Socket
 }
 
+export const socket = io(WEBSOCKET_URL, {
+  auth: {
+    token: getCookie("token")
+  }
+})
+
 export default create<WebsocketState>()(() => ({
-  websocket: io(WEBSOCKET_URL, {
-    auth: {
-      token: getCookie("token")
-    }
-  })
+  websocket: socket
 }))
 
 function getCookie(cname: string) {

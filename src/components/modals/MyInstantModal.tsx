@@ -1,4 +1,3 @@
-import { BaseDirectory, writeBinaryFile } from '@tauri-apps/api/fs'
 import { useEffect, useState } from 'react'
 import { BsDownload, BsPlayFill, BsStopCircleFill } from 'react-icons/bs'
 import { toast } from 'sonner'
@@ -6,6 +5,8 @@ import useCategories from '../../hooks/useCategories.ts'
 import useConfig from '../../hooks/useConfig.ts'
 import useLog from '../../hooks/useLog.ts'
 import useModal from '../../hooks/useModal.ts'
+import useWebsocket from '../../hooks/useWebsocket.ts'
+import { SoundEntry } from '../../pages/Home.tsx'
 import downloadMyInstantSound from '../../utils/downloadMyInstantSound.ts'
 import fetchMyInstantSound from '../../utils/fetchMyInstantSound.ts'
 import fetchMyInstantSounds from '../../utils/fetchMyInstantSounds.ts'
@@ -13,11 +14,12 @@ import Modal from './Modal.tsx'
 
 export default function MyInstantModal() {
     const [query, setQuery] = useState<string | undefined>("")
-    const { categories, addSound } = useCategories()
+    const { categories } = useCategories()
     const { saveConfig } = useConfig()
     const log = useLog()
     const [instants, setInstants] = useState<any>([])
     const { isOpen, setIsOpen, props } = useModal("my-instants")
+    const { websocket } = useWebsocket()
 
     useEffect(() => {
 
@@ -81,20 +83,19 @@ export default function MyInstantModal() {
         }
 
         if (data instanceof ArrayBuffer) {
-            await writeBinaryFile(fileName, data, { dir: BaseDirectory.AppCache })
-
             const sound = {
-                name: title,
+                title,
                 file: fileName,
                 keybind: "",
-                config: {
-                    volume: 100
-                }
-            }
+                config: { volume: 100 },
+                category: props.category
+            } satisfies Omit<SoundEntry, "id"> & { id?: string }
 
-            log(`${sound.name} uploaded`)
-            toast.success(`${sound.name} uploaded`)
-            addSound(sound, props.category ?? "Default")
+            await websocket.emitWithAck("uploadSound", sound, data)
+
+            log(`${sound.title} uploaded`)
+            toast.success(`${sound.title} uploaded`)
+            // addSound(sound as any as SoundEntry, props.category ?? "Default")
             saveConfig()
             setQuery("")
         }
