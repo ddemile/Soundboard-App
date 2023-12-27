@@ -5,6 +5,7 @@ export default function Modal(props: PropsWithChildren<{ open: boolean, setOpen:
     const dialogRef = useRef<ElementRef<"dialog">>(null)
     const [htmlProps, setHtmlProps] = useState<DialogHTMLAttributes<HTMLDialogElement>>({})
     const [isFirstUpdate, setIsFirstUpdate] = useState(true)
+    const [target, setTarget] = useState<EventTarget>()
 
     useEffect(() => {
         const propsVar = { ...props } as any
@@ -30,15 +31,14 @@ export default function Modal(props: PropsWithChildren<{ open: boolean, setOpen:
         setIsFirstUpdate(false)
     }, [props.open])
 
-    const handleClick: MouseEventHandler<HTMLDialogElement> = (e) => {
-        if (e.target === dialogRef.current && props.closable != false) {
+    const handleClick: MouseEventHandler<HTMLDialogElement> = () => {
+        if (target === dialogRef.current && props.closable != false) {
             props.setOpen(false)
         }
     }
 
-
     // Discord sizes: Width>440px Height>645px
-    return <dialog {...htmlProps} onClick={handleClick} style={props.open ? {} : { opacity: 0, display: "none" }} className={twMerge(`rounded-lg w-[440px] transition-all`, htmlProps.className)} ref={dialogRef} onClose={() => props.setOpen(false)}>
+    return <dialog {...htmlProps} onMouseDown={(e) => setTarget(e.target)} onMouseUp={handleClick} style={props.open ? {} : { opacity: 0, display: "none" }} className={twMerge(`rounded-lg w-[440px] transition-all`, htmlProps.className)} ref={dialogRef} onClose={() => props.setOpen(false)}>
         {props.children}
     </dialog>
 }
