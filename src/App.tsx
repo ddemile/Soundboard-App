@@ -143,7 +143,7 @@ function App() {
     return () => {
       websocket.off()
     }
-  }, [config.audio.useSoundoardAppSounds])
+  }, [config.audio])
 
   useEffect(() => {
     registerAll()
