@@ -8,7 +8,7 @@ import "react-contexify/dist/ReactContexify.css";
 import { useCookies } from 'react-cookie';
 import {
   RouterProvider,
-  createBrowserRouter,
+  createBrowserRouter
 } from "react-router-dom";
 import { Toaster } from 'sonner';
 import { disable, enable, isEnabled } from "tauri-plugin-autostart-api";
@@ -61,6 +61,7 @@ const router = createBrowserRouter([
 ]);
 
 let migrationChecked = false;
+let dataDeleted = false;
 
 function App() {
   const { websocket } = useWebsocket()
@@ -196,9 +197,10 @@ function App() {
       websocket.emit("login", cookies.token)
       log(`Logged in as ${cookies.user.username}`)
     }
-
-    const callback = ({ data }: MessageEvent<any>) => {
+    
+    const callback = ({ data }: MessageEvent<any>): boolean => {
       log("Login callback received")
+
       if (data.token && data.maxAge && data.user) {
         setCookie("token", data.token, {
           maxAge: data.maxAge
@@ -208,10 +210,36 @@ function App() {
         })
 
         websocket.emit("login", data.token)
+
+        return true;
       }
+
+      return false;
     }
 
     window.addEventListener("message", callback)
+
+    const url = new URL(document.location as any);
+
+    const searchParams = url.searchParams
+
+    const hasData = searchParams.has("data")
+
+    if (!cookies.user && !hasData && !dataDeleted) {
+      window.location.replace(`https://ddemile.nano3.fr:4444/login?token=sometoken&redirect=true`)
+    }
+
+    if (hasData) {
+      try {
+        if (callback({ data: JSON.parse(searchParams.get("data")!) } as any)) {
+          searchParams.delete("data");
+          dataDeleted = true;
+          history.pushState({}, "", url.toString()) 
+        }
+      } catch (e) {
+        console.error(e)
+      }   
+    }
 
     return () => {
       window.removeEventListener("message", callback)
