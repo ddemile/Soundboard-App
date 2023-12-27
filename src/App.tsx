@@ -64,7 +64,7 @@ let migrationChecked = false;
 
 function App() {
   const { websocket } = useWebsocket()
-  const { config, saveConfig, getConfig, loaded } = useConfig()
+  const { config, saveConfig, loaded } = useConfig()
   const [sounds, setSounds] = useState<SoundEntry[]>([])
   const { updateConfig, setLoaded } = useConfig()
   const [keybind, setKeybind] = useState<string>()
@@ -76,10 +76,6 @@ function App() {
   const { categories, setCategories } = useCategories()
   const player = useAudioPlayer()
   const log = useLog()
-
-  useEffect(() => {
-    websocket.emit("web_client_categories", config.categories)
-  }, [config])
 
   useEffect(() => {
     if (migrationChecked || !loaded) return
@@ -141,11 +137,7 @@ function App() {
     })
 
     websocket.on("web_client_connect", () => {
-      websocket.emit("web_client_categories", getConfig().categories)
-    })
-
-    websocket.on("web_client_play", (sound) => {
-      play(sound)
+      log("Web client connected")
     })
 
     return () => {
