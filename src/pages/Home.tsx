@@ -35,7 +35,7 @@ export type CategoryData = {
 
 function Home() {
   const { open } = useModal("upload")
-  const { categories, updateCategory, saveCategories } = useCategories();
+  const { categories, updateCategory } = useCategories();
   const { show } = useContextMenu({ id: HOME_CONTEXT_MENU })
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -56,7 +56,7 @@ function Home() {
           <CategoryContextMenu />
           <NewCategoryModal />
           <HomeContextMenu />
-          {categories!.map((category) => <Category key={category.name} {...category} onExpandToggle={(_e, name) => { updateCategory(name, { expanded: !category.expanded }); saveCategories() }} />)}
+          {categories!.map((category) => <Category key={category.name} {...category} onExpandToggle={(_e, name) => { updateCategory(name, { expanded: !category.expanded }) }} />)}
           {/* <button className='flex items-center justify-center m-auto w-12 aspect-square rounded-full bg-stone-900 [&>*>svg]:text-[25px]' onClick={() => websocket.emit("stopSound")}><span><BsStopFill /></span></button> */}
         </main>
       )

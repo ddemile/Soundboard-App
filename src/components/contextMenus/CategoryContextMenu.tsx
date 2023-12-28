@@ -4,7 +4,7 @@ import useModal from '../../hooks/useModal.ts';
 
 export default function CategoryContextMenu() {
   const { open } = useModal("edit-category")
-  const { deleteCategory, saveCategories } = useCategories()
+  const { deleteCategory } = useCategories()
 
   return (
     <Menu id={CATEGORY_CONTEXT_MENU} theme='dark'>
@@ -12,7 +12,7 @@ export default function CategoryContextMenu() {
         Edit category
       </Item>
       <Separator />
-      <Item onClick={({ props }) => { deleteCategory(props.name); saveCategories() }} disabled={({ props }) => ["Default", "Favorite"].includes(props.name)}>
+      <Item onClick={({ props }) => { deleteCategory(props.name) }} disabled={({ props }) => ["Default", "Favorite"].includes(props.name)}>
         Delete category
       </Item>
     </Menu>

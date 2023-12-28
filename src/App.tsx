@@ -19,7 +19,7 @@ import MigrationModal from './components/modals/MigrationModal.tsx';
 import SettingsModal from './components/modals/SettingsModal.tsx';
 import AppContext from './contexts/AppContext.tsx';
 import useAudioPlayer from './hooks/useAudioPlayer.ts';
-import useCategories from './hooks/useCategories.ts';
+import useCategories, { useCategoriesStore } from './hooks/useCategories.ts';
 import useConfig from './hooks/useConfig.ts';
 import useLog from './hooks/useLog.ts';
 import useModal from './hooks/useModal.ts';
@@ -62,6 +62,7 @@ const router = createBrowserRouter([
 
 let migrationChecked = false;
 let dataDeleted = false;
+let appReady = false;
 
 function App() {
   const { websocket } = useWebsocket()
@@ -74,19 +75,22 @@ function App() {
   const [cookies, setCookie] = useCookies(["token", "user"]);
   const { isOpen } = useModal("settings")
   const { setIsOpen } = useModal("migration")
-  const { categories, setCategories } = useCategories()
+  const { categories } = useCategories()
+  const store = useCategoriesStore()
   const player = useAudioPlayer()
   const log = useLog()
 
   useEffect(() => {
-    if (migrationChecked || !loaded) return
+    if (migrationChecked || !loaded || !appReady) return
 
-    if (!config.migrated && config.categories.length > 0) {
+    const sounds = categories.reduce<SoundEntry[]>((accumulator, category) => [...accumulator, ...category.sounds.map(sound => ({ ...sound, category: category.name }))], []);
+    
+    if (!config.migrated && config.categories.length > 0 && sounds.length == 0) {
       setIsOpen(true)
     }
 
     migrationChecked = true;
-  }, [config])
+  }, [config, categories])
 
   const registerAll = async () => {
     const { stopKeybind } = config;
@@ -97,7 +101,7 @@ function App() {
 
     if (isOpen) return;
 
-    for await (const category of categories) {
+    for await (const category of store.categories) {
       category.sounds.forEach(async (sound: SoundEntry) => {
         if (sound.keybind) {
           await register(sound.keybind, () => play(sound))
@@ -134,11 +138,48 @@ function App() {
     })
 
     websocket.on("init_categories", (categories) => {
-      setCategories(categories)
+      if (appReady) return;
+
+      store.setCategories(categories)
+      appReady = true;
     })
 
     websocket.on("web_client_connect", () => {
       log("Web client connected")
+    })
+
+    websocket.on("update_category", (categoryName, newProps) => {
+      store.updateCategory(categoryName, newProps)
+    })
+
+    websocket.on("create_category", (category) => {
+      store.createCategory(category)
+    })
+
+    websocket.on("delete_category", (categoryName) => {
+      store.deleteCategory(categoryName)
+    })
+
+    websocket.on("add_sound", (sound) => {
+      store.addSound(sound, sound.category)
+    })
+
+    websocket.on("update_sound", (soundId, newProps) => {
+      console.log(soundId, newProps)
+
+      const sounds = store.getCategories().reduce<SoundEntry[]>((accumulator, category) => [...accumulator, ...category.sounds.map(sound => ({ ...sound, category: category.name }))], [])
+
+      console.log(sounds)
+
+      const sound = sounds.find(sound => sound.id == soundId)
+
+      console.log(sound)
+
+      store.updateSound(soundId, sound?.category!, newProps)
+    })
+
+    websocket.on("delete_sound", (soundId) => {
+      store.deleteSound(soundId)
     })
 
     return () => {
@@ -148,7 +189,7 @@ function App() {
 
   useEffect(() => {
     registerAll()
-  }, [categories, isOpen])
+  }, [store.categories, isOpen])
 
   const fetchSounds = () => {
     fetchConfig().then(config => {
@@ -175,7 +216,7 @@ function App() {
           sounds: [],
           expanded: true
         } satisfies CategoryData
-        
+
         categories.push(defaultCategory)
       }
 
@@ -197,7 +238,7 @@ function App() {
       websocket.emit("login", cookies.token)
       log(`Logged in as ${cookies.user.username}`)
     }
-    
+
     const callback = ({ data }: MessageEvent<any>): boolean => {
       log("Login callback received")
 
@@ -234,11 +275,11 @@ function App() {
         if (callback({ data: JSON.parse(searchParams.get("data")!) } as any)) {
           searchParams.delete("data");
           dataDeleted = true;
-          history.pushState({}, "", url.toString()) 
+          history.pushState({}, "", url.toString())
         }
       } catch (e) {
         console.error(e)
-      }   
+      }
     }
 
     return () => {

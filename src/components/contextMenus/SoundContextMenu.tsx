@@ -1,10 +1,11 @@
 import { Item, ItemParams, Menu, Separator, Submenu } from 'react-contexify';
-import useCategories from "../../hooks/useCategories.ts";
+import useCategories, { useCategoriesStore } from "../../hooks/useCategories.ts";
 import useModal from '../../hooks/useModal.ts';
 import { CategoryData, SoundEntry } from "../../pages/Home.tsx";
 
 export default function SoundContextMenu() {
-  const { categories, addSound, removeSound, saveCategories, deleteSound } = useCategories()
+  const { categories, deleteSound } = useCategories()
+  const { addSound, removeSound } = useCategoriesStore();
   const { open } = useModal("config")
 
   const handleMove = ({ props }: ItemParams<{ sound: SoundEntry, category: CategoryData }>, newCategory: CategoryData) => {
@@ -13,7 +14,6 @@ export default function SoundContextMenu() {
 
     removeSound(sound.title, category.name)
     addSound(sound, newCategory.name)
-    saveCategories()
   }
 
   return (

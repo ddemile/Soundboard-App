@@ -7,7 +7,7 @@ import { IoVolumeMedium } from "react-icons/io5"
 import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowRight } from "react-icons/md"
 import AppContext from "../contexts/AppContext.tsx"
 import useAudioPlayer from "../hooks/useAudioPlayer.ts"
-import useCategories from "../hooks/useCategories.ts"
+import { useCategoriesStore } from "../hooks/useCategories.ts"
 import useConfig from '../hooks/useConfig.ts'
 import useModal from "../hooks/useModal.ts"
 import { CategoryData, SoundEntry } from "../pages/Home.tsx"
@@ -19,7 +19,7 @@ export default function Category(props: CategoryData & { onExpandToggle: (e: Mou
     const { name, expanded, sounds, icon, onExpandToggle } = props;
     const { play } = useContext(AppContext)!
     const { show } = useContextMenu()
-    const { removeSound, addSound, saveCategories } = useCategories()
+    const { removeSound, addSound } = useCategoriesStore()
     const { config } = useConfig()
     const { open: openUploadModal } = useModal("upload")
     const { open: openInstantsModal } = useModal("my-instants")
@@ -32,7 +32,6 @@ export default function Category(props: CategoryData & { onExpandToggle: (e: Mou
 
         removeSound(sound.title, name)
         addSound(sound, categoryName)
-        saveCategories()
     }
 
     const handleSoundPreview = async (sound: SoundEntry) => {

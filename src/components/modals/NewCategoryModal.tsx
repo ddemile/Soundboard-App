@@ -10,7 +10,7 @@ import Modal from "./Modal.tsx"
 
 export default function NewCategoryModal() {
     const { isOpen, setIsOpen, close } = useModal("new-category")
-    const { categories, createCategory, saveCategories } = useCategories()
+    const { categories, createCategory } = useCategories()
     const [category, setCategory] = useState<CategoryData>({ name: "", expanded: true, sounds: [] })
     const [iconSelectorProps, setIconSelectorProps] = useState({ open: false, x: 0, y: 0 })
     const Icon = icons[category.icon as any as keyof typeof icons] ?? icons.BsSoundwave
@@ -24,7 +24,6 @@ export default function NewCategoryModal() {
     const handleCreate = () => {
         createCategory(category)
         setCategory({ ...category, name: "" })
-        saveCategories()
         close()
     }
 

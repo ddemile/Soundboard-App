@@ -16,7 +16,7 @@ export default function ConfigModal() {
     const [_keys, setKeys] = useState<string[]>([])
     const { isOpen, setIsOpen, close, props: initialProps } = useModal("config")
     const [props, setProps] = useState(initialProps)
-    const { updateSound, saveCategories } = useCategories()
+    const { updateSound } = useCategories()
     const [emojiSelectorProps, setEmojiSelectorProps] = useState({ open: false, x: 0, y: 0 })
     const log = useLog()
 
@@ -98,7 +98,6 @@ export default function ConfigModal() {
 
             if (!isEqual(oldSound, newSound)) {
                 updateSound(oldSound.id, props.category.name, newSound)
-                saveCategories()
                 close()
 
                 // newSound.name = name;

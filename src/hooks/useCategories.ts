@@ -4,6 +4,7 @@ import { socket } from "./useWebsocket.ts";
 
 interface CategoryStore {
     categories: CategoryData[],
+    getCategories: () => CategoryData[],
     setCategories: (categories: CategoryData[]) => void
     createCategory: (category: CategoryData) => void
     updateCategory: (name: string, newProps: Partial<CategoryData>) => void
@@ -11,16 +12,20 @@ interface CategoryStore {
     addSound: (sound: SoundEntry, categoryName: string) => void
     removeSound: (soundName: string, categoryName: string) => void
     updateSound: (soundFile: string, categoryName: string, newProps: Partial<SoundEntry>) => void,
-    deleteSound: (soundId: string) => void,
-    saveCategories: () => void
+    deleteSound: (soundId: string) => void
 }
 
-export default create<CategoryStore>()((set, get) => ({
+export const useCategoriesStore = create<CategoryStore>()((set, get) => ({
     categories: [],
+    getCategories: () => get().categories,
     setCategories: (categories) => {
         set({ categories })
     },
     createCategory: (category) => {
+        const { categories } = get();
+        
+        if (categories.find(({ name }) => name == category.name)) return;
+
         set({ categories: [ ...get().categories, category ] })
     },
     updateCategory: (name, newProps) => {
@@ -43,6 +48,8 @@ export default create<CategoryStore>()((set, get) => ({
         const category = structuredClone(categories.find(category => category.name == categoryName))
 
         if (category) {
+            if (category.sounds.find(({ id }) => id == sound.id)) return;
+
             category.sounds.push(sound)
             updateCategory(category.name, { sounds: category.sounds })
         }
@@ -68,16 +75,48 @@ export default create<CategoryStore>()((set, get) => ({
             sounds[soundIndex] = { ...sounds[soundIndex], ...newProps }
 
             updateCategory(category.name, { sounds: category.sounds })
-
-            socket.emit("update_sound", soundId, newProps)
         }
     },
     deleteSound: (soundId) => {
-        socket.emit("delete_sound", soundId)
-    },
-    saveCategories: () => {
-        const { categories } = get()
+        const { categories, removeSound } = get()
 
-        socket.emit("sync_categories", categories)
+        const sounds = categories.reduce<SoundEntry[]>((accumulator, category) => [ ...accumulator, ...category.sounds.map(sound => ({ ...sound, category: category.name })) ], [])
+
+        const sound = sounds.find(sound => sound.id == soundId)
+        
+        if (sound) {
+            removeSound(sound.title, sound.category!)
+        }
     }
 }))
+
+export default function useCategories() {
+    const store = useCategoriesStore();
+
+    return {
+        categories: store.categories,
+        getCategories() {
+            return store.getCategories();
+        },
+        createCategory(category) {
+            store.createCategory(category)
+            socket.emit("create_category", category)
+        },
+        updateCategory(name, newProps) {
+            store.updateCategory(name, newProps)
+            socket.emit("update_category", name, newProps)
+        },
+        deleteCategory(categoryName) {
+            store.deleteCategory(categoryName)
+            socket.emit("delete_category", categoryName)
+        },
+        updateSound(soundId, categoryName, newProps) {
+            store.updateSound(soundId, categoryName, newProps)
+            socket.emit("update_sound", soundId, newProps)
+        },
+        deleteSound(soundId) {
+            store.deleteSound(soundId);
+            socket.emit("delete_sound", soundId)
+        },
+    } satisfies Partial<CategoryStore>
+}

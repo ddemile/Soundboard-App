@@ -20,7 +20,7 @@ const numpadKeys = [
 ]
 
 export default function Keybinds() {
-    const { categories, updateSound, saveCategories } = useCategories()
+    const { categories, updateSound } = useCategories()
     const { updateConfig, config, saveConfig } = useConfig()
     const [selected, setSelected] = useState<{ id?: string | null, keys: string[] }>({ id: null, keys: [] })
     const log = useLog()
@@ -79,7 +79,6 @@ export default function Keybinds() {
                             return
                         }
                         updateSound(selected.id, findSoundCategory(selected.id)?.name!, { keybind })
-                        saveCategories()
                     }
                 }, 200)
             }
