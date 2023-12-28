@@ -226,7 +226,7 @@ function App() {
     const hasData = searchParams.has("data")
 
     if (!cookies.user && !hasData && !dataDeleted) {
-      window.location.replace(`https://ddemile.nano3.fr:4444/login?token=sometoken&redirect=true`)
+      window.location.replace(`https://ddemile.nano3.fr:4444/login?redirect=${encodeURIComponent(window.location.href)}`)
     }
 
     if (hasData) {
