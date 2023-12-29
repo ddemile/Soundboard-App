@@ -20,6 +20,7 @@ export default function UploadModal() {
   const { websocket } = useWebsocket();
   const [index, setIndex] = useState(0)
   const [emojiSelectorProps, setEmojiSelectorProps] = useState({ open: false, x: 0, y: 0 })
+  const [isUploading, setIsUploading] = useState(false);
   const sound = sounds[index]
 
   if (!props.files) setProps({ ...props, files: [] })
@@ -50,6 +51,7 @@ export default function UploadModal() {
 
   const handleSave = async () => {
     if ((index + 1) == sounds.length) {
+      setIsUploading(true);
       for await (let sound of sounds) {
         if (sound && sound.file) {
           const { file, data } = sound;
@@ -66,7 +68,7 @@ export default function UploadModal() {
                 file: file.name as `${string}.${string}`,
                 keybind: "",
                 config: { volume: 100 },
-                category: props.category,
+                category: props.category ?? "Default",
                 ...data
               } satisfies Omit<SoundEntry, "id"> & { id?: string }
 
@@ -94,6 +96,7 @@ export default function UploadModal() {
       if (sounds.length > 1) {
         toast.success("All sounds uploaded")
       }
+      setIsUploading(false);
       close()
     } else {
       setIndex(index => index + 1)
@@ -179,7 +182,7 @@ export default function UploadModal() {
       </div>
       <div className="bg-zinc-800 p-3 flex justify-end gap-2">
         <Button onClick={close} type="discard">Discard</Button>
-        <Button onClick={handleSave} disabled={sounds.length == 0} type="validate">{((index + 1) == sounds.length || sounds.length < 1) ? "Import" : "Next"}</Button>
+        <Button onClick={handleSave} disabled={sounds.length == 0 || isUploading} type="validate">{((index + 1) == sounds.length || sounds.length < 1) ? "Import" : "Next"}</Button>
       </div>
     </div>
   </Modal>
