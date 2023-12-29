@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import useCategories from "../../hooks/useCategories.ts";
 import useLog from "../../hooks/useLog.ts";
 import useModal from "../../hooks/useModal.ts";
+import findChangedProperties from "../../utils/findChangedProperties.ts";
 import Button from "./Button.tsx";
 import Modal from "./Modal.tsx";
 
@@ -97,7 +98,8 @@ export default function ConfigModal() {
             const newSound = props.sound
 
             if (!isEqual(oldSound, newSound)) {
-                updateSound(oldSound.id, props.category.name, newSound)
+                
+                updateSound(oldSound.id, props.category.name, findChangedProperties(oldSound, newSound))
                 close()
 
                 // newSound.name = name;

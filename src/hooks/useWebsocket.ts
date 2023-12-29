@@ -9,7 +9,9 @@ interface WebsocketState {
 export const socket = io(WEBSOCKET_URL, {
   auth: {
     token: getCookie("token")
-  }
+  },
+  transports: ["websocket"],
+  protocols: ["soundboard-v2"]
 })
 
 export default create<WebsocketState>()(() => ({

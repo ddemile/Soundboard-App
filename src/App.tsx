@@ -144,6 +144,10 @@ function App() {
       appReady = true;
     })
 
+    websocket.on("deprecated_set_categories", (categories) => {
+      store.setCategories(categories);
+    })
+
     websocket.on("web_client_connect", () => {
       log("Web client connected")
     })
@@ -165,15 +169,9 @@ function App() {
     })
 
     websocket.on("update_sound", (soundId, newProps) => {
-      console.log(soundId, newProps)
-
       const sounds = store.getCategories().reduce<SoundEntry[]>((accumulator, category) => [...accumulator, ...category.sounds.map(sound => ({ ...sound, category: category.name }))], [])
 
-      console.log(sounds)
-
       const sound = sounds.find(sound => sound.id == soundId)
-
-      console.log(sound)
 
       store.updateSound(soundId, sound?.category!, newProps)
     })
