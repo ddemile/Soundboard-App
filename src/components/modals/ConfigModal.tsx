@@ -142,7 +142,7 @@ export default function ConfigModal() {
     //     setRecordingKeys(!recordingKeys)
     // }
 
-    return <Modal open={isOpen} setOpen={setIsOpen} className="flex justify-center flex-col min-w-full min-h-screen bg-transparent">
+    return <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)}>
         <div className="absolute z-30" style={{ top: emojiSelectorProps.y, left: emojiSelectorProps.x, display: emojiSelectorProps.open ? "inherit" : "none" }}>
             {emojiSelectorProps.open &&
                 <EmojiPicker skinTonesDisabled emojiStyle={EmojiStyle.NATIVE} theme={Theme.DARK} onEmojiClick={({ emoji, names }) => {

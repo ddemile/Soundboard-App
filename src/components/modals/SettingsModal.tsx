@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Toaster, toast } from "sonner"
+import { toast } from "sonner"
 import useCategories from '../../hooks/useCategories.ts'
 import useConfig from '../../hooks/useConfig.ts'
 import useLog from '../../hooks/useLog.ts'
@@ -95,9 +95,7 @@ export default function SettingsModal() {
 
 
   return (
-    <Modal open={isOpen} setOpen={setIsOpen} className='w-full h-full bg-[#303031] flex'>
-      <Toaster richColors className={"m-6"} />
-
+    <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} className='rounded-lg m-4 w-auto h-auto p-0 bg-[#303031] flex-row overflow-clip grow' overlayClassName="flex justify-normal items-stretch">
       <nav className='border-white border-opacity-20 border-r-2 h-full bg-[#232324] flex p-14 pr-0 flex-col'>
         <p className='text-left text-sm text-gray-300 px-2 font-semibold'>MAIN SETTINGS</p>
         <ul className='flex flex-col gap-0.5 text-left mr-1 w-48'>

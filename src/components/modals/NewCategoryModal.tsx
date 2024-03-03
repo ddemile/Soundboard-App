@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, ElementRef, useRef, useState } from "react"
 import * as icons from "react-icons/bs"
 import { IoCloseSharp } from "react-icons/io5"
 import useCategories from "../../hooks/useCategories.ts"
@@ -12,8 +12,9 @@ export default function NewCategoryModal() {
     const { isOpen, setIsOpen, close } = useModal("new-category")
     const { categories, createCategory } = useCategories()
     const [category, setCategory] = useState<CategoryData>({ name: "", expanded: true, sounds: [] })
-    const [iconSelectorProps, setIconSelectorProps] = useState({ open: false, x: 0, y: 0 })
+    const [iconSelectorProps, setIconSelectorProps] = useState({ open: false, x: 0, y: 0})
     const Icon = icons[category.icon as any as keyof typeof icons] ?? icons.BsSoundwave
+    const selectorRef = useRef<ElementRef<"div">>(null)
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -27,11 +28,34 @@ export default function NewCategoryModal() {
         close()
     }
 
-    return <Modal open={isOpen} onClose={() => setCategory({ name: "", expanded: false, sounds: [], icon: "BsSoundwave" })} setOpen={setIsOpen} className="flex justify-center flex-col min-w-full min-h-screen bg-transparent">
-        <div className="absolute z-30" style={{ top: iconSelectorProps.y, left: iconSelectorProps.x, display: iconSelectorProps.open ? "inherit" : "none" }}>
-            {iconSelectorProps.open && <IconSelector onIconClick={({ name }) => setCategory({ ...category, icon: name } as any)} />}
+    const calculateSelectorPos = (intialPos: { x: number, y: number }) => {            
+        const iconSelector = {
+            width: 384,
+            height: 322,
+        }
 
-        </div>
+        const bottomRight = {
+            x: intialPos.x + iconSelector.width,
+            y: intialPos.y + iconSelector.height,
+        }
+
+        const x = Math.min(window.innerWidth, bottomRight.x)
+
+        const y = Math.min(window.innerHeight, bottomRight.y)
+
+        return {
+            x: x - iconSelector.width,
+            y: y - iconSelector.height
+        }
+    }
+    
+    return <Modal isOpen={isOpen} onRequestClose={() => { setIsOpen(false); setCategory({ name: "", expanded: false, sounds: [], icon: "BsSoundwave" }) }}>
+        {iconSelectorProps.open && (
+            <div ref={selectorRef} className="absolute z-30" style={{ top: iconSelectorProps.y, left: iconSelectorProps.x }}>
+                <IconSelector onIconClick={({ name }) => { setCategory({ ...category, icon: name } as any); setIconSelectorProps({ ...iconSelectorProps, open: false}) }} />
+            </div>
+        )}
+
         <div className="rounded-lg w-[440px] overflow-hidden mx-auto" onClick={() => setIconSelectorProps({ ...iconSelectorProps, open: false })}>
             <div className="bg-[#303031] p-2 relative flex flex-col">
                 <button onClick={() => setIsOpen(false)} className="absolute right-0 top-0 m-2 border-none outline-none focus:outline-none p-0 bg-transparent text-2xl text-stone-500 hover:text-stone-400 transition-colors">
@@ -48,7 +72,11 @@ export default function NewCategoryModal() {
                             <label className="text-sm font-bold text-zinc-300">EMOJI</label>
                             <p onClick={(e) => {
                                 e.stopPropagation()
-                                setIconSelectorProps({ open: true, x: e.pageX, y: e.pageY })
+
+                                const pos = calculateSelectorPos({ x: e.pageX, y: e.pageY })
+                            
+                                setIconSelectorProps({ ...pos, open: true })
+                        
                             }} className="bg-zinc-900 rounded-sm p-2 flex cursor-pointer">
                                 <input className="w-0" />
                                 <span className="flex gap-2">

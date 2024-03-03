@@ -130,8 +130,8 @@ export default function MyInstantModal() {
     }
 
     return (
-        <Modal open={isOpen} setOpen={setIsOpen} className='w-full h-full p-0 bg-[#303031]'>
-            <div className='w-full flex flex-col gap-2.5 justify-between p-2'>
+        <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} className='rounded-lg m-4 w-auto h-auto p-0 bg-[#303031] justify-start overflow-y-auto' overlayClassName="flex justify-normal items-stretch">
+            <div className='w-full flex flex-col gap-2.5 p-2'>
                 <form className='w-auto' onSubmit={(e) => {
                     e.preventDefault()
                     handleSearch()

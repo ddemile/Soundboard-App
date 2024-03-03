@@ -6,6 +6,7 @@ import {
 import { useEffect, useLayoutEffect, useState } from 'react';
 import "react-contexify/dist/ReactContexify.css";
 import { useCookies } from 'react-cookie';
+import Modal from "react-modal";
 import {
   RouterProvider,
   createBrowserRouter
@@ -18,6 +19,7 @@ import SoundContextMenu from './components/contextMenus/SoundContextMenu.tsx';
 import MigrationModal from './components/modals/MigrationModal.tsx';
 import SettingsModal from './components/modals/SettingsModal.tsx';
 import AppContext from './contexts/AppContext.tsx';
+import { ConfirmContextProvider } from './contexts/ConfirmContext.tsx';
 import useAudioPlayer from './hooks/useAudioPlayer.ts';
 import useCategories, { useCategoriesStore } from './hooks/useCategories.ts';
 import useConfig from './hooks/useConfig.ts';
@@ -42,6 +44,8 @@ await onUpdaterEvent(({ error, status }) => {
 
 if (window.location.hostname == "localhost" && await isEnabled()) disable()
 if (window.location.hostname != "localhost" && !await isEnabled()) enable()
+
+Modal.setAppElement("#root")
 
 const router = createBrowserRouter([
   {
@@ -84,7 +88,7 @@ function App() {
     if (migrationChecked || !loaded || !appReady) return
 
     const sounds = categories.reduce<SoundEntry[]>((accumulator, category) => [...accumulator, ...category.sounds.map(sound => ({ ...sound, category: category.name }))], []);
-    
+
     if (!config.migrated && config.categories.length > 0 && sounds.length == 0) {
       setIsOpen(true)
     }
@@ -293,13 +297,15 @@ function App() {
 
   return (
     <AppContext.Provider value={{ keybind, setKeybind, volume, setVolume, selectedSound, setSelectedSound, sounds, setSounds, play }}>
-      <Toaster richColors />
-      <SoundContextMenu />
-      <SettingsModal />
-      <MigrationModal />
-      <div className='h-screen flex flex-col'>
-        <RouterProvider router={router} />
-      </div>
+      <ConfirmContextProvider>
+        <Toaster richColors />
+        <SoundContextMenu />
+        <SettingsModal />
+        <MigrationModal />
+        <div className='h-screen flex flex-col'>
+          <RouterProvider router={router} />
+        </div>
+      </ConfirmContextProvider>
     </AppContext.Provider>
   )
 }

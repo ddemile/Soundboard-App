@@ -41,7 +41,7 @@ export default function MigrationModal() {
     })
   }
 
-  return <Modal open={isOpen} setOpen={setIsOpen} className="flex justify-center flex-col min-w-full min-h-screen bg-transparent" closable={false}>
+  return <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} className="flex justify-center flex-col min-w-full min-h-screen bg-transparent" shouldCloseOnEsc={false} shouldCloseOnOverlayClick={false}>
     <div className="rounded-lg w-[440px] overflow-hidden mx-auto">
       <div className="bg-[#303031] p-2 relative flex flex-col">
         <p className="font-bold text-2xl mt-1">Migration needed</p>

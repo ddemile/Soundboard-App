@@ -1,44 +1,9 @@
-import { DialogHTMLAttributes, ElementRef, MouseEventHandler, PropsWithChildren, useEffect, useRef, useState } from "react"
+import ReactModal, { Props } from "react-modal"
 import { twMerge } from "tailwind-merge"
 
-export default function Modal(props: PropsWithChildren<{ open: boolean, setOpen: (isOpen: boolean) => void, onClose?: () => void, onOpen?: () => void, closable?: boolean } & DialogHTMLAttributes<HTMLDialogElement>>) {
-    const dialogRef = useRef<ElementRef<"dialog">>(null)
-    const [htmlProps, setHtmlProps] = useState<DialogHTMLAttributes<HTMLDialogElement>>({})
-    const [isFirstUpdate, setIsFirstUpdate] = useState(true)
-    const [target, setTarget] = useState<EventTarget>()
-
-    useEffect(() => {
-        const propsVar = { ...props } as any
-        delete propsVar.setOpen
-        delete propsVar.open
-        setHtmlProps(propsVar)
-    }, [])
-
-    useEffect(() => {
-        if (!props.open && !isFirstUpdate && props.onClose) {
-            props.onClose()
-        }
-
-        if (props.open && !isFirstUpdate && props.onOpen) {
-            props.onOpen()
-        }
-
-        if (dialogRef.current) {
-            if (props.open) dialogRef.current.showModal()
-            else dialogRef.current.close()
-        }
-
-        setIsFirstUpdate(false)
-    }, [props.open])
-
-    const handleClick: MouseEventHandler<HTMLDialogElement> = () => {
-        if (target === dialogRef.current && props.closable != false) {
-            props.setOpen(false)
-        }
-    }
-
+export default function Modal({ children, overlayClassName, className, ...props }: Props) {
     // Discord sizes: Width>440px Height>645px
-    return <dialog {...htmlProps} onMouseDown={(e) => setTarget(e.target)} onMouseUp={handleClick} style={props.open ? {} : { opacity: 0, display: "none" }} className={twMerge(`rounded-lg w-[440px] transition-all`, htmlProps.className)} ref={dialogRef} onClose={() => props.setOpen(false)}>
-        {props.children}
-    </dialog>
+    return <ReactModal {...props} closeTimeoutMS={200} className={twMerge("text-center flex justify-center flex-col w-[440px] outline-none", className as string)} overlayClassName={twMerge("fixed inset-0 bg-black bg-opacity-10 flex justify-center items-center", overlayClassName as string)}>
+        {children}
+    </ReactModal>
 }
