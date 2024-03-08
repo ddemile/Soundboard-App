@@ -49,7 +49,7 @@ export default function NewCategoryModal() {
         }
     }
     
-    return <Modal isOpen={isOpen} onRequestClose={() => { setIsOpen(false); setCategory({ name: "", expanded: false, sounds: [], icon: "BsSoundwave" }) }}>
+    return <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} onAfterClose={() => setCategory({ name: "", expanded: false, sounds: [], icon: "BsSoundwave" })}>
         {iconSelectorProps.open && (
             <div ref={selectorRef} className="absolute z-30" style={{ top: iconSelectorProps.y, left: iconSelectorProps.x }}>
                 <IconSelector onIconClick={({ name }) => { setCategory({ ...category, icon: name } as any); setIconSelectorProps({ ...iconSelectorProps, open: false}) }} />
@@ -68,7 +68,7 @@ export default function NewCategoryModal() {
                             <label className="text-sm font-bold text-zinc-300">CATEGORY NAME</label>
                             <input name="name" onChange={handleChange} value={category.name} className="bg-zinc-900 rounded-sm p-2"></input>
                         </div>
-                        <div className="flex flex-col w-full">
+                        <div className="flex flex-col w-full overflow-hidden">
                             <label className="text-sm font-bold text-zinc-300">EMOJI</label>
                             <p onClick={(e) => {
                                 e.stopPropagation()
@@ -79,9 +79,9 @@ export default function NewCategoryModal() {
                         
                             }} className="bg-zinc-900 rounded-sm p-2 flex cursor-pointer">
                                 <input className="w-0" />
-                                <span className="flex gap-2">
+                                <span className="flex gap-2 overflow-hidden">
                                     <span className="flex justify-center items-center"><Icon /></span>
-                                    <span>:{category.icon as string || "BsSoundwave"}:</span>
+                                    <span className="overflow-hidden text-ellipsis">:{category.icon as string || "BsSoundwave"}:</span>
                                 </span>
                             </p>
                         </div>

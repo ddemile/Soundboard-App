@@ -122,7 +122,7 @@ export default function UploadModal() {
     })
   }
 
-  return <Modal isOpen={isOpen} onRequestClose={() => { setIsOpen(false); setSounds([]) } }>
+  return <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} onAfterClose={() => setSounds([])}>
     <div className="absolute z-30" style={{ top: emojiSelectorProps.y, left: emojiSelectorProps.x, display: emojiSelectorProps.open ? "inherit" : "none" }}>
       {emojiSelectorProps.open &&
         <EmojiPicker skinTonesDisabled emojiStyle={EmojiStyle.NATIVE} theme={Theme.DARK} onEmojiClick={({ emoji, names }) => {
