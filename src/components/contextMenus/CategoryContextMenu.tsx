@@ -16,7 +16,7 @@ export default function CategoryContextMenu() {
 
   return (
     <Menu id={CATEGORY_CONTEXT_MENU} theme='dark'>
-      <Item onClick={open} disabled>
+      <Item onClick={({ props }) => open(props)} disabled={({ props }) => ["Default", "Favorite"].includes(props.name)}>
         Edit category
       </Item>
       <Separator />

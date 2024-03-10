@@ -6,7 +6,8 @@ import * as icons from "react-icons/bs";
 import Category from '../components/Category.tsx';
 import CategoryContextMenu from '../components/contextMenus/CategoryContextMenu.tsx';
 import HomeContextMenu, { HOME_CONTEXT_MENU } from '../components/contextMenus/HomeContextMenu.tsx';
-import ConfigModal from '../components/modals/ConfigModal.tsx';
+import EditCategoryModal from '../components/modals/EditCategoryModal.tsx';
+import EditSoundModal from '../components/modals/EditSoundModal.tsx';
 import MyInstantModal from '../components/modals/MyInstantModal.tsx';
 import NewCategoryModal from '../components/modals/NewCategoryModal.tsx';
 import UploadModal from '../components/modals/UploadModal.tsx';
@@ -50,11 +51,12 @@ function Home() {
         <main {...getRootProps()} onContextMenu={(e) => show({ event: e })} className='h-full focus:outline-transparent mt-1'>
           <input {...getInputProps()} />
 
-          <ConfigModal />
+          <EditSoundModal />
           <UploadModal />
           <MyInstantModal />
           <CategoryContextMenu />
           <NewCategoryModal />
+          <EditCategoryModal />
           <HomeContextMenu />
           {categories!.map((category) => <Category key={category.name} {...category} onExpandToggle={(_e, name) => { updateCategory(name, { expanded: !category.expanded }) }} />)}
           {/* <button className='flex items-center justify-center m-auto w-12 aspect-square rounded-full bg-stone-900 [&>*>svg]:text-[25px]' onClick={() => websocket.emit("stopSound")}><span><BsStopFill /></span></button> */}

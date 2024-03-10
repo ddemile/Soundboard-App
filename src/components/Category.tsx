@@ -15,8 +15,8 @@ import { BASE_API_URL } from '../utils/constants.ts'
 import { CATEGORY_CONTEXT_MENU } from "./contextMenus/CategoryContextMenu.tsx"
 import { SOUND_CONTEXT_MENU } from "./contextMenus/SoundContextMenu.tsx"
 
-export default function Category(props: CategoryData & { onExpandToggle: (e: MouseEvent<HTMLButtonElement>, name: string) => void }) {
-    const { name, expanded, sounds, icon, onExpandToggle } = props;
+export default function Category({ onExpandToggle, ...props }: CategoryData & { onExpandToggle: (e: MouseEvent<HTMLButtonElement>, name: string) => void }) {
+    const { name, expanded, sounds, icon } = props;
     const { play } = useContext(AppContext)!
     const { show } = useContextMenu()
     const { removeSound, addSound } = useCategoriesStore()
@@ -30,7 +30,7 @@ export default function Category(props: CategoryData & { onExpandToggle: (e: Mou
     const handleFavorite = (sound: SoundEntry) => {
         const categoryName = name == "Favorite" ? "Default" : "Favorite"
 
-        removeSound(sound.title, name)
+        removeSound(sound.id, name)
         addSound(sound, categoryName)
     }
 

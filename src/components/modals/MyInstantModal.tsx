@@ -130,7 +130,7 @@ export default function MyInstantModal() {
     }
 
     return (
-        <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} className='rounded-lg m-4 w-auto h-auto p-0 bg-[#303031] justify-start overflow-y-auto' overlayClassName="flex justify-normal items-stretch">
+        <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} className='rounded-lg m-4 w-full h-auto p-0 bg-[#303031] justify-start overflow-y-auto' overlayClassName="flex justify-normal items-stretch">
             <div className='w-full flex flex-col gap-2.5 p-2'>
                 <form className='w-auto' onSubmit={(e) => {
                     e.preventDefault()

@@ -1,21 +1,20 @@
 import { Item, ItemParams, Menu, Separator, Submenu } from 'react-contexify';
 import { useConfirm } from '../../contexts/ConfirmContext.tsx';
-import useCategories, { useCategoriesStore } from "../../hooks/useCategories.ts";
+import useCategories from "../../hooks/useCategories.ts";
 import useModal from '../../hooks/useModal.ts';
 import { CategoryData, SoundEntry } from "../../pages/Home.tsx";
 
 export default function SoundContextMenu() {
   const { categories, deleteSound } = useCategories()
-  const { addSound, removeSound } = useCategoriesStore();
+  const { moveSound } = useCategories();
   const { open } = useModal("config")
   const { confirm } = useConfirm()
 
   const handleMove = ({ props }: ItemParams<{ sound: SoundEntry, category: CategoryData }>, newCategory: CategoryData) => {
     if (!props) return;
-    const { sound, category } = props
+    const { sound } = props
 
-    removeSound(sound.title, category.name)
-    addSound(sound, newCategory.name)
+    moveSound(sound.id, newCategory.name)
   }
 
   const handleDelete = async (sound: SoundEntry) => {

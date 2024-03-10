@@ -5,6 +5,10 @@ import { CategoryData } from "../pages/Home.tsx";
 import useLog from "./useLog.ts";
 
 interface Config {
+    /**
+     * Old categories that were used in a previous version of the app.
+     * @deprecated
+     */
     categories: CategoryData[],
     stopKeybind: string;
     audio: {

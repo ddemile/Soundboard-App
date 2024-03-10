@@ -10,11 +10,8 @@ import findChangedProperties from "../../utils/findChangedProperties.ts";
 import Button from "./Button.tsx";
 import Modal from "./Modal.tsx";
 
-export default function ConfigModal() {
+export default function EditSoundModal() {
     const nameRef = useRef<ElementRef<"h3">>(null)
-    const [recordingKeys, setRecordingKeys] = useState<boolean>(false)
-    const [_savedKeys, setSavedKeys] = useState<string[]>([])
-    const [_keys, setKeys] = useState<string[]>([])
     const { isOpen, setIsOpen, close, props: initialProps } = useModal("config")
     const [props, setProps] = useState(initialProps)
     const { updateSound } = useCategories()
@@ -24,58 +21,6 @@ export default function ConfigModal() {
     useLayoutEffect(() => {
         setProps(initialProps)
     }, [initialProps])
-
-    useEffect(() => {
-        const current = new Set<string>()
-
-        function onKeyPress(event: KeyboardEvent) {
-            if (!current) return;
-
-            const key = (event.key || event.code).toUpperCase();
-            current.add(key);
-
-            if (timeout) {
-                clearTimeout(timeout)
-                timeout = null;
-            }
-
-            setKeys(Array.from(current))
-        }
-
-        let timeout: NodeJS.Timeout | null = null;
-        let keybind: string[] = []
-
-        function onKeyRelease(event: KeyboardEvent) {
-            if (!current) return;
-
-            const key = (event.key || event.code).toUpperCase();
-
-            if (!timeout) {
-                keybind = Array.from(current)
-                timeout = setTimeout(() => {
-                    if (current.size == 0) {
-                        timeout = null;
-                        if (recordingKeys)
-                            setSavedKeys(keybind)
-                        setRecordingKeys(false)
-                    }
-                }, 200)
-            }
-
-            current.delete(key);
-
-            setKeys(Array.from(current))
-        }
-
-        // Add key event listeners
-        document.addEventListener("keydown", onKeyPress);
-        document.addEventListener("keyup", onKeyRelease);
-
-        return () => {
-            document.removeEventListener("keydown", onKeyPress)
-            document.removeEventListener("keyup", onKeyRelease);
-        }
-    }, [recordingKeys])
 
     useEffect(() => {
         if (isOpen) {
@@ -101,46 +46,11 @@ export default function ConfigModal() {
                 
                 updateSound(oldSound.id, props.category.name, findChangedProperties(oldSound, newSound))
                 close()
-
-                // newSound.name = name;
-                // newSound.keybind = savedKeys.join("+");
-
-                // if (oldSound.config?.volume != volume) {
-                //     newSound.config ??= {}
-                //     newSound.config.volume = volume
-                // }
-
-                // newConfig.sounds[newSound.file] = newSound;
-
-                // if (oldSound.name != newSound.name) log(`${newSound.file}: ${oldSound?.name} > ${newSound.name}`)
-
-                // if (oldSound.keybind != newSound.keybind) {
-                //     if (oldSound.keybind) {
-                //         unregister(oldSound.keybind).then(() => {
-                //             if (newSound.keybind) {
-                //                 register(newSound.keybind, () => play(newSound))
-                //             }
-                //         })
-                //     } else if (newSound.keybind) {
-                //         register(newSound.keybind, () => play(newSound))
-                //     }
-                // }
-
-                // if (oldSound.keybind != newSound.keybind || oldSound.name != newSound.name || oldSound.config?.volume != newSound.config?.volume) {
-                //     setSelectedSound(null)
-                //     saveConfig(newConfig)
-                //     setConfig(newConfig)
-                //     setSounds(Object.values(newConfig.sounds))
-                // }
             } else {
                 toast.error("Nothing has changed")
             }
         }
     }
-
-    // const handleClick = () => {
-    //     setRecordingKeys(!recordingKeys)
-    // }
 
     return <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)}>
         <div className="absolute z-30" style={{ top: emojiSelectorProps.y, left: emojiSelectorProps.x, display: emojiSelectorProps.open ? "inherit" : "none" }}>
@@ -188,6 +98,5 @@ export default function ConfigModal() {
                 <Button onClick={handleSave} type="validate">Save</Button>
             </div>
         </div>
-
     </Modal>
 }

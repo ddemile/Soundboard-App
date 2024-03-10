@@ -11,7 +11,7 @@ export const socket = io(WEBSOCKET_URL, {
     token: getCookie("token")
   },
   transports: ["websocket"],
-  protocols: ["soundboard-v2"]
+  protocols: ["soundboard-v3"]
 })
 
 export default create<WebsocketState>()(() => ({

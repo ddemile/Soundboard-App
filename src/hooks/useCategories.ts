@@ -10,9 +10,10 @@ interface CategoryStore {
     updateCategory: (name: string, newProps: Partial<CategoryData>) => void
     deleteCategory: (categoryName: string) => void
     addSound: (sound: SoundEntry, categoryName: string) => void
-    removeSound: (soundName: string, categoryName: string) => void
+    removeSound: (soundId: string, categoryName: string) => void
     updateSound: (soundFile: string, categoryName: string, newProps: Partial<SoundEntry>) => void,
-    deleteSound: (soundId: string) => void
+    deleteSound: (soundId: string) => void,
+    moveSound: (soundId: string, categoryName: string) => void,
 }
 
 export const useCategoriesStore = create<CategoryStore>()((set, get) => ({
@@ -54,13 +55,13 @@ export const useCategoriesStore = create<CategoryStore>()((set, get) => ({
             updateCategory(category.name, { sounds: category.sounds })
         }
     },
-    removeSound: (soundName, categoryName) => {
+    removeSound: (soundId, categoryName) => {
         const { categories, updateCategory } = get()
 
         const category = structuredClone(categories.find(category => category.name == categoryName))
 
         if (category) {
-            const sounds = category.sounds.filter(sound => sound.title != soundName)
+            const sounds = category.sounds.filter(sound => sound.id != soundId)
             updateCategory(category.name, { sounds })
         }
     },
@@ -85,9 +86,20 @@ export const useCategoriesStore = create<CategoryStore>()((set, get) => ({
         const sound = sounds.find(sound => sound.id == soundId)
         
         if (sound) {
-            removeSound(sound.title, sound.category!)
+            removeSound(sound.id, sound.category!)
         }
-    }
+    },
+    moveSound(soundId, categoryName) {
+        const { categories, removeSound, addSound } = get()
+
+        const category = categories.find(({ sounds }) => sounds.some(sound => sound.id == soundId))
+
+        if (category) {
+          const sound = category.sounds.find(sound => sound.id == soundId)!
+          removeSound(soundId, category.name)
+          addSound(sound, categoryName)
+        }
+    },
 }))
 
 export default function useCategories() {
@@ -118,5 +130,10 @@ export default function useCategories() {
             store.deleteSound(soundId);
             socket.emit("delete_sound", soundId)
         },
+        moveSound(soundId, categoryName) {
+            store.moveSound(soundId, categoryName)
+            socket.emit("move_sound", soundId, categoryName)
+            console.log("Emit move sound")
+        }
     } satisfies Partial<CategoryStore>
 }

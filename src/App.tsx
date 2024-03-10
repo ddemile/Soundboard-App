@@ -184,6 +184,10 @@ function App() {
       store.deleteSound(soundId)
     })
 
+    websocket.on("move_sound", (soundId, categoryName) => {
+      store.moveSound(soundId, categoryName)
+    })
+
     return () => {
       websocket.off()
     }
