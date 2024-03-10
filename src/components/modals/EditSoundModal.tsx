@@ -7,8 +7,8 @@ import useCategories from "../../hooks/useCategories.ts";
 import useLog from "../../hooks/useLog.ts";
 import useModal from "../../hooks/useModal.ts";
 import findChangedProperties from "../../utils/findChangedProperties.ts";
-import Button from "./Button.tsx";
 import Modal from "./Modal.tsx";
+import { SmallModal } from "./SmallModal.tsx";
 
 export default function EditSoundModal() {
     const nameRef = useRef<ElementRef<"h3">>(null)
@@ -54,30 +54,30 @@ export default function EditSoundModal() {
     return <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)}>
         <div className="absolute z-30" style={{ top: emojiSelectorProps.y, left: emojiSelectorProps.x, display: emojiSelectorProps.open ? "inherit" : "none" }}>
             {emojiSelectorProps.open &&
-                <EmojiPicker skinTonesDisabled emojiStyle={EmojiStyle.NATIVE} theme={Theme.DARK} onEmojiClick={({ emoji, names }) => {
+                <EmojiPicker skinTonesDisabled emojiStyle={EmojiStyle.NATIVE} theme={Theme.AUTO} onEmojiClick={({ emoji, names }) => {
                     setEmojiSelectorProps({ ...emojiSelectorProps, open: false })
                     setProps({ ...props, sound: { ...props.sound, emoji, emojiName: names[0].replace(/ /g, "_") } })
                 }} />
             }
         </div>
-        <div className="rounded-lg w-[440px] overflow-hidden mx-auto" onClick={() => setEmojiSelectorProps({ ...emojiSelectorProps, open: false })}>
-            <div className="bg-[#303031] p-2 relative flex flex-col">
+        <SmallModal.Container onClick={() => setEmojiSelectorProps({ ...emojiSelectorProps, open: false })}>
+            <SmallModal.Content>
                 <button onClick={() => setIsOpen(false)} className="absolute right-0 top-0 m-2 border-none outline-none focus:outline-none p-0 bg-transparent text-2xl text-stone-500 hover:text-stone-400 transition-colors">
                     <IoCloseSharp />
                 </button>
-                <p className="font-bold text-2xl mt-1">Edit sound</p>
+                <SmallModal.Title>Edit sound</SmallModal.Title>
                 <ul className="flex gap-2 flex-col">
                     <li className="text-left flex gap-4 mt-8">
                         <div className="flex flex-col w-full">
-                            <label className="text-sm font-bold text-zinc-300">SOUND NAME</label>
-                            <input name="title" onChange={handleChange} value={props.sound?.title} className="bg-zinc-900 rounded-sm p-2"></input>
+                            <SmallModal.Label>SOUND NAME</SmallModal.Label>
+                            <input name="title" onChange={handleChange} value={props.sound?.title} className="bg-zinc-300 dark:bg-zinc-900 rounded-sm p-2"></input>
                         </div>
                         <div className="flex flex-col w-full">
-                            <label className="text-sm font-bold text-zinc-300">EMOJI</label>
+                            <SmallModal.Label>EMOJI</SmallModal.Label>
                             <p onClick={(e) => {
                                 e.stopPropagation()
                                 setEmojiSelectorProps({ open: true, x: e.pageX, y: e.pageY })
-                            }} className="bg-zinc-900 rounded-sm p-2 flex cursor-pointer">
+                            }} className="bg-zinc-300 dark:bg-zinc-900 rounded-sm p-2 flex cursor-pointer">
                                 <input className="w-0" />
                                 <span className="flex gap-2">
                                     <span>{props.sound?.emoji || "🎵"} </span>
@@ -87,15 +87,15 @@ export default function EditSoundModal() {
                         </div>
                     </li>
                     <li className="text-left flex flex-col gap-1">
-                        <label className="text-sm font-bold text-zinc-300">SOUND VOLUME</label>
+                        <SmallModal.Label>SOUND VOLUME</SmallModal.Label>
                         <input name="volume" onChange={handleChange} value={props.sound?.config?.volume ?? 100} type="range" className=""></input>
                     </li>
                 </ul>
-            </div>
-            <div className="bg-zinc-800 p-3 flex justify-end gap-2">
-                <Button onClick={close} type="discard">Discard</Button>
-                <Button onClick={handleSave} type="validate">Save</Button>
-            </div>
-        </div>
+            </SmallModal.Content>
+            <SmallModal.Footer>
+                <SmallModal.Button onClick={close} variant="discard">Discard</SmallModal.Button>
+                <SmallModal.Button onClick={handleSave} variant="validate">Save</SmallModal.Button>
+            </SmallModal.Footer>
+        </SmallModal.Container>
     </Modal>
 }

@@ -4,6 +4,7 @@ import useModal from "../../hooks/useModal.ts"
 import useWebsocket from "../../hooks/useWebsocket.ts"
 import { ProgressEvent, uploadSounds } from "../../utils/migrationHelpers.ts"
 import Modal from "./Modal.tsx"
+import { SmallModal } from "./SmallModal.tsx"
 
 export default function MigrationModal() {
   const { isOpen, setIsOpen, props, setProps } = useModal("migration")
@@ -42,13 +43,13 @@ export default function MigrationModal() {
   }
 
   return <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} className="flex justify-center flex-col min-w-full min-h-screen bg-transparent" shouldCloseOnEsc={false} shouldCloseOnOverlayClick={false}>
-    <div className="rounded-lg w-[440px] overflow-hidden mx-auto">
-      <div className="bg-[#303031] p-2 relative flex flex-col">
-        <p className="font-bold text-2xl mt-1">Migration needed</p>
+    <SmallModal.Container>
+      <SmallModal.Content>
+        <SmallModal.Title>Migration needed</SmallModal.Title>
         <p className="font-medium text-sm mt-1">The last release has changed the application structure and so all of your sounds needs to be uploaded in the cloud.</p>
         <ul className="flex gap-2 flex-col">
           <li className="text-left flex flex-col gap-1 mt-8">
-            <label className="text-sm font-bold text-zinc-300">STATUS</label>
+            <SmallModal.Label>STATUS</SmallModal.Label>
             <label className="bg-zinc-800 border-zinc-900 border-[1px] rounded-sm p-2 flex">
               {progressState ?
                 <p>Uploading sound {progressState.currentlyUploading} out of {progressState.totalSounds} ({progressState.uploadsFailed} failed)</p>
@@ -65,7 +66,7 @@ export default function MigrationModal() {
             }
           </li>
         </ul>
-      </div>
-    </div>
+      </SmallModal.Content>
+    </SmallModal.Container>
   </Modal>
 }

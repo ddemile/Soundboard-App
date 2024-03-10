@@ -5,8 +5,8 @@ import useCategories from "../../hooks/useCategories.ts"
 import useModal from "../../hooks/useModal.ts"
 import { CategoryData } from "../../pages/Home.tsx"
 import IconSelector from "../IconSelector.tsx"
-import Button from "./Button.tsx"
 import Modal from "./Modal.tsx"
+import { SmallModal } from "./SmallModal.tsx"
 
 export default function NewCategoryModal() {
     const { isOpen, setIsOpen, close } = useModal("new-category")
@@ -56,20 +56,20 @@ export default function NewCategoryModal() {
             </div>
         )}
 
-        <div className="rounded-lg w-[440px] overflow-hidden mx-auto" onClick={() => setIconSelectorProps({ ...iconSelectorProps, open: false })}>
-            <div className="bg-[#303031] p-2 relative flex flex-col">
+        <SmallModal.Container onClick={() => setIconSelectorProps({ ...iconSelectorProps, open: false })}>
+            <SmallModal.Content>
                 <button onClick={() => setIsOpen(false)} className="absolute right-0 top-0 m-2 border-none outline-none focus:outline-none p-0 bg-transparent text-2xl text-stone-500 hover:text-stone-400 transition-colors">
                     <IoCloseSharp />
                 </button>
-                <p className="font-bold text-2xl mt-1">New category</p>
+                <SmallModal.Title>New category</SmallModal.Title>
                 <ul className="flex gap-2 flex-col">
                     <li className="text-left flex gap-1 mt-8">
                         <div className="flex flex-col w-full">
-                            <label className="text-sm font-bold text-zinc-300">CATEGORY NAME</label>
-                            <input name="name" onChange={handleChange} value={category.name} className="bg-zinc-900 rounded-sm p-2"></input>
+                            <SmallModal.Label>CATEGORY NAME</SmallModal.Label>
+                            <input name="name" onChange={handleChange} value={category.name} className="bg-zinc-300 dark:bg-zinc-900 rounded-sm p-2"></input>
                         </div>
                         <div className="flex flex-col w-full overflow-hidden">
-                            <label className="text-sm font-bold text-zinc-300">EMOJI</label>
+                            <SmallModal.Label>EMOJI</SmallModal.Label>
                             <p onClick={(e) => {
                                 e.stopPropagation()
 
@@ -77,7 +77,7 @@ export default function NewCategoryModal() {
                             
                                 setIconSelectorProps({ ...pos, open: true })
                         
-                            }} className="bg-zinc-900 rounded-sm p-2 flex cursor-pointer">
+                            }} className="bg-zinc-300 dark:bg-zinc-900 rounded-sm p-2 flex cursor-pointer">
                                 <input className="w-0" />
                                 <span className="flex gap-2 overflow-hidden">
                                     <span className="flex justify-center items-center"><Icon /></span>
@@ -87,12 +87,12 @@ export default function NewCategoryModal() {
                         </div>
                     </li>
                 </ul>
-            </div>
-            <div className="bg-zinc-800 p-3 flex justify-end gap-2">
-                <Button onClick={close} type="discard">Discard</Button>
-                <Button onClick={handleCreate} disabled={categories.some(({ name }) => category.name == name) || !category.name.trim()} type="validate">Create</Button>
-            </div>
-        </div>
+            </SmallModal.Content>
+            <SmallModal.Footer>
+                <SmallModal.Button onClick={close} variant="discard">Discard</SmallModal.Button>
+                <SmallModal.Button onClick={handleCreate} disabled={categories.some(({ name }) => category.name == name) || !category.name.trim()} variant="validate">Create</SmallModal.Button>
+            </SmallModal.Footer>
+        </SmallModal.Container>
 
     </Modal >
 }

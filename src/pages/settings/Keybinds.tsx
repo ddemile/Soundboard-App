@@ -112,12 +112,12 @@ export default function Keybinds() {
                 {sounds.map(sound => (
                     <li id={sound.id} key={sound.id} className='flex items-center gap-10'>
                         <div className='flex flex-col w-full text-left gap-1'>
-                            <p className='text-left text-sm text-gray-300 font-semibold'>SOUND NAME</p>
-                            <p className='w-full p-2 bg-stone-900 rounded-sm'>{sound.emoji || "🎵"} {sound.title}</p>
+                            <p className='text-left text-sm text-gray-500 dark:text-gray-300 font-semibold'>SOUND NAME</p>
+                            <p className='w-full p-2 bg-neutral-200 dark:bg-stone-900 rounded-sm'>{sound.emoji || "🎵"} {sound.title}</p>
                         </div>
                         <div className='flex flex-col w-full text-left gap-1'>
-                            <p className='text-left text-sm text-gray-300 font-semibold'>SHORTCUT</p>
-                            <p onClick={(e) => { setSelected({ ...selected, id: sound.id }); e.stopPropagation() }} style={{ outline: selected.id == sound.id ? "2px solid rgb(239 68 68)" : "", boxShadow: selected.id == sound.id ? "0px 0px 5px 3px rgb(239 68 68)" : "" }} className="flex w-full whitespace-nowrap overflow-hidden text-ellipsis items-center gap-1 rounded-sm bg-zinc-800 p-2 h-10">{sound.id == selected.id ? selected.keys.join("+") : sound.keybind} <button onClick={(e) => { e.stopPropagation(); setSelected({ ...selected, id: null }); updateSound(sound.id, findSoundCategory(sound.id)?.name!, { keybind: "" }); saveConfig() }} className="ml-auto p-1 rounded-md"><AiOutlineClose /></button></p>
+                            <p className='text-left text-sm text-gray-500 dark:text-gray-300 font-semibold'>SHORTCUT</p>
+                            <p onClick={(e) => { setSelected({ ...selected, id: sound.id }); e.stopPropagation() }} style={{ outline: selected.id == sound.id ? "2px solid rgb(239 68 68)" : "", boxShadow: selected.id == sound.id ? "0px 0px 5px 3px rgb(239 68 68)" : "" }} className="flex w-full whitespace-nowrap overflow-hidden text-ellipsis items-center gap-1 rounded-sm dark:bg-zinc-800 p-2 h-10 border-gray-200 border dark:border-none">{sound.id == selected.id ? selected.keys.join("+") : sound.keybind} <button onClick={(e) => { e.stopPropagation(); setSelected({ ...selected, id: null }); updateSound(sound.id, findSoundCategory(sound.id)?.name!, { keybind: "" }); saveConfig() }} className="ml-auto p-1 rounded-md"><AiOutlineClose /></button></p>
                         </div>
                     </li>
                 ))}
@@ -126,12 +126,12 @@ export default function Keybinds() {
 
                 <li id={"stop-sound"} className='flex items-center gap-10'>
                     <div className='flex flex-col w-full text-left gap-1'>
-                        <p className='text-left text-sm text-gray-300 font-semibold'>ACTION</p>
-                        <p className='w-full p-2 bg-stone-900 rounded-sm'>Stop sound</p>
+                        <p className='text-left text-sm text-gray-500 dark:text-gray-300 font-semibold'>ACTION</p>
+                        <p className='w-full p-2 bg-neutral-200 dark:bg-stone-900 rounded-sm'>Stop sound</p>
                     </div>
                     <div className='flex flex-col w-full text-left gap-1'>
-                        <p className='text-left text-sm text-gray-300 font-semibold'>SHORTCUT</p>
-                        <p onClick={(e) => { setSelected({ ...selected, id: "stop" }); e.stopPropagation() }} style={{ outline: selected.id == "stop" ? "2px solid rgb(239 68 68)" : "", boxShadow: selected.id == "stop" ? "0px 0px 5px 3px rgb(239 68 68)" : "" }} className="flex w-full whitespace-nowrap overflow-hidden text-ellipsis items-center gap-1 rounded-sm bg-zinc-800 p-2 h-10">{"stop" == selected.id ? selected.keys.join("+") : config?.stopKeybind} <button onClick={(e) => { e.stopPropagation(); setSelected({ ...selected, id: null }); updateConfig({ stopKeybind: "" }); saveConfig() }} className="ml-auto p-1 rounded-md"><AiOutlineClose /></button></p>
+                        <p className='text-left text-sm text-gray-500 dark:text-gray-300 font-semibold'>SHORTCUT</p>
+                        <p onClick={(e) => { setSelected({ ...selected, id: "stop" }); e.stopPropagation() }} style={{ outline: selected.id == "stop" ? "2px solid rgb(239 68 68)" : "", boxShadow: selected.id == "stop" ? "0px 0px 5px 3px rgb(239 68 68)" : "" }} className="flex w-full whitespace-nowrap overflow-hidden text-ellipsis items-center gap-1 rounded-sm dark:bg-zinc-800 p-2 h-10 border-gray-200 border dark:border-none">{"stop" == selected.id ? selected.keys.join("+") : config?.stopKeybind} <button onClick={(e) => { e.stopPropagation(); setSelected({ ...selected, id: null }); updateConfig({ stopKeybind: "" }); saveConfig() }} className="ml-auto p-1 rounded-md"><AiOutlineClose /></button></p>
                     </div>
                 </li>
             </ul>

@@ -44,11 +44,11 @@ export default function Category({ onExpandToggle, ...props }: CategoryData & { 
             {expanded && <ul className='mb-2 grid mx-2.5 mt-1 gap-2.5 grid-cols-150 list-none'>
                 {sounds.map((sound: SoundEntry) =>
                     <li key={sound.file} className='[&>*]:col-start-1 [&>*]:row-start-1 grid rounded-lg overflow-hidden group h-10' onContextMenu={(e) => { e.stopPropagation(); show({ id: SOUND_CONTEXT_MENU, event: e, props: { sound, category: { name, expanded, sounds } } }) }}>
-                        <div className='bg-main flex gap-1 items-center p-1 rounded-lg justify-center overflow-ellipsis overflow-hidden'>
+                        <div className='bg-neutral-100 dark:bg-main flex gap-1 items-center p-1 rounded-lg justify-center overflow-ellipsis overflow-hidden'>
                             <span className='text-xl'>{sound.emoji ?? "🎵"}</span>
                             <span className='font-medium line-clamp-2 break-words text-xs'>{sound.title}</span>
                         </div>
-                        <div className='bg-opacity-0 opacity-0 group-hover:bg-opacity-50 group-hover:opacity-100 bg-black w-full flex items-center justify-between px-1 transition-opacity'>
+                        <div className='bg-opacity-0 opacity-0 group-hover:bg-opacity-25 dark:group-hover:bg-opacity-50 group-hover:opacity-100 bg-black w-full flex items-center justify-between px-1 transition-opacity'>
                             <button className='border-none outline-none focus:outline-none bg-transparent rounded-full aspect-square p-0 [&>*]:text-xl' onClick={() => handleSoundPreview(sound)}>
                                 <IoVolumeMedium />
                             </button>
@@ -61,8 +61,8 @@ export default function Category({ onExpandToggle, ...props }: CategoryData & { 
                         </div>
                     </li>
                 )}
-                <li className='bg-main max-w-[200px] flex gap-1 items-center p-1 rounded-lg h-10 justify-center'>
-                    <button className='bg-stone-900 rounded-full aspect-square p-1 border-none outline-none focus:outline-none' onClick={(e) => {
+                <li className='bg-neutral-100 dark:bg-main max-w-[200px] flex gap-1 items-center p-1 rounded-lg h-10 justify-center'>
+                    <button className='bg-neutral-300 dark:bg-stone-900 rounded-full aspect-square p-1 border-none outline-none focus:outline-none' onClick={(e) => {
                         e.preventDefault()
 
                         if (e.shiftKey) return openInstantsModal({ category: name })

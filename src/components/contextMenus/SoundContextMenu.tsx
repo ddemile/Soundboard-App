@@ -2,6 +2,7 @@ import { Item, ItemParams, Menu, Separator, Submenu } from 'react-contexify';
 import { useConfirm } from '../../contexts/ConfirmContext.tsx';
 import useCategories from "../../hooks/useCategories.ts";
 import useModal from '../../hooks/useModal.ts';
+import useSystemTheme from '../../hooks/useSystemTheme.ts';
 import { CategoryData, SoundEntry } from "../../pages/Home.tsx";
 
 export default function SoundContextMenu() {
@@ -9,6 +10,7 @@ export default function SoundContextMenu() {
   const { moveSound } = useCategories();
   const { open } = useModal("config")
   const { confirm } = useConfirm()
+  const theme = useSystemTheme()
 
   const handleMove = ({ props }: ItemParams<{ sound: SoundEntry, category: CategoryData }>, newCategory: CategoryData) => {
     if (!props) return;
@@ -24,7 +26,7 @@ export default function SoundContextMenu() {
   }
 
   return (
-    <Menu id={SOUND_CONTEXT_MENU} theme='dark'>
+    <Menu id={SOUND_CONTEXT_MENU} theme={theme}>
       <Item onClick={({ props }) => open(props)}>
         Edit sound
       </Item>

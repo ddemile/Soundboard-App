@@ -130,16 +130,16 @@ export default function MyInstantModal() {
     }
 
     return (
-        <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} className='rounded-lg m-4 w-full h-auto p-0 bg-[#303031] justify-start overflow-y-auto' overlayClassName="flex justify-normal items-stretch">
+        <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} className='rounded-lg m-4 w-full h-auto p-0 bg-neutral-200 dark:bg-[#303031] justify-start overflow-y-auto' overlayClassName="flex justify-normal items-stretch">
             <div className='w-full flex flex-col gap-2.5 p-2'>
                 <form className='w-auto' onSubmit={(e) => {
                     e.preventDefault()
                     handleSearch()
                 }}>
-                    <input placeholder='Type the link of a sound' type="text" name="search" className="p-1 w-full rounded-sm border-2 border-[#3a3a3a]" value={query} onChange={(e) => setQuery(e.target.value)} />
+                    <input placeholder='Type the link of a sound' type="text" name="search" className="p-1 w-full rounded-sm border-2 border-neutral-300 dark:border-[#3a3a3a]" value={query} onChange={(e) => setQuery(e.target.value)} />
                 </form>
                 <ul className='w-full grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-2 gap-4'>
-                    {instants.map((instant: any, index: number) => instant && <li className='bg-[#232324] gap-2 p-3 rounded-md flex items-center' key={index}>
+                    {instants.map((instant: any, index: number) => instant && <li className='bg-neutral-300 dark:bg-[#232324] gap-2 p-3 rounded-md flex items-center' key={index}>
                         <audio id={instant.fileName.replaceAll(".", '')}></audio>
                         <span className='text-xl cursor-pointer' onClick={() => handlePlay(instant)}>{instant.playing ? <BsStopCircleFill /> : <BsPlayFill />}</span>
                         <div className='flex flex-col text-left whitespace-nowrap text-ellipsis overflow-hidden'>

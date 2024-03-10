@@ -24,13 +24,13 @@ export default function Navbar() {
                             </Link>
                         </li>
                         <li>
-                            <Link to="/" className={twMerge("block py-2 pl-3 pr-4 text-white rounded md:bg-transparent md:p-0 dark:text-white hover:text-orange-700 dark:hover:text-orange-500 transition-colors", window.location.pathname == "/" ? "md:text-orange-600 md:dark:text-orange-400" : "md:text-white")} aria-current="page">Home</Link>
+                            <Link to="/" className={twMerge("block py-2 pl-3 pr-4 text-black rounded md:bg-transparent md:p-0 dark:text-white hover:text-orange-700 dark:hover:text-orange-500 transition-colors", window.location.pathname == "/" ? "md:text-orange-600 md:dark:text-orange-400" : "md:text-black md:dark:text-white")} aria-current="page">Home</Link>
                         </li>
                         <li>
-                            <Link to="/discover" className={twMerge("block py-2 pl-3 pr-4 text-white rounded md:bg-transparent md:p-0 dark:text-white hover:text-orange-700 dark:hover:text-orange-500 transition-colors", window.location.pathname == "/discover" ? "md:text-orange-600 md:dark:text-orange-400" : "md:text-white")}>Discover</Link>
+                            <Link to="/discover" className={twMerge("block py-2 pl-3 pr-4 text-black rounded md:bg-transparent md:p-0 dark:text-white hover:text-orange-700 dark:hover:text-orange-500 transition-colors", window.location.pathname == "/discover" ? "md:text-orange-600 md:dark:text-orange-400" : "md:text-black md:dark:text-white")}>Discover</Link>
                         </li>
                         <li>
-                            <Link to="#" className={twMerge("block py-2 pl-3 pr-4 text-white rounded md:bg-transparent md:p-0 dark:text-white hover:text-orange-700 dark:hover:text-orange-500 transition-colors", window.location.pathname == "/trending" ? "md:text-orange-600 md:dark:text-orange-400" : "md:text-white")}>Trending</Link>
+                            <Link to="#" className={twMerge("block py-2 pl-3 pr-4 text-black rounded md:bg-transparent md:p-0 dark:text-white hover:text-orange-700 dark:hover:text-orange-500 transition-colors", window.location.pathname == "/trending" ? "md:text-orange-600 md:dark:text-orange-400" : "md:text-black md:dark:text-white")}>Trending</Link>
                         </li>
                     </ul>
                 </div>

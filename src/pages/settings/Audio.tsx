@@ -5,7 +5,7 @@ import Button from "../../components/modals/Button.tsx";
 import useAudioPlayer from "../../hooks/useAudioPlayer.ts";
 import useConfig from "../../hooks/useConfig.ts";
 
-const Separator = () => <li className="w-full h-px bg-zinc-600"></li>
+const Separator = () => <li className="w-full h-px bg-zinc-300 dark:bg-zinc-600"></li>
 
 export default function Audio() {
   const { globalSetVolume } = useAudioPlayer()
@@ -27,17 +27,17 @@ export default function Audio() {
       <ul className="w-full flex flex-col items-center gap-3 max-w-3xl">
         <li className="flex gap-2 w-full">
           <div className="text-left flex flex-col gap-1 w-full">
-            <label className="text-sm font-bold text-zinc-300">PREVIEW VOLUME</label>
+            <label className="text-sm font-bold text-gray-500 dark:text-gray-300">PREVIEW VOLUME</label>
             <input name="volume" onChange={(e) => setAudioConfig({ ...audioConfig, previewVolume: parseInt(e.target.value) })} value={audioConfig.previewVolume ?? 100} type="range" className=""></input>
           </div>
           <div className="text-left flex flex-col gap-1 w-full">
-            <label className="text-sm font-bold text-zinc-300">SOUNDS VOLUME</label>
+            <label className="text-sm font-bold text-gray-500 dark:text-gray-300">SOUNDS VOLUME</label>
             <input name="volume" onChange={(e) => setAudioConfig({ ...audioConfig, soundsVolume: parseInt(e.target.value) })} value={audioConfig.soundsVolume ?? 100} type="range" className=""></input>
           </div>
         </li>
         <Separator />
         <li className="flex w-full items-center flex-col">
-          <h2 className="text-sm font-bold text-zinc-300 text-left w-full">OTHER</h2>
+          <h2 className="text-sm font-bold text-gray-500 dark:text-gray-300 text-left w-full">OTHER</h2>
           <div className="flex w-full items-center justify-between">
             <span className="text-lg">Use the sounboard app sounds</span>
             <Checkbox checked={audioConfig.useSoundoardAppSounds || false} onChange={(e) => setAudioConfig({ ...audioConfig, useSoundoardAppSounds: e.target.checked })} />

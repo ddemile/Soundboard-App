@@ -24,7 +24,7 @@ export default function IconSelector({ onIconClick }: { onIconClick?: ({ name }:
     }
 
     return (
-        <div className="border-[1px] border-zinc-800 rounded flex w-96 h-auto min-h-[322px] overflow-hidden flex-col bg-[#303031]">
+        <div className="border-[1px] border-zinc-300 dark:border-zinc-800 rounded flex w-96 h-auto min-h-[322px] overflow-hidden flex-col bg-neutral-200 dark:bg-[#303031]">
             <input placeholder="Type something..." className="rounded p-0.5 m-1 outline-none" value={value} onChange={handleChange}></input>
             <AutoSizer>
                 {({ width, height }) => {
