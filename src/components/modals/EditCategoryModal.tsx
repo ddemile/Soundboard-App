@@ -5,6 +5,7 @@ import { IoCloseSharp } from "react-icons/io5"
 import { toast } from "sonner"
 import useCategories from "../../hooks/useCategories.ts"
 import useModal from "../../hooks/useModal.ts"
+import findChangedProperties from "../../utils/findChangedProperties.ts"
 import IconSelector from "../IconSelector.tsx"
 import Button from "./Button.tsx"
 import Modal from "./Modal.tsx"
@@ -18,7 +19,6 @@ export default function EditCategoryModal() {
     const selectorRef = useRef<ElementRef<"div">>(null)
 
     useLayoutEffect(() => {
-        console.log(initialProps)
         setProps(initialProps)
     }, [initialProps])
 
@@ -33,7 +33,7 @@ export default function EditCategoryModal() {
         const newCategory = props
 
         if (!isEqual(oldCategory, newCategory)) {
-            updateCategory(oldCategory.name, newCategory)
+            updateCategory(oldCategory.name, findChangedProperties(oldCategory, newCategory))
             close()
         } else {
             toast.error("Nothing has changed")

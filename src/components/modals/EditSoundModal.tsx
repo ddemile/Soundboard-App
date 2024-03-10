@@ -43,7 +43,6 @@ export default function EditSoundModal() {
             const newSound = props.sound
 
             if (!isEqual(oldSound, newSound)) {
-                
                 updateSound(oldSound.id, props.category.name, findChangedProperties(oldSound, newSound))
                 close()
             } else {

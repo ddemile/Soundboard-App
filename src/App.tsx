@@ -307,6 +307,26 @@ function App() {
         <SettingsModal />
         <MigrationModal />
         <div className='h-screen flex flex-col'>
+
+          {/* <div data-tauri-drag-region className="titlebar h-8 bg-[#1f2022] select-none flex justify-end top-0 left-0 right-0">
+            <div className="titlebar-button inline-flex justify-center items-center w-12 h-[30px] hover:bg-[#2b2d30]" id="titlebar-minimize">
+              <img
+                src="https://api.iconify.design/mdi:window-minimize.svg"
+                color='white'
+                alt="minimize"
+              />
+            </div>
+            <div className="titlebar-button inline-flex justify-center items-center w-12 h-[30px] hover:bg-[#2b2d30]" id="titlebar-maximize">
+              <img
+                src="https://api.iconify.design/mdi:window-maximize.svg"
+                alt="maximize"
+              />
+            </div>
+            <div className="titlebar-button inline-flex justify-center items-center w-12 h-[30px] hover:bg-[#2b2d30]" id="titlebar-close">
+              <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
+            </div>
+          </div> */}
+
           <RouterProvider router={router} />
         </div>
       </ConfirmContextProvider>
