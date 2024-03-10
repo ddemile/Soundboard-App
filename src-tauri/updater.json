@@ -1,6 +1,6 @@
 {
-    "version": "v1.1.3",
-    "notes": "(MINOR) Improved modal system + better icon selector",
+    "version": "v1.1.4",
+    "notes": "(MAJOR) Light theme support + soundboard-v3 protocol support",
     "pub_date": "2024-03-08T12:00:57.227Z",
     "platforms": {
         "darwin-x86_64": {
@@ -16,8 +16,8 @@
             "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-amd64.AppImage.tar.gz"
         },
         "windows-x86_64": {
-            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQYzZZRis0Q1I0WWM4MWtRY3FOY2ExL1Q4VExIS3c5VE1FYmdsdEFiOEJQek1lZjdobWVKUGl4Nm1VT2NKMkRoNnFXUjFoK1l5MlFmdmU0MmJzU1EvU0EwPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzA5ODk4OTQ2CWZpbGU6U291bmRib2FyZF8xLjEuM194NjRfZW4tVVMubXNpLnppcApFYS9HZE1aRUN1SkJUWjNzU3ZsZTFETzg3QkVLSDA0STZjZzk2eG13dENvTHkvK1p5cTNHSTFIRmluKzF3azJpa1RTU2RZWFNRSW94MGk5UmdGRXdDQT09Cg==",
-            "url": "https://github.com/ddemile/Soundboard-App/releases/download/1.1.3/Soundboard_1.1.3_x64.msi.zip"
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQYzhhZlhnckYxYnRsOEw4QTFKczlKUC9mVlJOZWdkTkhya1l1b2tOTE4ySzQ3MGk3dEt0Q2FaZWZJQzU0M2NwZlNzTUJjV1E5ck40bFZ3azNIcW4zQlEwPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzEwMDkyMDE2CWZpbGU6U291bmRib2FyZF8xLjEuNF94NjRfZW4tVVMubXNpLnppcApKSjNET0NxQWxSbkprTlM1NlBqd2gwN2RsSzJOVlVDakZkbTNZWit3VHpvbDltZVdSK0tlY2hBOTEwQXFoRFQ4QWRsZERjVjRsckNMemwzMW9kK1RCdz09Cg==",
+            "url": "https://github.com/ddemile/Soundboard-App/releases/download/1.1.4/Soundboard_1.1.4_x64.msi.zip"
         }
     }
 }
