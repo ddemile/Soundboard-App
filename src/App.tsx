@@ -298,7 +298,7 @@ function App() {
 
   const play = (sound: SoundEntry) => {
     websocket.emit("playSound", sound.id, {
-      volume: (sound.config?.volume / 100 ?? 1) * 0.75
+      volume: (sound.config?.volume / 100 || 1) * 0.75
     })
   }
 
