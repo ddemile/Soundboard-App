@@ -1,5 +1,9 @@
+import { useInfiniteQuery } from "@tanstack/react-query"
+import { basename } from "@tauri-apps/api/path"
+import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { BsDownload, BsPlayFill, BsStopCircleFill } from 'react-icons/bs'
+import { FaSpinner } from "react-icons/fa6"
 import { toast } from 'sonner'
 import useCategories from '../../hooks/useCategories.ts'
 import useConfig from '../../hooks/useConfig.ts'
@@ -8,38 +12,67 @@ import useModal from '../../hooks/useModal.ts'
 import useWebsocket from '../../hooks/useWebsocket.ts'
 import { SoundEntry } from '../../pages/Home.tsx'
 import downloadMyInstantSound from '../../utils/downloadMyInstantSound.ts'
-import fetchMyInstantSound from '../../utils/fetchMyInstantSound.ts'
-import fetchMyInstantSounds from '../../utils/fetchMyInstantSounds.ts'
 import Modal from './Modal.tsx'
 
+async function fetchPage(page: number, query: string) {
+    try {
+        const url = new URL(query!)
+        if (url.hostname == "www.myinstants.com") {
+            const { data: sound } = await axios.get(`https://ddemile.nano3.fr:4444/my-instants/instants/${await basename(url.pathname)}`)
+
+            toast.success("Loding 1 so")
+
+            return [sound]
+        } else {
+            toast.error("Invalid link provided")
+        }
+    } catch {
+        const url = new URL("https://ddemile.nano3.fr:4444/my-instants")
+
+        if (query) {
+            url.searchParams.set("search", query)
+        }
+
+        url.searchParams.set("page", page.toString())
+
+        const { data: instants } = await axios.get(url.toString())
+
+        return instants
+    }
+}
+
 export default function MyInstantModal() {
-    const [query, setQuery] = useState<string | undefined>("")
+    const [query, setQuery] = useState("")
+    const [savedQuery, setSavedQuery] = useState(query)
     const { categories } = useCategories()
     const { saveConfig } = useConfig()
     const log = useLog()
-    const [instants, setInstants] = useState<any>([])
     const { isOpen, setIsOpen, props } = useModal("my-instants")
     const { websocket } = useWebsocket()
+    const [instants, setInstants] = useState<any>([])
+
+
+    const {
+        fetchNextPage,
+        isFetching,
+        isFetchingNextPage,
+        data: apiInstants
+    } = useInfiniteQuery({
+        queryKey: ["instants", savedQuery],
+        queryFn: ({ pageParam }) => fetchPage(pageParam, query),
+        initialPageParam: 1,
+        getNextPageParam: (_lastPage, _allPages, lastPageParam) =>
+            lastPageParam + 1,
+        getPreviousPageParam: (_firstPage, _allPages, firstPageParam) =>
+            firstPageParam - 1,
+    })
 
     useEffect(() => {
-
-        fetchMyInstantSounds().then(instants => setInstants(instants))
-    }, [])
+        setInstants(apiInstants?.pages.reduce((accumulator, page) => [...accumulator, ...page], []) ?? [])
+    }, [apiInstants])
 
     const handleSearch = async () => {
-        try {
-            const url = new URL(query!)
-            if (url.hostname == "www.myinstants.com") {
-                const sound = await fetchMyInstantSound(query!)
-
-                setInstants([sound])
-            } else {
-                toast.error("Invalid link provided")
-            }
-        } catch {
-            const instants = await fetchMyInstantSounds(query)
-            setInstants(instants)
-        }
+        setSavedQuery(query)
     }
 
     const handleDownload = async (instant: any) => {
@@ -131,25 +164,38 @@ export default function MyInstantModal() {
 
     return (
         <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} className='rounded-lg m-4 w-full h-auto p-0 bg-neutral-200 dark:bg-[#303031] justify-start overflow-y-auto' overlayClassName="flex justify-normal items-stretch">
-            <div className='w-full flex flex-col gap-2.5 p-2'>
+            <div className='w-full h-full flex flex-col gap-2.5 p-2'>
                 <form className='w-auto' onSubmit={(e) => {
                     e.preventDefault()
                     handleSearch()
                 }}>
                     <input placeholder='Type the link of a sound' type="text" name="search" className="p-1 w-full rounded-sm border-2 border-neutral-300 dark:border-[#3a3a3a]" value={query} onChange={(e) => setQuery(e.target.value)} />
                 </form>
-                <ul className='w-full grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-2 gap-4'>
-                    {instants.map((instant: any, index: number) => instant && <li className='bg-neutral-300 dark:bg-[#232324] gap-2 p-3 rounded-md flex items-center' key={index}>
-                        <audio id={instant.fileName.replaceAll(".", '')}></audio>
-                        <span className='text-xl cursor-pointer' onClick={() => handlePlay(instant)}>{instant.playing ? <BsStopCircleFill /> : <BsPlayFill />}</span>
-                        <div className='flex flex-col text-left whitespace-nowrap text-ellipsis overflow-hidden'>
-                            <span className='whitespace-nowrap text-ellipsis overflow-hidden text-left font-semibold'>{instant.title}</span>
-                            <span className='whitespace-nowrap text-ellipsis overflow-hidden text-xs'>{instant.fileName}</span>
-                        </div>
-                        <span className='ml-auto text-xl cursor-pointer' onClick={() => handleDownload(instant)}><BsDownload /></span>
-                    </li>)}
-                </ul>
-            </div>
+                {isFetching && !isFetchingNextPage ? (
+                    <FaSpinner className="animate-spin m-auto mt-auto h-full" size={40} />
+                ) : (
+                    <>
+                        <ul className='w-full grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-2 gap-4'>
+                            {instants.map((instant: any, index: number) => instant && <li className='bg-neutral-300 dark:bg-[#232324] gap-2 p-3 rounded-md flex items-center' key={index}>
+                                <audio id={instant.fileName.replaceAll(".", '')}></audio>
+                                <span className='text-xl cursor-pointer' onClick={() => handlePlay(instant)}>{instant.playing ? <BsStopCircleFill /> : <BsPlayFill />}</span>
+                                <div className='flex flex-col text-left whitespace-nowrap text-ellipsis overflow-hidden'>
+                                    <span className='whitespace-nowrap text-ellipsis overflow-hidden text-left font-semibold'>{instant.title}</span>
+                                    <span className='whitespace-nowrap text-ellipsis overflow-hidden text-xs'>{instant.fileName}</span>
+                                </div>
+                                <span className='ml-auto text-xl cursor-pointer' onClick={() => handleDownload(instant)}><BsDownload /></span>
+                            </li>)}
+                        </ul>
+                        {isFetchingNextPage ? (
+                            <span className="mx-auto pb-1">
+                                <FaSpinner className="animate-spin" size={20} />
+                            </span>
+                        ): (
+                            <button className="focus:outline-none" onClick={() => fetchNextPage()}>Load more</button>
+                        )}
+                    </>
+                )}
+            </div >
         </Modal >
     )
 }

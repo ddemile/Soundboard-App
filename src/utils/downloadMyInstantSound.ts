@@ -1,16 +1,12 @@
-import axios, { AxiosProgressEvent, ResponseType } from "axios";
-
-function proxy(url: string, responseType: ResponseType = "text") {
-    return `https://ddemile.nano3.fr:4004?url=${url}&responseType=${responseType}`
-}
+import axios, { AxiosProgressEvent } from "axios";
 
 export default async function downloadMyInstantSound(instant: any, onProgress?: (progressEvent: AxiosProgressEvent) => void) {
-    const sound = await axios.get(proxy(instant.downloadUrl, "arraybuffer"), {
+    const { data: sound } = await axios.get(`https://ddemile.nano3.fr:4444/my-instants/download?downloadUrl=${encodeURIComponent(instant.downloadUrl)}`, {
         responseType: "arraybuffer",
         onDownloadProgress(progressEvent) {
             if (onProgress) onProgress(progressEvent)
-        },
+        }
     })
 
-    return sound.data
+    return sound
 }

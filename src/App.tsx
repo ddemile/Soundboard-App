@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { register, unregisterAll } from '@tauri-apps/api/globalShortcut';
 import { invoke } from '@tauri-apps/api/tauri';
 import {
@@ -63,6 +64,8 @@ const router = createBrowserRouter([
     </>
   }
 ]);
+
+const queryClient = new QueryClient()
 
 let migrationChecked = false;
 let dataDeleted = false;
@@ -300,37 +303,39 @@ function App() {
   }
 
   return (
-    <AppContext.Provider value={{ keybind, setKeybind, volume, setVolume, selectedSound, setSelectedSound, sounds, setSounds, play }}>
-      <ConfirmContextProvider>
-        <Toaster richColors />
-        <SoundContextMenu />
-        <SettingsModal />
-        <MigrationModal />
-        <div className='h-screen flex flex-col'>
+    <QueryClientProvider client={queryClient}>
+      <AppContext.Provider value={{ keybind, setKeybind, volume, setVolume, selectedSound, setSelectedSound, sounds, setSounds, play }}>
+        <ConfirmContextProvider>
+          <Toaster richColors />
+          <SoundContextMenu />
+          <SettingsModal />
+          <MigrationModal />
+          <div className='h-screen flex flex-col'>
 
-          {/* <div data-tauri-drag-region className="titlebar h-8 bg-[#1f2022] select-none flex justify-end top-0 left-0 right-0">
+            {/* <div data-tauri-drag-region className="titlebar h-8 bg-[#1f2022] select-none flex justify-end top-0 left-0 right-0">
             <div className="titlebar-button inline-flex justify-center items-center w-12 h-[30px] hover:bg-[#2b2d30]" id="titlebar-minimize">
-              <img
-                src="https://api.iconify.design/mdi:window-minimize.svg"
-                color='white'
-                alt="minimize"
-              />
+            <img
+            src="https://api.iconify.design/mdi:window-minimize.svg"
+            color='white'
+            alt="minimize"
+            />
             </div>
             <div className="titlebar-button inline-flex justify-center items-center w-12 h-[30px] hover:bg-[#2b2d30]" id="titlebar-maximize">
-              <img
-                src="https://api.iconify.design/mdi:window-maximize.svg"
-                alt="maximize"
-              />
+            <img
+            src="https://api.iconify.design/mdi:window-maximize.svg"
+            alt="maximize"
+            />
             </div>
             <div className="titlebar-button inline-flex justify-center items-center w-12 h-[30px] hover:bg-[#2b2d30]" id="titlebar-close">
-              <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
+            <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
             </div>
           </div> */}
 
-          <RouterProvider router={router} />
-        </div>
-      </ConfirmContextProvider>
-    </AppContext.Provider>
+            <RouterProvider router={router} />
+          </div>
+        </ConfirmContextProvider>
+      </AppContext.Provider>
+    </QueryClientProvider>
   )
 }
 
