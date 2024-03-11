@@ -164,16 +164,16 @@ export default function UploadModal() {
               <SmallModal.Label>SOUND NAME</SmallModal.Label>
               <input name="name" onChange={handleChange} value={sound?.data?.title ?? sound?.file?.name?.split(".")[0] ?? ""} className="bg-neutral-300 dark:bg-zinc-900 rounded-sm p-2"></input>
             </div>
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full overflow-hidden">
               <SmallModal.Label>EMOJI</SmallModal.Label>
               <p onClick={(e) => {
                 e.stopPropagation()
                 setEmojiSelectorProps({ open: true, x: e.pageX, y: e.pageY })
               }} className="bg-neutral-300 dark:bg-zinc-900 rounded-sm p-2 flex cursor-pointer">
                 <input className="w-0" />
-                <span className="flex gap-2">
+                <span className="flex gap-2 overflow-hidden">
                   <span>{sound?.data.emoji || "🎵"} </span>
-                  <span>:{sound?.data.emojiName || "musical_note"}:</span>
+                  <span className="overflow-hidden text-ellipsis line-clamp-1 break-all">:{sound?.data.emojiName || "musical_note"}:</span>
                 </span>
               </p>
             </div>

@@ -1,7 +1,7 @@
 import isEqual from "lodash.isequal";
 import { useState } from "react";
 import Checkbox from "../../components/Checkbox.tsx";
-import Button from "../../components/modals/Button.tsx";
+import { Button } from "../../components/modals/SmallModal.tsx";
 import useAudioPlayer from "../../hooks/useAudioPlayer.ts";
 import useConfig from "../../hooks/useConfig.ts";
 
@@ -46,10 +46,10 @@ export default function Audio() {
       </ul>
       {!isEqual(savedAudioConfig, audioConfig) && (
         <div className="absolute bottom-0 right-0 w-full flex justify-center">
-          <div className="px-4 py-3 bg-stone-900 m-2 flex items-center gap-1 rounded-md animate-pulse">
+          <div className="px-4 py-3 bg-stone-200 dark:bg-stone-900 m-2 flex items-center gap-1 rounded-md animate-pulse">
             <span>You have unsaved modifcations, save them!</span>
-            <Button type="discard" onClick={() => setAudioConfig(savedAudioConfig)}>Discard</Button>
-            <Button type="validate" onClick={handleSave}>Save</Button>
+            <Button variant="discard" onClick={() => setAudioConfig(savedAudioConfig)}>Discard</Button>
+            <Button variant="validate" onClick={handleSave}>Save</Button>
           </div>
         </div>
       )}
