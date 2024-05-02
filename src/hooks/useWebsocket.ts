@@ -7,6 +7,7 @@ interface WebsocketState {
 }
 
 export const socket = io(WEBSOCKET_URL, {
+  path: "/api/socket.io",
   auth: {
     token: getCookie("token")
   },

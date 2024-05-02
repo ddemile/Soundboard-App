@@ -11,6 +11,7 @@ import useLog from '../../hooks/useLog.ts'
 import useModal from '../../hooks/useModal.ts'
 import useWebsocket from '../../hooks/useWebsocket.ts'
 import { SoundEntry } from '../../pages/Home.tsx'
+import { BASE_API_URL } from "../../utils/constants.ts"
 import downloadMyInstantSound from '../../utils/downloadMyInstantSound.ts'
 import Modal from './Modal.tsx'
 
@@ -18,7 +19,7 @@ async function fetchPage(page: number, query: string) {
     try {
         const url = new URL(query!)
         if (url.hostname == "www.myinstants.com") {
-            const { data: sound } = await axios.get(`https://ddemile.nano3.fr:4444/my-instants/instants/${await basename(url.pathname)}`)
+            const { data: sound } = await axios.get(`${BASE_API_URL}/my-instants/instants/${await basename(url.pathname)}`)
 
             toast.success("Loding 1 so")
 
@@ -27,7 +28,7 @@ async function fetchPage(page: number, query: string) {
             toast.error("Invalid link provided")
         }
     } catch {
-        const url = new URL("https://ddemile.nano3.fr:4444/my-instants")
+        const url = new URL(`${BASE_API_URL}/my-instants`)
 
         if (query) {
             url.searchParams.set("search", query)
@@ -112,13 +113,12 @@ export default function MyInstantModal() {
         });
 
         for (const category of categories) {
-            if (category.sounds.some(sound => sound.file == fileName)) return toast.error(`${fileName} is already in the soundboard`)
+            if (category.sounds.some(sound => sound.title == fileName)) return toast.error(`${fileName} is already in the soundboard`)
         }
 
         if (data instanceof ArrayBuffer) {
             const sound = {
                 title,
-                file: fileName,
                 keybind: "",
                 config: { volume: 100 },
                 category: props.category

@@ -17,7 +17,6 @@ import useModal from '../hooks/useModal.ts';
 export type SoundEntry = {
   id: string,
   title: string,
-  file: `${string}.${string}`,
   keybind: string,
   config: {
     volume: number

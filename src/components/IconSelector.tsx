@@ -6,15 +6,10 @@ import { Grid } from "react-virtualized/dist/es/Grid";
 export default function IconSelector({ onIconClick }: { onIconClick?: ({ name }: { name: string }) => void }) {
     const [value, setValue] = useState("")
     const [icons] = useState(Object.entries(bsIcons))
-    const filteredIcons = useMemo(() => icons.filter(([name, Icon]) => {
-        //if no input the return the original
-        if (value === '') {
-            return [name, Icon];
-        }
-        //return the item which contains the user input
-        else {
-            return name.toLowerCase().includes(value.toLowerCase())
-        }
+    const filteredIcons = useMemo(() => icons.filter(([name]) => {
+        if (value === '') return true;
+
+        return name.toLowerCase().includes(value.toLowerCase())
     }), [value])
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

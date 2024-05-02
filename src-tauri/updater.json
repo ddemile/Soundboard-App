@@ -1,7 +1,7 @@
 {
-    "version": "v1.1.5",
-    "notes": "(MAJOR) Light theme support + soundboard-v3 protocol support",
-    "pub_date": "2024-03-08T12:00:57.227Z",
+    "version": "v1.2.0",
+    "notes": "(BREAKING) New api support",
+    "pub_date": "2024-05-02T14:38:52.939Z",
     "platforms": {
         "darwin-x86_64": {
             "signature": "Content of app.tar.gz.sig",
@@ -16,8 +16,8 @@
             "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-amd64.AppImage.tar.gz"
         },
         "windows-x86_64": {
-            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQYzI5M0piVTNpOEJlRzdUbzk0SEJ0S2hPTHF5bFgxcFVRZjArM3VOTWt2dUN5Z3BpZS91ellTc09ZTFNoUUE4TjZEK0x5d0ZOaGw5T090Wk04aHdyY1EwPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzEwMTYyMTc3CWZpbGU6U291bmRib2FyZF8xLjEuNV94NjRfZW4tVVMubXNpLnppcApEd2krS1ZXblIzUmorZE92elZUb2RkYVJGZkJTUkpRcUcrOG50QmRISElHRjNmY0dGTG5WdytwME5wRSthOEN6ZlpKMkRXZ1ZleXM0WGxGMXVpU1dDQT09Cg==",
-            "url": "https://github.com/ddemile/Soundboard-App/releases/download/1.1.5/Soundboard_1.1.5_x64.msi.zip"
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQYzdqSnJIV3h2cTRadFhBOGtRT0kvbE55OXNmMlpjVWZiSUNTaTJqc1gyQjZPcnpjS21BeElEenBuMVg5L2ExWWxPbVgxeWNzOExtVXNHVm5sSUdRU1FzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzE0NjYwNjk3CWZpbGU6U291bmRib2FyZF8xLjIuMF94NjRfZW4tVVMubXNpLnppcAp1QnNoUmQxYXl5Z1pIOS8zSFFTeTVjRFh4WUdIMkpIYnhkZ0dvNVl6K3gwRFlGVzFGWkEvSms1cW5yNFhkUmNHQjdsSEttR3A4Y2VKRVl4ZnNTM0dEdz09Cg==",
+            "url": "https://github.com/ddemile/Soundboard-App/releases/download/1.2.0/Soundboard_1.2.0_x64.msi.zip"
         }
     }
 }

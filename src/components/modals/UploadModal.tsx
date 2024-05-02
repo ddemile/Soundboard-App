@@ -11,6 +11,11 @@ import { SoundEntry } from "../../pages/Home.tsx"
 import Modal from "./Modal.tsx"
 import { SmallModal } from "./SmallModal.tsx"
 
+interface SoundPrimitive extends Omit<SoundEntry, "id"> {
+  id?: string;
+  file: string
+}
+
 export default function UploadModal() {
   const { isOpen, setIsOpen, props, setProps, close } = useModal("upload")
   const [sounds, setSounds] = useState<{ file: File, data: Partial<SoundEntry> }[]>(props.files ? props.files.map((file: File) => ({ file, data: {} })) : [])
@@ -57,7 +62,7 @@ export default function UploadModal() {
           const { file, data } = sound;
 
           for (const category of categories) {
-            if (category.sounds.some(sound => sound.file == file.name)) return toast.error(`${file.name} is already in the soundboard`)
+            if (category.sounds.some(sound => sound.title == file.name)) return toast.error(`${file.name} is already in the soundboard`)
           }
 
           const uploadPromise: Promise<SoundEntry> = new Promise(async (resolve, reject) => {
@@ -65,14 +70,16 @@ export default function UploadModal() {
             if (content instanceof ArrayBuffer) {  
               const sound = {
                 title: file.name.split(".")[0],
-                file: file.name as `${string}.${string}`,
+                file: file.name,
                 keybind: "",
                 config: { volume: 100 },
                 category: props.category ?? "Default",
                 ...data
-              } satisfies Omit<SoundEntry, "id"> & { id?: string }
+              } satisfies SoundPrimitive
 
-              await websocket.emitWithAck("uploadSound", sound, content)
+              const { error, message } = await websocket.emitWithAck("uploadSound", sound, content)
+
+              if (error) return reject(message)
 
               log(`${sound.title} uploaded`)
               saveConfig()
@@ -85,12 +92,12 @@ export default function UploadModal() {
           const soundName = file.name.split(".")[0]
 
           toast.promise(uploadPromise, {
-            error: `Cannot upload ${soundName}`,
+            error: (error) => error,
             loading: `Uploading ${soundName}`,
             success: `${soundName} uploaded`
           })
-
-          await uploadPromise;
+          
+          await uploadPromise.catch(() => {});
         }
       }
       if (sounds.length > 1) {

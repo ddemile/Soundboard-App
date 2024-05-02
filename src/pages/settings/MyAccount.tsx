@@ -1,5 +1,6 @@
 import { useCookies } from "react-cookie";
 import useWebsocket from "../../hooks/useWebsocket.ts";
+import { BASE_API_URL } from "../../utils/constants.ts";
 
 export default function MyAccount() {
   const [cookies, _setCookie, removeCookie] = useCookies()
@@ -21,7 +22,7 @@ export default function MyAccount() {
         <div className="w-full flex flex-col items-center gap-2">
           <h1 className="text-4xl">You're not logged in, maybe you should to unlock powerful features!</h1>
           <h2>Here is a powerful button</h2>
-          <button className="bg-blue-500 shrink w-min p-2 rounded-md px-4" onClick={() => window.open(`https://ddemile.nano3.fr:4444/login?token=${cookies.token}`, "PopupWindow")}>Login!</button>
+          <button className="bg-blue-500 shrink w-min p-2 rounded-md px-4" onClick={() => window.open(`${BASE_API_URL}/login?token=${cookies.token}`, "PopupWindow")}>Login!</button>
         </div>
       }
     </>
