@@ -1,5 +1,5 @@
-import { BaseDirectory, createDir, exists, writeFile } from "@tauri-apps/api/fs";
 import { appConfigDir } from "@tauri-apps/api/path";
+import { BaseDirectory, exists, mkdir, writeFile } from "@tauri-apps/plugin-fs";
 import { create } from "zustand";
 import { CategoryData } from "../pages/Home.tsx";
 import useLog from "./useLog.ts";
@@ -63,15 +63,17 @@ export default create<ConfigStore>()((set, get) => ({
 async function save(config: object) {
     const log = useLog()
 
-    if (!(await exists("config.json", { dir: BaseDirectory.AppConfig }))) {
-        if (!(await exists(await appConfigDir()))) await createDir(await appConfigDir());
+    let encoder = new TextEncoder();
 
-        await writeFile("config.json", "{}", { dir: BaseDirectory.AppConfig })
+    if (!(await exists("config.json", { baseDir: BaseDirectory.AppConfig }))) {
+        if (!(await exists(await appConfigDir()))) await mkdir(await appConfigDir());
+
+        await writeFile("config.json", encoder.encode("{}"), { baseDir: BaseDirectory.AppConfig })
 
         log("Config updated")
     }
 
-    await writeFile("config.json", JSON.stringify(config, null, 4), { dir: BaseDirectory.AppConfig })
+    await writeFile("config.json", encoder.encode(JSON.stringify(config, null, 4)), { baseDir: BaseDirectory.AppConfig })
 
     log("Config updated")
 }

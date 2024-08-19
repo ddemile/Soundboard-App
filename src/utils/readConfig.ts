@@ -1,16 +1,17 @@
-import { BaseDirectory, createDir, exists, readTextFile, writeFile } from "@tauri-apps/api/fs";
 import { appConfigDir } from "@tauri-apps/api/path";
+import { BaseDirectory, exists, mkdir, readTextFile, writeFile } from "@tauri-apps/plugin-fs";
 
 export default async function fetchConfig() {
-    if (!(await exists("config.json", { dir: BaseDirectory.AppConfig }))) {
-        if (!(await exists(await appConfigDir()))) await createDir(await appConfigDir());
+    if (!(await exists("config.json", { baseDir: BaseDirectory.AppConfig }))) {
+        if (!(await exists(await appConfigDir()))) await mkdir(await appConfigDir());
 
-        await writeFile("config.json", "{}", { dir: BaseDirectory.AppConfig })
+        let encoder = new TextEncoder();
+        await writeFile("config.json", encoder.encode("{}"), { baseDir: BaseDirectory.AppConfig })
     }
 
     try {
         return JSON.parse(await readTextFile("config.json", {
-            dir: BaseDirectory.AppConfig
+            baseDir: BaseDirectory.AppConfig
         }))
     } catch (e) {
         console.log(e)
