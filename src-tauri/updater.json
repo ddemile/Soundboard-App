@@ -16,7 +16,7 @@
             "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-amd64.AppImage.tar.gz"
         },
         "windows-x86_64": {
-            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQYzZmUDJNbjQ3ZXV0dkFNS2grZU9oSkRURW1VZDFsSUJmRFA2WEhBdDg2V1hXbXlza1BFOVY2Mmk0SWFDZ1ZyMzBHVE5oSGFZbk5rakl1aEN6QWxLa1EwPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzI0MDU2NzEyCWZpbGU6U291bmRib2FyZF8xLjMuMF94NjRfZW4tVVMubXNpClBUT2hvZEhIblUwaUo2MVhNcnBhUEFVWU9Zc3ZyMEEyaWl2WjM1enRoWmIvaE9CMUpxZXpsQXR3UHQwVGU0OFlXR05pRlhxdldrZ3NYWTBZbGVzNERRPT0K",
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQY3dHUUM5QnljSUFBcnZjQjdHdlczV0lDaWVHb3FXRkpxUUJXUzR2a2NDS3VGQlJ5SDBlWHNOUS90b2U3MUozbkRlZnFRTERZRUpCQjdiN3NkQ0tpeWdrPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzI0MDU3OTgxCWZpbGU6U291bmRib2FyZF8xLjMuMF94NjRfZW4tVVMubXNpLnppcAprMEl4UUdmNCtnNkZ3bjh2UmZrSWJ1eWN4VWtVTzRXY2YyZ0ZzYTJ4YnVpM1laRXNzUlAwUHJ0WEJlbXpFNmVjbnZmam9tZDE3eWsrVmJnVUgzSDZBZz09Cg==",
             "url": "https://github.com/ddemile/Soundboard-App/releases/download/1.3.0/Soundboard_1.3.0_x64.msi.zip"
         }
     }
