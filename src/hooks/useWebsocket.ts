@@ -7,7 +7,8 @@ interface WebsocketState {
   data: {
     webInterfaceCode: string,
     soundSizeLimit: number
-  } | null
+  } | null,
+  connected: boolean
 }
 
 const url = new URL(WEBSOCKET_URL)
@@ -23,10 +24,19 @@ export const socket = io(url.origin, {
 
 const store = create<WebsocketState>()(() => ({
   websocket: socket,
-  data: null
+  data: null,
+  connected: true
 }))
 
 export default store
+
+socket.io.on("open", () => {
+  store.setState({ connected: true })
+})
+
+socket.io.on("close", () => {
+  store.setState({ connected: false })
+})
 
 socket.on("init", (data) => {
   const state = store.getState()

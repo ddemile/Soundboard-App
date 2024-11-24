@@ -1,12 +1,14 @@
-import { ChangeEvent, ElementRef, useRef, useState } from "react"
+import { ChangeEvent, ElementRef, FormEventHandler, MouseEventHandler, useRef, useState } from "react"
 import * as icons from "react-icons/bs"
-import { IoCloseSharp } from "react-icons/io5"
 import useCategories from "../../hooks/useCategories.ts"
 import useModal from "../../hooks/useModal.ts"
 import { CategoryData } from "../../pages/Home.tsx"
 import IconSelector from "../IconSelector.tsx"
+import { Button } from "../ui/button.tsx"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card.tsx"
+import { Input } from "../ui/input.tsx"
+import { Label } from "../ui/label.tsx"
 import Modal from "./Modal.tsx"
-import { SmallModal } from "./SmallModal.tsx"
 
 export default function NewCategoryModal() {
     const { isOpen, setIsOpen, close } = useModal("new-category")
@@ -22,7 +24,9 @@ export default function NewCategoryModal() {
         setCategory({ ...category, [name]: value })
     }
 
-    const handleCreate = () => {
+    const handleCreate: FormEventHandler<HTMLFormElement> = (e) => {
+        e.preventDefault()
+
         createCategory(category)
         setCategory({ ...category, name: "" })
         close()
@@ -48,51 +52,45 @@ export default function NewCategoryModal() {
             y: y - iconSelector.height
         }
     }
-    
-    return <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} onAfterClose={() => setCategory({ name: "", expanded: false, sounds: [], icon: "BsSoundwave" })}>
+
+    const handleShowSelector: MouseEventHandler<HTMLButtonElement> = (e) => {
+        const pos = calculateSelectorPos({ x: e.pageX, y: e.pageY })
+                            
+        setIconSelectorProps({ ...pos, open: true })
+    }
+
+    return <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)}>
         {iconSelectorProps.open && (
             <div ref={selectorRef} className="absolute z-30" style={{ top: iconSelectorProps.y, left: iconSelectorProps.x }}>
                 <IconSelector onIconClick={({ name }) => { setCategory({ ...category, icon: name } as any); setIconSelectorProps({ ...iconSelectorProps, open: false}) }} />
             </div>
         )}
 
-        <SmallModal.Container onClick={() => setIconSelectorProps({ ...iconSelectorProps, open: false })}>
-            <SmallModal.Content>
-                <button onClick={() => setIsOpen(false)} className="absolute right-0 top-0 m-2 border-none outline-none focus:outline-none p-0 bg-transparent text-2xl text-stone-500 hover:text-stone-400 transition-colors">
-                    <IoCloseSharp />
-                </button>
-                <SmallModal.Title>New category</SmallModal.Title>
-                <ul className="flex gap-2 flex-col">
-                    <li className="text-left flex gap-1 mt-8">
-                        <div className="flex flex-col w-full">
-                            <SmallModal.Label>CATEGORY NAME</SmallModal.Label>
-                            <input name="name" onChange={handleChange} value={category.name} className="bg-zinc-300 dark:bg-zinc-900 rounded-sm p-2"></input>
+        <form onSubmit={handleCreate}>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Create category</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid w-full items-center gap-4">
+                        <div className="flex flex-col space-y-1.5">
+                            <Label htmlFor="name">Category name</Label>
+                            <Input id="name" name="name" value={category.name} onChange={handleChange} placeholder="Name of your project" />
                         </div>
-                        <div className="flex flex-col w-full overflow-hidden">
-                            <SmallModal.Label>EMOJI</SmallModal.Label>
-                            <p onClick={(e) => {
-                                e.stopPropagation()
-
-                                const pos = calculateSelectorPos({ x: e.pageX, y: e.pageY })
-                            
-                                setIconSelectorProps({ ...pos, open: true })
-                        
-                            }} className="bg-zinc-300 dark:bg-zinc-900 rounded-sm p-2 flex cursor-pointer">
-                                <input className="w-0" />
-                                <span className="flex gap-2 overflow-hidden">
-                                    <span className="flex justify-center items-center"><Icon /></span>
-                                    <span className="overflow-hidden text-ellipsis">:{category.icon as string || "BsSoundwave"}:</span>
-                                </span>
-                            </p>
+                        <div className="flex flex-col space-y-1.5">
+                            <Label>Emoji</Label>
+                            <Button id="emoji" type="button" variant="outline" onClick={handleShowSelector}>
+                                <span className="flex justify-center items-center"><Icon /></span>
+                                <span className="overflow-hidden text-ellipsis">:{category.icon as string || "BsSoundwave"}:</span>
+                            </Button>
                         </div>
-                    </li>
-                </ul>
-            </SmallModal.Content>
-            <SmallModal.Footer>
-                <SmallModal.Button onClick={close} variant="discard">Discard</SmallModal.Button>
-                <SmallModal.Button onClick={handleCreate} disabled={categories.some(({ name }) => category.name == name) || !category.name.trim()} variant="validate">Create</SmallModal.Button>
-            </SmallModal.Footer>
-        </SmallModal.Container>
-
-    </Modal >
+                    </div>
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                    <Button type="button" variant="outline" onClick={close}>Cancel</Button>
+                    <Button type="submit" disabled={categories.some(({ name }) => category.name == name) || !category.name.trim()}>Create</Button>
+                </CardFooter>
+            </Card>
+        </form>
+    </Modal>
 }

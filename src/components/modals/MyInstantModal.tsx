@@ -191,7 +191,7 @@ export default function MyInstantModal() {
                                 <FaSpinner className="animate-spin" size={20} />
                             </span>
                         ): (
-                            <button className="focus:outline-none" onClick={() => fetchNextPage()}>Load more</button>
+                            <button className="focus:outline-hidden" onClick={() => fetchNextPage()}>Load more</button>
                         )}
                     </>
                 )}

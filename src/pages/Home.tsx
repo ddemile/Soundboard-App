@@ -1,3 +1,4 @@
+import PlaceholderCategory from "@/components/PlaceholderCategory.tsx";
 import { useCallback } from "react";
 import { useCookies } from "react-cookie";
 import Dropzone from "react-dropzone";
@@ -7,11 +8,11 @@ import { Navigate } from "react-router-dom";
 import Category from "../components/Category.tsx";
 import CategoryContextMenu from "../components/contextMenus/CategoryContextMenu.tsx";
 import HomeContextMenu from "../components/contextMenus/HomeContextMenu.tsx";
+import EditCategoryModal from "../components/modals/EditCategoryModal.tsx";
+import EditSoundModal from "../components/modals/EditSoundModal.tsx";
 import MyInstantModal from "../components/modals/MyInstantModal.tsx";
+import NewCategoryModal from "../components/modals/NewCategoryModal.tsx";
 import UploadModal from "../components/modals/UploadModal.tsx";
-import EditCategoryModal from "../components/shad_modals/EditCategoryModal.tsx";
-import EditSoundModal from "../components/shad_modals/EditSoundModal.tsx";
-import NewCategoryModal from "../components/shad_modals/NewCategoryModal.tsx";
 import useCategories from "../hooks/useCategories.ts";
 import useModal from "../hooks/useModal.ts";
 
@@ -55,7 +56,7 @@ function Home() {
         {({ getRootProps, getInputProps }) => (
           <main
             {...getRootProps()}
-            className="h-full focus:outline-transparent outline-none"
+            className="h-full focus:outline-transparent outline-hidden"
             tabIndex={-1}
           >
             <input {...getInputProps()} />
@@ -76,6 +77,12 @@ function Home() {
                 }}
               />
             ))}
+            {categories.length == 0 && (
+              <>
+                <PlaceholderCategory name="Favorite" icon="BsStarFill" items={3} />
+                <PlaceholderCategory name="Default" icon="BsSoundwave" items={15} />
+              </>
+            )}
             {/* <button className='flex items-center justify-center m-auto w-12 aspect-square rounded-full bg-stone-900 [&>*>svg]:text-[25px]' onClick={() => websocket.emit("stopSound")}><span><BsStopFill /></span></button> */}
           </main>
         )}

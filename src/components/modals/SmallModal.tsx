@@ -49,7 +49,7 @@ export function Label({ children, className, ...props }: DetailedHTMLProps<HTMLA
 SmallModal.Label = Label
 
 const buttonVariants = {
-    discard: "p-1 rounded-sm bg-transparent focus:outline-none border-none hover:underline",
+    discard: "p-1 rounded-sm bg-transparent focus:outline-hidden border-none hover:underline",
     validate: "disabled:bg-blue-500 dark:disabled:bg-blue-900 text-white disabled:text-zinc-300 dark:disabled:text-zinc-400 disabled:cursor-not-allowed rounded-md bg-blue-400 hover:bg-blue-500 transition-colors duration-300 p-1 px-4",
     danger: "text-white disabled:text-zinc-400 disabled:cursor-not-allowed rounded-md bg-red-500 dark:bg-red-800 hover:bg-red-600 dark:hover:bg-red-900 transition-colors duration-300 p-1 px-4"
 }

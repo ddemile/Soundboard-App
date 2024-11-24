@@ -15,6 +15,7 @@ import {
 import { toast, Toaster } from 'sonner';
 import './App.css';
 import Navbar from './components/Navbar.tsx';
+import Spinner from './components/Spinner.tsx';
 import SoundContextMenu from './components/contextMenus/SoundContextMenu.tsx';
 import GenerateCodeModal from './components/modals/GenerateCodeModal.tsx';
 import ImageViewerModal from './components/modals/ImageViewerModal.tsx';
@@ -108,7 +109,7 @@ let appReady = false;
 let initialized = false;
 
 function App() {
-  const { websocket } = useWebsocket()
+  const { websocket, connected } = useWebsocket()
   const { config } = useConfig()
   const [sounds, setSounds] = useState<SoundEntry[]>([])
   const [keybind, setKeybind] = useState<string>()
@@ -269,6 +270,17 @@ function App() {
               <div className='h-screen flex flex-col'>
                 <RouterProvider router={router} />
               </div>
+              {!connected && (
+                <div className='absolute top-0 left-0 w-screen h-screen flex items-center justify-center bg-white dark:bg-[#181818]'>
+                  <div className='flex flex-col items-center'>
+                    <Spinner />                
+                    <div className='flex items-center gap-2 mt-2 text-xl'>
+                      <p>Connecting to server...</p>
+                    </div>
+                    <p className='text-lg text-gray-500 dark:text-gray-400'>Please wait while we connect to the server</p>
+                  </div>
+                </div>
+              )}
             </div>
           </ConfirmContextProvider>
         </AppContext.Provider>

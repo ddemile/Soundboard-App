@@ -67,7 +67,7 @@ export default function Landing() {
                 <div className="flex items-center justify-center flex-col gap-5 w-full">
                     <span className="flex flex-col lg:flex-row items-center">
                         <h1 className="text-7xl inline font-semibold whitespace-nowrap">Welcome to the&nbsp;</h1>
-                        <h1 className="tracking-tight text-transparent text-7xl inline font-semibold bg-gradient-to-r bg-clip-text from-orange-400 to-orange-600">Soundboard</h1>
+                        <h1 className="tracking-tight text-transparent text-7xl inline font-semibold bg-linear-to-r bg-clip-text from-orange-400 to-orange-600">Soundboard</h1>
                     </span>
                     <div className="flex">
                         <h2 className="text-4xl">Before you get started let's log to&nbsp;</h2>

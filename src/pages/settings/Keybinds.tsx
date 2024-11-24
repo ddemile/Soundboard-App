@@ -122,7 +122,7 @@ export default function Keybinds() {
                     </li>
                 ))}
 
-                <div className='border-b-2 w-full border-opacity-20 border-white'></div>
+                <div className='border-b-2 w-full border-white/20'></div>
 
                 <li id={"stop-sound"} className='flex items-center gap-10'>
                     <div className='flex flex-col w-full text-left gap-1'>

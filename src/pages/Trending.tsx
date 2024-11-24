@@ -7,7 +7,7 @@
 
 // function RoundedButton({ icon: Icon, onClick }: { icon: IconType, onClick?: () => void }) {
 //   return (
-//     <button className="focus:outline-none" onClick={onClick}>
+//     <button className="focus:outline-hidden" onClick={onClick}>
 //       <Icon className="rounded-full bg-zinc-800 p-1" size={30} />
 //     </button>
 //   )

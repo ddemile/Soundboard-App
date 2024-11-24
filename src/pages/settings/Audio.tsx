@@ -1,7 +1,7 @@
 import { Slider } from "@/components/ui/slider.tsx";
+import { Switch } from "@/components/ui/switch.tsx";
 import isEqual from "lodash.isequal";
 import { useState } from "react";
-import Checkbox from "../../components/Checkbox.tsx";
 import { Button } from "../../components/modals/SmallModal.tsx";
 import useAudioPlayer from "../../hooks/useAudioPlayer.ts";
 import useConfig from "../../hooks/useConfig.ts";
@@ -42,7 +42,7 @@ export default function Audio() {
           <h2 className="text-sm font-bold text-gray-500 dark:text-gray-300 text-left w-full">OTHER</h2>
           <div className="flex w-full items-center justify-between">
             <span className="text-lg">Use the soundboard app sounds</span>
-            <Checkbox checked={audioConfig.useSoundoardAppSounds || false} onChange={(e) => setAudioConfig({ ...audioConfig, useSoundoardAppSounds: e.target.checked })} />
+            <Switch checked={audioConfig.useSoundoardAppSounds || false} onCheckedChange={(checked) => setAudioConfig({ ...audioConfig, useSoundoardAppSounds: checked })} />
           </div>
         </li>
       </ul>

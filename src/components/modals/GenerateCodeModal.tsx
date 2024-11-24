@@ -67,7 +67,7 @@ export default function GenerateCodeModal() {
       closeTimeoutMS={200}
       onRequestClose={() => setIsOpen(false)}
       className="flex justify-center flex-col outline-non"
-      overlayClassName="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-30 flex justify-center items-center"
+      overlayClassName="fixed inset-0 bg-black/50 dark:bg-black/30 flex justify-center items-center"
       onAfterClose={() => {
         if (shouldClear) {
           setLabel("");

@@ -1,15 +1,17 @@
 import { Slider } from "@/components/ui/slider.tsx";
 import EmojiPicker, { EmojiStyle, Theme } from "emoji-picker-react";
 import isEqual from "lodash.isequal";
-import { ChangeEvent, ElementRef, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { IoCloseSharp } from "react-icons/io5";
+import { ChangeEvent, ElementRef, FormEventHandler, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import useCategories from "../../hooks/useCategories.ts";
 import useLog from "../../hooks/useLog.ts";
 import useModal from "../../hooks/useModal.ts";
 import findChangedProperties from "../../utils/findChangedProperties.ts";
+import { Button } from "../ui/button.tsx";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card.tsx";
+import { Input } from "../ui/input.tsx";
+import { Label } from "../ui/label.tsx";
 import Modal from "./Modal.tsx";
-import { SmallModal } from "./SmallModal.tsx";
 
 export default function EditSoundModal() {
     const nameRef = useRef<ElementRef<"h3">>(null)
@@ -30,15 +32,17 @@ export default function EditSoundModal() {
     }, [open])
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
+        const { id, value } = e.target
 
-        log(`${name}: ${value}`)
+        log(`${id}: ${value}`)
 
-        if (name == "title") setProps({ ...props, sound: { ...props.sound, title: value } })
-        if (name == "volume") setProps({ ...props, sound: { ...props.sound, config: { ...(props.sound.config ?? {}), volume: value } } })
+        if (id == "title") setProps({ ...props, sound: { ...props.sound, title: value } })
+        if (id == "volume") setProps({ ...props, sound: { ...props.sound, config: { ...(props.sound.config ?? {}), volume: value } } })
     }
 
-    const handleSave = async () => {
+    const handleSave: FormEventHandler<HTMLFormElement> = async (e) => {
+        e.preventDefault()
+
         if (props.sound.title) {
             const oldSound = initialProps.sound
             const newSound = props.sound
@@ -61,42 +65,35 @@ export default function EditSoundModal() {
                 }} />
             }
         </div>
-        <SmallModal.Container onClick={() => setEmojiSelectorProps({ ...emojiSelectorProps, open: false })}>
-            <SmallModal.Content>
-                <button onClick={() => setIsOpen(false)} className="absolute right-0 top-0 m-2 border-none outline-none focus:outline-none p-0 bg-transparent text-2xl text-stone-500 hover:text-stone-400 transition-colors">
-                    <IoCloseSharp />
-                </button>
-                <SmallModal.Title>Edit sound</SmallModal.Title>
-                <ul className="flex gap-2 flex-col">
-                    <li className="text-left flex gap-4 mt-8">
-                        <div className="flex flex-col w-full">
-                            <SmallModal.Label>SOUND NAME</SmallModal.Label>
-                            <input name="title" onChange={handleChange} value={props.sound?.title} className="bg-zinc-300 dark:bg-zinc-900 rounded-sm p-2"></input>
+        <form onSubmit={handleSave}>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Edit sound</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid w-full items-center gap-4">
+                        <div className="flex flex-col space-y-1.5">
+                            <Label htmlFor="title">Title</Label>
+                            <Input id="title" value={props.sound?.title} onChange={handleChange} placeholder="Name of your project" />
                         </div>
-                        <div className="flex flex-col w-full overflow-hidden">
-                            <SmallModal.Label>EMOJI</SmallModal.Label>
-                            <p onClick={(e) => {
-                                e.stopPropagation()
-                                setEmojiSelectorProps({ open: true, x: e.pageX, y: e.pageY })
-                            }} className="bg-zinc-300 dark:bg-zinc-900 rounded-sm p-2 flex cursor-pointer">
-                                <input className="w-0" />
-                                <span className="flex gap-2 overflow-hidden">
-                                    <span>{props.sound?.emoji || "🎵"} </span>
-                                    <span className="overflow-hidden text-ellipsis">:{props.sound?.emojiName || "musical_note"}:</span>
-                                </span>
-                            </p>
+                        <div className="flex flex-col space-y-1.5">
+                            <Label>Emoji</Label>
+                            <Button id="emoji" type="button" variant="outline" onClick={(e) => setEmojiSelectorProps({ open: true, x: e.pageX, y: e.pageY })}>
+                                <span>{props.sound?.emoji || "🎵"} </span>
+                                <span className="overflow-hidden text-ellipsis">:{props.sound?.emojiName || "musical_note"}:</span>
+                            </Button>
                         </div>
-                    </li>
-                    <li className="text-left flex flex-col gap-1">
-                        <SmallModal.Label>SOUND VOLUME</SmallModal.Label>
-                        <Slider className="my-2" max={100} step={1} value={[props.sound?.config?.volume ?? 100]} onValueChange={(values) => setProps({ ...props, sound: { ...props.sound, config: { ...(props.sound.config ?? {}), volume: values[0].toString() } } })} />
-                    </li>
-                </ul>
-            </SmallModal.Content>
-            <SmallModal.Footer>
-                <SmallModal.Button onClick={close} variant="discard">Discard</SmallModal.Button>
-                <SmallModal.Button onClick={handleSave} variant="validate">Save</SmallModal.Button>
-            </SmallModal.Footer>
-        </SmallModal.Container>
+                        <div className="flex flex-col space-y-1.5">
+                            <Label htmlFor="volume">Volume</Label>
+                            <Slider id="volume" className="my-2" max={100} step={1} value={[props.sound?.config?.volume ?? 100]} onValueChange={(values) => setProps({ ...props, sound: { ...props.sound, config: { ...(props.sound.config ?? {}), volume: values[0].toString() } } })} />
+                        </div>
+                    </div>
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                    <Button type="button" variant="outline" onClick={close}>Cancel</Button>
+                    <Button type="submit">Save</Button>
+                </CardFooter>
+            </Card>
+        </form>
     </Modal>
 }
