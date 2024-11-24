@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { create } from "zustand";
 
 interface AudioPlayerStore {
@@ -15,7 +16,10 @@ export default create<AudioPlayerStore>()((set, get) => ({
 
         const ressource = ressources[id] ?? new Audio(url)
 
-        ressource.play()
+        ressource.play().catch((error) => {
+            console.error(error)
+            toast.error(`Failed to play audio: ${id}`)
+        })
 
         ressource.volume = volume / 100
 

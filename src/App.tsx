@@ -1,40 +1,41 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { invoke } from '@tauri-apps/api/core';
 import { disable, enable, isEnabled } from "@tauri-apps/plugin-autostart";
 import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut';
 import { relaunch } from '@tauri-apps/plugin-process';
 import { check } from '@tauri-apps/plugin-updater';
+import hotkeys from "hotkeys-js";
 import { useEffect, useLayoutEffect, useState } from 'react';
 import "react-contexify/dist/ReactContexify.css";
 import { useCookies } from 'react-cookie';
 import Modal from "react-modal";
 import {
-  RouterProvider,
-  createBrowserRouter
+  createBrowserRouter,
+  RouterProvider
 } from "react-router-dom";
-import { Toaster } from 'sonner';
+import { toast, Toaster } from 'sonner';
 import './App.css';
 import Navbar from './components/Navbar.tsx';
 import SoundContextMenu from './components/contextMenus/SoundContextMenu.tsx';
+import GenerateCodeModal from './components/modals/GenerateCodeModal.tsx';
+import ImageViewerModal from './components/modals/ImageViewerModal.tsx';
+import SearchBarModal from './components/modals/SearchBarModal.tsx';
 import SettingsModal from './components/modals/SettingsModal.tsx';
+import { ThemeProvider } from './components/theme-provider.tsx';
 import AppContext from './contexts/AppContext.tsx';
 import { ConfirmContextProvider } from './contexts/ConfirmContext.tsx';
 import useAudioPlayer from './hooks/useAudioPlayer.ts';
+import useAuth from './hooks/useAuth.ts';
 import { useCategoriesStore } from './hooks/useCategories.ts';
 import useConfig from './hooks/useConfig.ts';
 import useLog from './hooks/useLog.ts';
 import useModal from './hooks/useModal.ts';
 import useWebsocket from './hooks/useWebsocket.ts';
 import Discover from './pages/Discover.tsx';
-import Home, { CategoryData, SoundEntry } from './pages/Home.tsx';
+import Home, { SoundEntry } from './pages/Home.tsx';
+import Landing from './pages/Landing.tsx';
+import Test from './pages/Test.tsx';
 import { BASE_API_URL } from './utils/constants.ts';
 import fetchConfig from './utils/readConfig.ts';
-
-document.addEventListener('DOMContentLoaded', () => {
-  // This will wait for the window to load, but you could
-  // run this function on whatever trigger you want
-  invoke('close_splashscreen')
-})
 
 const update = await check();
 if (update) {
@@ -83,27 +84,43 @@ const router = createBrowserRouter([
       <Navbar />
       <Discover />
     </>
+  },
+  {
+    path: "/trending",
+    element: <>
+      <Navbar />
+      {/* <Trending /> */}
+    </>
+  },
+  {
+    path: "/landing",
+    element: <Landing />
+  },
+  {
+    path: "nothing",
+    element: <Test />
   }
 ]);
 
 const queryClient = new QueryClient()
 
-let dataDeleted = false;
 let appReady = false;
 let initialized = false;
 
 function App() {
   const { websocket } = useWebsocket()
-  const { config, saveConfig } = useConfig()
+  const { config } = useConfig()
   const [sounds, setSounds] = useState<SoundEntry[]>([])
-  const { updateConfig, setLoaded } = useConfig()
   const [keybind, setKeybind] = useState<string>()
   const [volume, setVolume] = useState<number>()
+  const { setConfig, setLoaded } = useConfig()
   const [selectedSound, setSelectedSound] = useState<string | null>(null)
-  const [cookies, setCookie] = useCookies(["token", "user"]);
+  const [cookies] = useCookies(["token", "user"]);
   const { isOpen } = useModal("settings")
+  const { open: showSearchBar } = useModal("searchBar")
   const store = useCategoriesStore()
   const player = useAudioPlayer()
+  const { authenticate } = useAuth()
   const log = useLog()
 
   const registerAll = async () => {
@@ -127,14 +144,14 @@ function App() {
       setKeybind(stopKeybind)
       register(stopKeybind, () => {
         log("Stop sound")
-        websocket.emit("stopSound")
+        websocket.emit("stop_sound")
       })
     }
   }
 
   useLayoutEffect(() => {
     if (config.audio.useSoundoardAppSounds) {
-      websocket.on("playSound", (id: string, params?: { volume?: number }) => {
+      websocket.on("play_sound", (id: string, params?: { volume?: number }) => {
         log(`Playing: ${id}`)
 
         const volume = Math.min(100, params?.volume ? params.volume * 100 : 75) * config.audio.soundsVolume / 100
@@ -142,14 +159,10 @@ function App() {
         player.play({ id: `distant-${id}`, url: `${BASE_API_URL}/sounds/${id}`, volume })
       })
 
-      websocket.on("stopSound", () => {
+      websocket.on("stop_sound", () => {
         player.stop()
       })
     }
-
-    websocket.on("init", (auth) => {
-      websocket.auth = { ...websocket.auth, ...auth }
-    })
 
     websocket.on("init_categories", (categories) => {
       if (appReady) return;
@@ -167,6 +180,7 @@ function App() {
     })
 
     websocket.on("update_category", (categoryName, newProps) => {
+      delete newProps["expanded"]
       store.updateCategory(categoryName, newProps)
     })
 
@@ -198,6 +212,14 @@ function App() {
       store.moveSound(soundId, categoryName)
     })
 
+    websocket.on("error", ({ message }) => {
+      if (toast.getHistory().find(toast => typeof toast.id == "string" && toast.id.startsWith("slow-down") && Date.now() - Number(toast.id.split("/")[1]) < 10000)) return
+
+      toast.error(message, {
+        id: `slow-down/${Date.now()}`,
+      })
+    })
+
     return () => {
       websocket.off()
     }
@@ -207,148 +229,51 @@ function App() {
     registerAll()
   }, [store.categories, isOpen])
 
-  const fetchSounds = () => {
-    fetchConfig().then(config => {
-      // Update config to the new format
-      config.categories ??= []
-      const categories = config.categories
-
-      let favoritesCategory = categories.find((category: CategoryData) => category.name == "Favorite")
-      if (!favoritesCategory) {
-        favoritesCategory = {
-          name: "Favorite",
-          icon: "BsStarFill",
-          sounds: [],
-          expanded: true
-        } satisfies CategoryData
-
-        categories.push(favoritesCategory)
-      }
-
-      let defaultCategory = categories.find((category: CategoryData) => category.name == "Default")
-      if (!defaultCategory) {
-        defaultCategory = {
-          name: "Default",
-          sounds: [],
-          expanded: true
-        } satisfies CategoryData
-
-        categories.push(defaultCategory)
-      }
-
-      if (config.sounds) {
-        defaultCategory.sounds = Object.values(config.sounds)
-        delete config.sounds
-      }
-
-      updateConfig(config)
-      setLoaded(true);
-      saveConfig()
-    })
-  }
-
   useEffect(() => {
     if (initialized) return;
 
     initialized = true;
 
-    fetchSounds()
+    hotkeys("ctrl+f", (event) => {
+      event.preventDefault()
 
-    if (cookies.token && cookies.user) {
-      authenticate(cookies.token)
-      log(`Logged in as ${cookies.user.username}`)
-    }
+      showSearchBar()
+    })
 
-    const callback = ({ data }: MessageEvent<any>): boolean => {
-      log("Login callback received")
+    fetchConfig().then((config) => {
+      setConfig(config)
+      setLoaded(true)
+    })
 
-      if (data.token && data.maxAge && data.user) {
-        setCookie("token", data.token, {
-          maxAge: data.maxAge
-        })
-
-        authenticate(data.token)
-
-        return true;
-      }
-
-      return false;
-    }
-
-    function authenticate(token: string) {
-      websocket.emitWithAck("login", token).then(({ user, maxAge }: { user: any, maxAge: number }) => {
-        setCookie("user", user, { maxAge })
-      })
-    }
-
-    window.addEventListener("message", callback)
-
-    const url = new URL(document.location as any);
-
-    const searchParams = url.searchParams
-
-    const hasData = searchParams.has("data")
-
-    if (!cookies.user && !hasData && !dataDeleted) {
-      window.location.replace(`${BASE_API_URL}/login?redirect=${encodeURIComponent(window.location.href)}`)
-    }
-
-    if (hasData) {
-      try {
-        if (callback({ data: JSON.parse(searchParams.get("data")!) } as any)) {
-          searchParams.delete("data");
-          dataDeleted = true;
-          history.pushState({}, "", url.toString())
-        }
-      } catch (e) {
-        console.error(e)
-      }
-    }
-
-    return () => {
-      window.removeEventListener("message", callback)
-    }
+    if (cookies.token) authenticate()
   }, [])
 
   const play = (sound: SoundEntry) => {
-    websocket.emit("playSound", sound.id, {
+    websocket.emit("play_sound", sound.id, {
       volume: (sound.config?.volume / 100 || 1) * 0.75
     })
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AppContext.Provider value={{ keybind, setKeybind, volume, setVolume, selectedSound, setSelectedSound, sounds, setSounds, play }}>
-        <ConfirmContextProvider>
-          <Toaster richColors />
-          <SoundContextMenu />
-          <SettingsModal />
-          <div className='h-screen flex flex-col'>
-
-            {/* <div data-tauri-drag-region className="titlebar h-8 bg-[#1f2022] select-none flex justify-end top-0 left-0 right-0">
-            <div className="titlebar-button inline-flex justify-center items-center w-12 h-[30px] hover:bg-[#2b2d30]" id="titlebar-minimize">
-            <img
-            src="https://api.iconify.design/mdi:window-minimize.svg"
-            color='white'
-            alt="minimize"
-            />
+    <ThemeProvider defaultTheme='system' storageKey="vite-ui-theme">
+      <QueryClientProvider client={queryClient}>
+        <AppContext.Provider value={{ keybind, setKeybind, volume, setVolume, selectedSound, setSelectedSound, sounds, setSounds, play }}>
+          <ConfirmContextProvider>
+            <div className='bg-white dark:bg-[#181818]'>
+              <Toaster richColors />
+              <SoundContextMenu />
+              <SettingsModal />
+              <ImageViewerModal />
+              <GenerateCodeModal />
+              <SearchBarModal />
+              <div className='h-screen flex flex-col'>
+                <RouterProvider router={router} />
+              </div>
             </div>
-            <div className="titlebar-button inline-flex justify-center items-center w-12 h-[30px] hover:bg-[#2b2d30]" id="titlebar-maximize">
-            <img
-            src="https://api.iconify.design/mdi:window-maximize.svg"
-            alt="maximize"
-            />
-            </div>
-            <div className="titlebar-button inline-flex justify-center items-center w-12 h-[30px] hover:bg-[#2b2d30]" id="titlebar-close">
-            <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
-            </div>
-          </div> */}
-
-            <RouterProvider router={router} />
-          </div>
-        </ConfirmContextProvider>
-      </AppContext.Provider>
-    </QueryClientProvider>
+          </ConfirmContextProvider>
+        </AppContext.Provider>
+      </QueryClientProvider>
+    </ThemeProvider>
   )
 }
 

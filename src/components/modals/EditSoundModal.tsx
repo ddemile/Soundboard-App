@@ -1,3 +1,4 @@
+import { Slider } from "@/components/ui/slider.tsx";
 import EmojiPicker, { EmojiStyle, Theme } from "emoji-picker-react";
 import isEqual from "lodash.isequal";
 import { ChangeEvent, ElementRef, useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -88,7 +89,7 @@ export default function EditSoundModal() {
                     </li>
                     <li className="text-left flex flex-col gap-1">
                         <SmallModal.Label>SOUND VOLUME</SmallModal.Label>
-                        <input name="volume" onChange={handleChange} value={props.sound?.config?.volume ?? 100} type="range" className=""></input>
+                        <Slider className="my-2" max={100} step={1} value={[props.sound?.config?.volume ?? 100]} onValueChange={(values) => setProps({ ...props, sound: { ...props.sound, config: { ...(props.sound.config ?? {}), volume: values[0].toString() } } })} />
                     </li>
                 </ul>
             </SmallModal.Content>

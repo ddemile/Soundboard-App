@@ -1,3 +1,4 @@
+import { Slider } from "@/components/ui/slider.tsx";
 import isEqual from "lodash.isequal";
 import { useState } from "react";
 import Checkbox from "../../components/Checkbox.tsx";
@@ -27,19 +28,20 @@ export default function Audio() {
       <ul className="w-full flex flex-col items-center gap-3 max-w-3xl">
         <li className="flex gap-2 w-full">
           <div className="text-left flex flex-col gap-1 w-full">
-            <label className="text-sm font-bold text-gray-500 dark:text-gray-300">PREVIEW VOLUME</label>
-            <input name="volume" onChange={(e) => setAudioConfig({ ...audioConfig, previewVolume: parseInt(e.target.value) })} value={audioConfig.previewVolume ?? 100} type="range" className=""></input>
+            <label className="text-sm font-bold text-gray-500 dark:text-gray-300 mb-2">PREVIEW VOLUME</label>
+            <Slider className="mb-1" max={100} step={1} name="volume" onValueChange={(values) => setAudioConfig({ ...audioConfig, previewVolume: values[0] })} value={[audioConfig.previewVolume ?? 100]} />
           </div>
           <div className="text-left flex flex-col gap-1 w-full">
-            <label className="text-sm font-bold text-gray-500 dark:text-gray-300">SOUNDS VOLUME</label>
-            <input name="volume" onChange={(e) => setAudioConfig({ ...audioConfig, soundsVolume: parseInt(e.target.value) })} value={audioConfig.soundsVolume ?? 100} type="range" className=""></input>
+            <label className="text-sm font-bold text-gray-500 dark:text-gray-300 mb-2">SOUNDS VOLUME</label>
+            <Slider className="mb-1" max={100} step={1} name="volume" onValueChange={(values) => setAudioConfig({ ...audioConfig, soundsVolume: values[0] })} value={[audioConfig.soundsVolume ?? 100]} />
+            {/* <input name="volume" onChange={(e) => setAudioConfig({ ...audioConfig, soundsVolume: parseInt(e.target.value) })} value={audioConfig.soundsVolume ?? 100} type="range" className=""></input> */}
           </div>
         </li>
         <Separator />
         <li className="flex w-full items-center flex-col">
           <h2 className="text-sm font-bold text-gray-500 dark:text-gray-300 text-left w-full">OTHER</h2>
           <div className="flex w-full items-center justify-between">
-            <span className="text-lg">Use the sounboard app sounds</span>
+            <span className="text-lg">Use the soundboard app sounds</span>
             <Checkbox checked={audioConfig.useSoundoardAppSounds || false} onChange={(e) => setAudioConfig({ ...audioConfig, useSoundoardAppSounds: e.target.checked })} />
           </div>
         </li>

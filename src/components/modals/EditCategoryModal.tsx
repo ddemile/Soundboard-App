@@ -90,7 +90,6 @@ export default function EditCategoryModal() {
                                 const pos = calculateSelectorPos({ x: e.pageX, y: e.pageY })
                             
                                 setIconSelectorProps({ ...pos, open: true })
-                        
                             }} className="bg-zinc-300 dark:bg-zinc-900 rounded-sm p-2 flex cursor-pointer">
                                 <input className="w-0" />
                                 <span className="flex gap-2 overflow-hidden">

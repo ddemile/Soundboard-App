@@ -52,7 +52,7 @@ export default function Keybinds() {
             setSelected({ ...selected, keys: Array.from(current).map(key => capitalize(key)) })
         }
 
-        let timeout: number | null = null;
+        let timeout: NodeJS.Timeout | null = null;
 
         function onKeyRelease(event: KeyboardEvent) {
             if (!current) return;

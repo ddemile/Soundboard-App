@@ -1,18 +1,18 @@
-import { Item, Menu } from 'react-contexify';
+import { PropsWithChildren } from 'react';
 import useModal from '../../hooks/useModal.ts';
-import useSystemTheme from '../../hooks/useSystemTheme.ts';
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '../ui/context-menu.tsx';
 
-export default function HomeContextMenu() {
+export default function HomeContextMenu({ children }: PropsWithChildren) {
   const { open } = useModal("new-category")
-  const theme = useSystemTheme()
 
   return (
-    <Menu id={HOME_CONTEXT_MENU} theme={theme}>
-      <Item onClick={open}>
-        New category
-      </Item>
-    </Menu>
+    <ContextMenu>
+      <ContextMenuTrigger className='h-full p-0 mt-1'>
+        {children}
+      </ContextMenuTrigger>
+      <ContextMenuContent className='w-64'>
+        <ContextMenuItem onClick={open}>New category</ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   )
 }
-
-export const HOME_CONTEXT_MENU = "home_context_menu";

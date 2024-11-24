@@ -19,7 +19,16 @@
     "global-shortcut:allow-unregister",
     "global-shortcut:allow-unregister-all",
     "fs:allow-exists",
-    "fs:read-all",
-    "fs:read-app-specific-dirs-recursive"
+    "fs:read-app-specific-dirs-recursive",
+    {
+      "identifier": "fs:write-all",
+      "allow": [{ "path": "$APPCONFIG/*" }, { "path": "$APPCONFIG" }]
+    },
+    {
+      "identifier": "fs:read-all",
+      "allow": [{ "path": "$APPCONFIG/*" }, { "path": "$APPCONFIG" }]
+    },
+    "deep-link:allow-get-current",
+    "dialog:allow-save"
   ]
 }

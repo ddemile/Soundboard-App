@@ -3,21 +3,36 @@ import { create } from "zustand";
 import { WEBSOCKET_URL } from "../utils/constants.ts";
 
 interface WebsocketState {
-  websocket: Socket
+  websocket: Socket,
+  data: {
+    webInterfaceCode: string,
+    soundSizeLimit: number
+  } | null
 }
 
-export const socket = io(WEBSOCKET_URL, {
-  path: "/api/socket.io",
+const url = new URL(WEBSOCKET_URL)
+
+export const socket = io(url.origin, {
+  path: (url.pathname == "/" ? "" : url.pathname) + "/socket.io",
   auth: {
     token: getCookie("token")
   },
   transports: ["websocket"],
-  protocols: ["soundboard-v3"]
+  protocols: ["soundboard-v4"]
 })
 
-export default create<WebsocketState>()(() => ({
-  websocket: socket
+const store = create<WebsocketState>()(() => ({
+  websocket: socket,
+  data: null
 }))
+
+export default store
+
+socket.on("init", (data) => {
+  const state = store.getState()
+  state.data = data
+  store.setState(state)
+})
 
 function getCookie(cname: string) {
   let name = cname + "=";

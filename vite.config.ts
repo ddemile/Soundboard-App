@@ -1,7 +1,7 @@
 import react from "@vitejs/plugin-react";
+import path from "node:path";
 import { defineConfig } from "vite";
 
-// @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vitejs.dev/config/
@@ -30,7 +30,11 @@ export default defineConfig(async () => ({
     },
   },
   build: {
-    // @ts-expect-error process is a nodejs global
     target: process.env.OS == 'Windows_NT' ? 'chrome105' : 'safari13',
-  }
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
 }));
