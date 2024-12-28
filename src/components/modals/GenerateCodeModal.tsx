@@ -45,7 +45,7 @@ export default function GenerateCodeModal() {
     }
 
     socket
-      .emitWithAck("generate_code", { expirationMethod, expiresAt })
+      .emitWithAck("generate_code", { label, expirationMethod, expiresAt })
       .then((code) => {
         toast.success("Code generated");
 
@@ -60,6 +60,8 @@ export default function GenerateCodeModal() {
     close()
     setShouldClear(true);
   };
+
+  const isValid = expiresIn && label && label.length <= 20
 
   return (
     <ReactModal
@@ -119,7 +121,7 @@ export default function GenerateCodeModal() {
             <Button type="button" variant="outline" onClick={close}>
               Cancel
             </Button>
-            <Button type="submit" disabled={!expiresIn}>Generate</Button>
+            <Button type="submit" disabled={!isValid}>Generate</Button>
           </CardFooter>
         </Card>
       </form>

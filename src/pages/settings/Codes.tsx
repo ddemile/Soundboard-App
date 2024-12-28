@@ -39,7 +39,7 @@ import {
 } from "@/components/ui/table";
 import useModal from "@/hooks/useModal.ts";
 import useWebsocket from "@/hooks/useWebsocket.ts";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import QRCode from "qrcode";
 import { toast } from "sonner";
 
@@ -73,6 +73,11 @@ export const columns: ColumnDef<Code>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
+  },
+  {
+    accessorKey: "label",
+    header: "Label",
+    cell: ({ row }) => <div>{row.getValue("label")}</div>,
   },
   {
     accessorKey: "value",
@@ -134,6 +139,8 @@ export const columns: ColumnDef<Code>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const code = row.original;
+      const { websocket } = useWebsocket()
+      const client = useQueryClient()
 
       const { open: displayImage } = useModal("imageViewer");
 
@@ -172,7 +179,14 @@ export const columns: ColumnDef<Code>[] = [
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>View customer</DropdownMenuItem>
-              <DropdownMenuItem>View payment details</DropdownMenuItem>
+              <DropdownMenuItem onClick={async () => {
+                const response = await websocket.emitWithAck("delete_code", code.value);
+
+                if (response.error) return;
+
+                const codes = client.getQueryData(["dashboard-codes"]) as Code[]
+                client.setQueryData(["dashboard-codes"], codes.filter(c => c.value !== code.value));
+              }}>Delete</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

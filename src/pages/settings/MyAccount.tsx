@@ -5,8 +5,8 @@ import useWebsocket from "../../hooks/useWebsocket.ts";
 export default function MyAccount() {
   const [cookies, _setCookie, removeCookie] = useCookies();
   const { close } = useModal("settings");
-  const { websocket } = useWebsocket();
-
+  const { logout } = useWebsocket();
+  
   return (
     <>
       <h1 className="text-3xl font-semibold text-left mb-2">My account</h1>
@@ -29,7 +29,7 @@ export default function MyAccount() {
             onClick={() => {
               removeCookie("token");
               removeCookie("user");
-              websocket.emit("logout");
+              logout();
               close();
             }}
           >

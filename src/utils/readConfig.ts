@@ -10,9 +10,16 @@ export default async function fetchConfig() {
     }
 
     try {
-        return JSON.parse(await readTextFile("config.json", {
+        // TODO: Fix this function because there is a bug in tauri where  the readTextFile returns an arraybuffer instead of a string
+        const buffer = await readTextFile("config.json", {
             baseDir: BaseDirectory.AppConfig
-        }))
+        }) as any as ArrayBuffer
+
+        const decoder = new TextDecoder();
+
+        const string = decoder.decode(buffer)
+
+        return JSON.parse(string)
     } catch (e) {
         console.log(e)
         throw new Error("Invalid config")

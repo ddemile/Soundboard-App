@@ -14,13 +14,13 @@ import {
 } from "react-router-dom";
 import { toast, Toaster } from 'sonner';
 import './App.css';
-import Navbar from './components/Navbar.tsx';
-import Spinner from './components/Spinner.tsx';
 import SoundContextMenu from './components/contextMenus/SoundContextMenu.tsx';
 import GenerateCodeModal from './components/modals/GenerateCodeModal.tsx';
 import ImageViewerModal from './components/modals/ImageViewerModal.tsx';
 import SearchBarModal from './components/modals/SearchBarModal.tsx';
 import SettingsModal from './components/modals/SettingsModal.tsx';
+import Navbar from './components/Navbar.tsx';
+import Spinner from './components/Spinner.tsx';
 import { ThemeProvider } from './components/theme-provider.tsx';
 import AppContext from './contexts/AppContext.tsx';
 import { ConfirmContextProvider } from './contexts/ConfirmContext.tsx';
@@ -30,11 +30,11 @@ import { useCategoriesStore } from './hooks/useCategories.ts';
 import useConfig from './hooks/useConfig.ts';
 import useLog from './hooks/useLog.ts';
 import useModal from './hooks/useModal.ts';
-import useWebsocket from './hooks/useWebsocket.ts';
+import useWebsocket, { SocketStatus } from './hooks/useWebsocket.ts';
 import Discover from './pages/Discover.tsx';
 import Home, { SoundEntry } from './pages/Home.tsx';
 import Landing from './pages/Landing.tsx';
-import Test from './pages/Test.tsx';
+import WorkInProgress from './pages/WorkInProgress.tsx';
 import { BASE_API_URL } from './utils/constants.ts';
 import fetchConfig from './utils/readConfig.ts';
 
@@ -83,23 +83,19 @@ const router = createBrowserRouter([
     path: "/discover",
     element: <>
       <Navbar />
-      <Discover />
+      {import.meta.env.DEV ? <Discover /> : <WorkInProgress />}
     </>
   },
   {
     path: "/trending",
     element: <>
       <Navbar />
-      {/* <Trending /> */}
+      {import.meta.env.DEV ? <h1>Trending page</h1> : <WorkInProgress />}
     </>
   },
   {
     path: "/landing",
     element: <Landing />
-  },
-  {
-    path: "nothing",
-    element: <Test />
   }
 ]);
 
@@ -109,7 +105,7 @@ let appReady = false;
 let initialized = false;
 
 function App() {
-  const { websocket, connected } = useWebsocket()
+  const { websocket, status } = useWebsocket()
   const { config } = useConfig()
   const [sounds, setSounds] = useState<SoundEntry[]>([])
   const [keybind, setKeybind] = useState<string>()
@@ -270,7 +266,7 @@ function App() {
               <div className='h-screen flex flex-col'>
                 <RouterProvider router={router} />
               </div>
-              {!connected && (
+              {status == SocketStatus.Reconnecting && (
                 <div className='absolute top-0 left-0 w-screen h-screen flex items-center justify-center bg-white dark:bg-[#181818]'>
                   <div className='flex flex-col items-center'>
                     <Spinner />                

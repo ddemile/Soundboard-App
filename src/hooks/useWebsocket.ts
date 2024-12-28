@@ -8,7 +8,18 @@ interface WebsocketState {
     webInterfaceCode: string,
     soundSizeLimit: number
   } | null,
-  connected: boolean
+  status: SocketStatus,
+  logout: () => void,
+  connect: () => void,
+  setStatus: (status:  SocketStatus) => void
+}
+
+export enum SocketStatus {
+  Connecting,
+  Reconnecting,
+  Connected,
+  Disconnected,
+  NotAuthenticated
 }
 
 const url = new URL(WEBSOCKET_URL)
@@ -22,20 +33,36 @@ export const socket = io(url.origin, {
   protocols: ["soundboard-v4"]
 })
 
-const store = create<WebsocketState>()(() => ({
+const store = create<WebsocketState>()((set, get) => ({
   websocket: socket,
   data: null,
-  connected: true
+  status: SocketStatus.Connecting,
+  logout() {
+    const { websocket } = get()
+    websocket.emit("logout")
+
+    set({ status: SocketStatus.NotAuthenticated })
+  },
+  connect() {
+    const { websocket } = get()
+    websocket.connect()
+    set({ status: SocketStatus.Connecting })
+  },
+  setStatus(status) {
+    set({ status })
+  },
 }))
 
 export default store
 
 socket.io.on("open", () => {
-  store.setState({ connected: true })
+  store.setState({ status: SocketStatus.NotAuthenticated })
 })
 
 socket.io.on("close", () => {
-  store.setState({ connected: false })
+  const { status } = store.getState()
+
+  store.setState({ status: status == SocketStatus.NotAuthenticated ? SocketStatus.Disconnected : SocketStatus.Reconnecting })
 })
 
 socket.on("init", (data) => {

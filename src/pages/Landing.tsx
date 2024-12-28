@@ -29,6 +29,8 @@ export default function Landing() {
     const handleClick = async () => {
         if (loading) return;
 
+        if (!socket.connected) socket.connect()
+
         setLoading(true)
 
         const current = await getCurrent()
