@@ -46,7 +46,9 @@ export default function GenerateCodeModal() {
 
     socket
       .emitWithAck("generate_code", { label, expirationMethod, expiresAt })
-      .then((code) => {
+      .then(({ error, data: code }) => {
+        if (error) return toast.error("Failed to generate code");
+
         toast.success("Code generated");
 
         const codes = queryClient.getQueryData(["dashboard-codes"]) as any[]

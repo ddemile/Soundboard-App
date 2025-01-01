@@ -1,44 +1,32 @@
 import { appConfigDir } from "@tauri-apps/api/path";
-import { BaseDirectory, exists, mkdir, writeFile } from "@tauri-apps/plugin-fs";
+import { BaseDirectory, exists, mkdir, readTextFile, writeFile } from "@tauri-apps/plugin-fs";
+import { z } from "zod";
 import { create } from "zustand";
-import { CategoryData } from "../pages/Home.tsx";
 import useLog from "./useLog.ts";
 
-interface Config {
-    /**
-     * Old categories that were used in a previous version of the app.
-     * @deprecated
-     */
-    categories: CategoryData[],
-    stopKeybind: string;
-    audio: {
-        useSoundoardAppSounds: boolean,
-        previewVolume: number,
-        soundsVolume: number
-    },
-    migrated: boolean
-}
+export const configSchema = z.object({
+    categories: z.array(z.any()).catch([]),
+    audio: z.object({
+        useSoundoardAppSounds: z.boolean().catch(true),
+        previewVolume: z.number().min(0).max(100).catch(100),
+        soundsVolume: z.number().min(0).max(100).catch(100)
+    }).default({}),
+    stopKeybind: z.string().catch("")
+})
+
+type Config = z.infer<typeof configSchema>
+
+export const defaultConfig = configSchema.parse({})
 
 interface ConfigStore {
     config: Config,
     loaded: boolean,
     getConfig: () => Config,
-    setConfig: (config: object) => void,
     saveConfig: () => void,
+    loadConfig: () => void,
     updateConfig: (config: Partial<Config>) => void,
     setLoaded: (loaded: boolean) => void
 }
-
-const defaultConfig = {
-    categories: [],
-    audio: {
-        useSoundoardAppSounds: false,
-        previewVolume: 100,
-        soundsVolume: 100
-    },
-    stopKeybind: "",
-    migrated: false
-} satisfies Config
 
 export default create<ConfigStore>()((set, get) => ({
     config: defaultConfig,
@@ -46,11 +34,13 @@ export default create<ConfigStore>()((set, get) => ({
     getConfig: () => {
         return get().config
     },
-    setConfig: (config) => {
-        set({ config: config as Config })
-    },
     saveConfig: () => {
         save(get().config)
+    },
+    loadConfig() {
+        fetchConfig().then((config) => {
+            set({ config, loaded: true })
+        })
     },
     updateConfig: (partialConfig) => {
         set({ config: { ...get().config, ...partialConfig } })
@@ -68,7 +58,7 @@ async function save(config: object) {
     if (!(await exists("config.json", { baseDir: BaseDirectory.AppConfig }))) {
         if (!(await exists(await appConfigDir()))) await mkdir(await appConfigDir());
 
-        await writeFile("config.json", encoder.encode("{}"), { baseDir: BaseDirectory.AppConfig })
+        await writeFile("config.json", encoder.encode(JSON.stringify(defaultConfig, null, 4)), { baseDir: BaseDirectory.AppConfig })
 
         log("Config updated")
     }
@@ -78,3 +68,32 @@ async function save(config: object) {
     log("Config updated")
 }
 
+async function fetchConfig(): Promise<Config> {
+    if (!(await exists("config.json", { baseDir: BaseDirectory.AppConfig }))) {
+        if (!(await exists(await appConfigDir()))) await mkdir(await appConfigDir());
+
+        let encoder = new TextEncoder();
+        await writeFile("config.json", encoder.encode(JSON.stringify(defaultConfig, null, 4)), { baseDir: BaseDirectory.AppConfig })
+    }
+
+    try {
+        const content = await readTextFile("config.json", {
+            baseDir: BaseDirectory.AppConfig
+        })
+
+        const data = JSON.parse(content)
+        
+        const config = configSchema.parse(data)
+
+        save(config)
+
+        return config
+    } catch (e) {
+        console.log(e)
+
+        let encoder = new TextEncoder();
+        await writeFile("config.json", encoder.encode(JSON.stringify(defaultConfig, null, 4)), { baseDir: BaseDirectory.AppConfig })
+
+        return defaultConfig
+    }
+}

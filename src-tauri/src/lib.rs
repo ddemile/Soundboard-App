@@ -1,4 +1,4 @@
-use std::ffi::c_void;
+// use std::ffi::c_void;
 
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri::{
@@ -85,9 +85,9 @@ pub fn run() {
         .expect("error while running tauri application");
 }
 
-fn pointer_to_isize(ptr: *mut c_void) -> isize {
-    ptr as isize
-}
+// fn pointer_to_isize(ptr: *mut c_void) -> isize {
+//     ptr as isize
+// }
 
 fn show_window(app: &AppHandle) {
     let windows = app.webview_windows();

@@ -1,6 +1,5 @@
-import { } from 'react'
-import ProgressBar from './ProgressBar.tsx'
 import { BsPauseFill, BsPlayFill } from 'react-icons/bs'
+import ProgressBar from './ProgressBar.tsx'
 
 export default function Player() {
     return (

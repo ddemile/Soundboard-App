@@ -34,7 +34,13 @@ export default function SettingsModal() {
   const handleOpen = async () => {
     await queryClient.prefetchQuery({
       queryKey: ["dashboard-codes"],
-      queryFn: () => websocket.emitWithAck("get_codes"),
+      queryFn: async () => {
+        const { error, data: codes } = await websocket.emitWithAck("get_codes")
+
+        if (error) throw new Error(error)
+
+        return codes;
+      },
     })
   }
 

@@ -31,6 +31,28 @@ export default function EditSoundModal() {
         }
     }, [open])
 
+    useEffect(() => {
+        const listener: (this: Document, ev: MouseEvent) => void = (e) => {
+          let element = e.target as HTMLElement;
+          let contains = false;
+          while (!contains && element != null) {
+            contains = element?.classList.contains("EmojiPickerReact")
+            element = element.parentElement!;
+          }
+    
+          if (!contains) setEmojiSelectorProps({
+            ...emojiSelectorProps,
+            open: false
+          })
+        }
+    
+        document.addEventListener("click", listener)
+    
+        return () => {
+          document.removeEventListener("click", listener)
+        }
+    }, [emojiSelectorProps])
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target
 
@@ -78,7 +100,11 @@ export default function EditSoundModal() {
                         </div>
                         <div className="flex flex-col space-y-1.5">
                             <Label>Emoji</Label>
-                            <Button id="emoji" type="button" variant="outline" onClick={(e) => setEmojiSelectorProps({ open: true, x: e.pageX, y: e.pageY })}>
+                            <Button id="emoji" type="button" variant="outline" onClick={(e) => {
+                                e.stopPropagation()
+
+                                setEmojiSelectorProps({ open: true, x: e.pageX, y: e.pageY })
+                            }}>
                                 <span>{props.sound?.emoji || "🎵"} </span>
                                 <span className="overflow-hidden text-ellipsis">:{props.sound?.emojiName || "musical_note"}:</span>
                             </Button>

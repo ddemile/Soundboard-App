@@ -2,11 +2,25 @@ import { Slider } from "@/components/ui/slider.tsx";
 import { Switch } from "@/components/ui/switch.tsx";
 import isEqual from "lodash.isequal";
 import { useState } from "react";
-import { Button } from "../../components/modals/SmallModal.tsx";
+import { twMerge } from "tailwind-merge";
 import useAudioPlayer from "../../hooks/useAudioPlayer.ts";
 import useConfig from "../../hooks/useConfig.ts";
 
-const Separator = () => <li className="w-full h-px bg-zinc-300 dark:bg-zinc-600"></li>
+const Separator = () => <li className="w-full h-px bg-zinc-300 dark:bg-zinc-600" />
+
+const buttonVariants = {
+  discard: "p-1 rounded-sm bg-transparent focus:outline-hidden border-none hover:underline",
+  validate: "disabled:bg-blue-500 dark:disabled:bg-blue-900 text-white disabled:text-zinc-300 dark:disabled:text-zinc-400 disabled:cursor-not-allowed rounded-md bg-blue-400 hover:bg-blue-500 transition-colors duration-300 p-1 px-4",
+  danger: "text-white disabled:text-zinc-400 disabled:cursor-not-allowed rounded-md bg-red-500 dark:bg-red-800 hover:bg-red-600 dark:hover:bg-red-900 transition-colors duration-300 p-1 px-4"
+}
+
+function Button({ children, variant, className, ...props }: Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "type"> & { variant: keyof typeof buttonVariants}) {    
+  return (
+    <>
+      <button {...props} className={twMerge(buttonVariants[variant], className)}>{children}</button>
+    </>
+  )
+}
 
 export default function Audio() {
   const { globalSetVolume } = useAudioPlayer()

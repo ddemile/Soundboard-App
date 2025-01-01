@@ -29,7 +29,7 @@ export default function IconSelector({ onIconClick }: { onIconClick?: ({ name }:
     })
 
     return (
-        <Card className="bg-stone-950/90">
+        <Card className="bg-stone-950/90 IconSelector">
             <CardHeader className="p-4 pb-0">
                 <Input value={value} onChange={handleChange} placeholder="Search an icon"></Input>
             </CardHeader>

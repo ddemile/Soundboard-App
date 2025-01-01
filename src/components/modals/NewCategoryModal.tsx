@@ -1,4 +1,4 @@
-import { ChangeEvent, ElementRef, FormEventHandler, MouseEventHandler, useRef, useState } from "react"
+import { ChangeEvent, ElementRef, FormEventHandler, MouseEventHandler, useEffect, useRef, useState } from "react"
 import * as icons from "react-icons/bs"
 import useCategories from "../../hooks/useCategories.ts"
 import useModal from "../../hooks/useModal.ts"
@@ -17,6 +17,28 @@ export default function NewCategoryModal() {
     const [iconSelectorProps, setIconSelectorProps] = useState({ open: false, x: 0, y: 0})
     const Icon = icons[category.icon as any as keyof typeof icons] ?? icons.BsSoundwave
     const selectorRef = useRef<ElementRef<"div">>(null)
+
+    useEffect(() => {
+        const listener: (this: Document, ev: MouseEvent) => void = (e) => {
+            let element = e.target as HTMLElement;
+            let contains = false;
+            while (!contains && element != null) {
+                contains = element?.classList.contains("IconSelector")
+                element = element.parentElement!;
+            }
+    
+            if (!contains) setIconSelectorProps({
+                ...iconSelectorProps,
+                open: false
+            })
+        }
+    
+        document.addEventListener("click", listener)
+    
+        return () => {
+            document.removeEventListener("click", listener)
+        }
+    }, [iconSelectorProps])
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -54,6 +76,8 @@ export default function NewCategoryModal() {
     }
 
     const handleShowSelector: MouseEventHandler<HTMLButtonElement> = (e) => {
+        e.stopPropagation()
+
         const pos = calculateSelectorPos({ x: e.pageX, y: e.pageY })
                             
         setIconSelectorProps({ ...pos, open: true })

@@ -1,6 +1,6 @@
 {
   "productName": "Soundboard",
-  "version": "1.3.0",
+  "version": "../package.json",
   "identifier": "com.ddemile.soundboard",
   "build": {
     "beforeDevCommand": "pnpm dev",
@@ -11,7 +11,7 @@
   "app": {
     "windows": [
       {
-        "title": "Soundboard Audio & Groove-Ready Output Module (v1.3.0)",
+        "title": "Soundboard Audio & Groove-Ready Output Module (v1.4.0)",
         "width": 800,
         "height": 600,
         "dragDropEnabled": false

@@ -88,8 +88,10 @@ export default function UploadModal() {
             if (category.sounds.some(sound => sound.title == file.name)) return toast.error(`${file.name} is already in the soundboard`)
           }
 
+          console.time("Sending file")
           const uploadPromise: Promise<SoundEntry> = new Promise(async (resolve, reject) => {
             const content = await readFileContent(file)
+            console.timeEnd("Sending file")
             if (content instanceof ArrayBuffer) {  
               if (content.byteLength > (socketData?.soundSizeLimit || 0)) return reject(`Maximum size allowed: ${parseFloat(((socketData?.soundSizeLimit ?? 0) / 1e6).toFixed(2))}mb`);
 
@@ -102,9 +104,9 @@ export default function UploadModal() {
                 ...data
               } satisfies SoundPrimitive
 
-              const { error, message } = await websocket.emitWithAck("upload_sound", sound, content)
+              const { error } = await websocket.emitWithAck("upload_sound", sound, content)
 
-              if (error) return reject(message)
+              if (error) return reject(error)
 
               log(`${sound.title} uploaded`)
               saveConfig()
@@ -205,8 +207,8 @@ export default function UploadModal() {
 
                 setEmojiSelectorProps({ open: true, x: e.pageX, y: e.pageY })
               }}>
-                  <span>{sound?.data.emoji || "🎵"} </span>
-                  <span className="overflow-hidden text-ellipsis">:{sound?.data.emojiName || "musical_note"}:</span>
+                <span>{sound?.data.emoji || "🎵"} </span>
+                <span className="overflow-hidden text-ellipsis">:{sound?.data.emojiName || "musical_note"}:</span>
               </Button>
           </div>
         </div>

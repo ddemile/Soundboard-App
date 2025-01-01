@@ -7,6 +7,7 @@ import { open } from "@tauri-apps/plugin-shell";
 import { useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 type LoginCallbackResponse = {
     error: null 
@@ -47,7 +48,7 @@ export default function Landing() {
 
             unlisten()
 
-            if (error) return
+            if (error) return toast.error("Failed to login")
 
             setCookie("token", data!.token, {
                 maxAge: data!.maxAge
@@ -58,7 +59,13 @@ export default function Landing() {
             navigate("/")
         })
 
-        const url = await socket.emitWithAck("request_login_payload") as string
+        const { error, data: url } = await socket.emitWithAck("request_login_payload")
+
+        if (error) {
+            toast.error("Failed to login")
+            setLoading(false)
+            return
+        }
 
         open(url)
     }

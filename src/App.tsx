@@ -5,7 +5,6 @@ import { relaunch } from '@tauri-apps/plugin-process';
 import { check } from '@tauri-apps/plugin-updater';
 import hotkeys from "hotkeys-js";
 import { useEffect, useLayoutEffect, useState } from 'react';
-import "react-contexify/dist/ReactContexify.css";
 import { useCookies } from 'react-cookie';
 import Modal from "react-modal";
 import {
@@ -14,7 +13,6 @@ import {
 } from "react-router-dom";
 import { toast, Toaster } from 'sonner';
 import './App.css';
-import SoundContextMenu from './components/contextMenus/SoundContextMenu.tsx';
 import GenerateCodeModal from './components/modals/GenerateCodeModal.tsx';
 import ImageViewerModal from './components/modals/ImageViewerModal.tsx';
 import SearchBarModal from './components/modals/SearchBarModal.tsx';
@@ -36,7 +34,6 @@ import Home, { SoundEntry } from './pages/Home.tsx';
 import Landing from './pages/Landing.tsx';
 import WorkInProgress from './pages/WorkInProgress.tsx';
 import { BASE_API_URL } from './utils/constants.ts';
-import fetchConfig from './utils/readConfig.ts';
 
 const update = await check();
 if (update) {
@@ -110,7 +107,7 @@ function App() {
   const [sounds, setSounds] = useState<SoundEntry[]>([])
   const [keybind, setKeybind] = useState<string>()
   const [volume, setVolume] = useState<number>()
-  const { setConfig, setLoaded } = useConfig()
+  const { loadConfig } = useConfig()
   const [selectedSound, setSelectedSound] = useState<string | null>(null)
   const [cookies] = useCookies(["token", "user"]);
   const { isOpen } = useModal("settings")
@@ -237,10 +234,7 @@ function App() {
       showSearchBar()
     })
 
-    fetchConfig().then((config) => {
-      setConfig(config)
-      setLoaded(true)
-    })
+    loadConfig()
 
     if (cookies.token) authenticate()
   }, [])
@@ -258,7 +252,6 @@ function App() {
           <ConfirmContextProvider>
             <div className='bg-white dark:bg-[#181818]'>
               <Toaster richColors />
-              <SoundContextMenu />
               <SettingsModal />
               <ImageViewerModal />
               <GenerateCodeModal />

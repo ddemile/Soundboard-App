@@ -124,7 +124,13 @@ export default function MyInstantModal() {
                 category: props.category
             } satisfies Omit<SoundEntry, "id"> & { id?: string }
 
-            await websocket.emitWithAck("upload_sound", sound, data)
+            const { error } = await websocket.emitWithAck("upload_sound", sound, data)
+
+            if (error) {
+                log(`Failed to upload ${sound.title}`)
+                toast.error(`Failed to upload ${sound.title}`)
+                return;
+            }
 
             log(`${sound.title} uploaded`)
             toast.success(`${sound.title} uploaded`)

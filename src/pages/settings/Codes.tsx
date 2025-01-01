@@ -182,7 +182,7 @@ export const columns: ColumnDef<Code>[] = [
               <DropdownMenuItem onClick={async () => {
                 const response = await websocket.emitWithAck("delete_code", code.value);
 
-                if (response.error) return;
+                if (response.error) return toast.error(response.error);
 
                 const codes = client.getQueryData(["dashboard-codes"]) as Code[]
                 client.setQueryData(["dashboard-codes"], codes.filter(c => c.value !== code.value));
@@ -209,7 +209,13 @@ export function Codes() {
 
   const { data } = useQuery({
     queryKey: ["dashboard-codes"],
-    queryFn: () => websocket.emitWithAck("get_codes"),
+    queryFn: async () => {
+      const { error, data: codes } = await websocket.emitWithAck("get_codes")
+
+      if (error) throw new Error(error);
+
+      return codes;
+    },
     initialData: [],
   });
 

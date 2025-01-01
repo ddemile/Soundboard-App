@@ -15,10 +15,6 @@ export default function PlaceholderCategory({ ...props }: { name: string, items:
                 {new Array(items).fill(null).map((_, index) =>
                     <li key={index} className='*:col-start-1 *:row-start-1 grid rounded-lg overflow-hidden group h-10'>
                         <Skeleton className="h-full w-full" />
-                        {/* <div className='bg-neutral-100 dark:bg-main flex gap-1 items-center p-1 rounded-lg justify-center text-ellipsis overflow-hidden'>
-                            <span className='text-xl'>{sound.emoji ?? "🎵"}</span>
-                            <span className='font-medium line-clamp-2 break-words text-xs'>{sound.title}</span>
-                        </div> */}
                     </li>
                 )}
             </ul>

@@ -1,5 +1,5 @@
 import isEqual from "lodash.isequal";
-import { ChangeEvent, ElementRef, FormEventHandler, MouseEventHandler, useLayoutEffect, useRef, useState } from "react";
+import { ChangeEvent, ElementRef, FormEventHandler, MouseEventHandler, useEffect, useLayoutEffect, useRef, useState } from "react";
 import * as icons from "react-icons/bs";
 import { toast } from "sonner";
 import useCategories from "../../hooks/useCategories.ts";
@@ -23,6 +23,28 @@ export default function EditSoundModal() {
     useLayoutEffect(() => {
         setProps(initialProps)
     }, [initialProps])
+
+    useEffect(() => {
+        const listener: (this: Document, ev: MouseEvent) => void = (e) => {
+            let element = e.target as HTMLElement;
+            let contains = false;
+            while (!contains && element != null) {
+                contains = element?.classList.contains("IconSelector")
+                element = element.parentElement!;
+            }
+    
+            if (!contains) setIconSelectorProps({
+                ...iconSelectorProps,
+                open: false
+            })
+        }
+    
+        document.addEventListener("click", listener)
+    
+        return () => {
+            document.removeEventListener("click", listener)
+        }
+    }, [iconSelectorProps])
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -66,6 +88,8 @@ export default function EditSoundModal() {
     }
 
     const handleShowSelector: MouseEventHandler<HTMLButtonElement> = (e) => {
+        e.stopPropagation()
+
         const pos = calculateSelectorPos({ x: e.pageX, y: e.pageY })
                             
         setIconSelectorProps({ ...pos, open: true })

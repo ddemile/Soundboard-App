@@ -6,7 +6,6 @@ import { IconType } from "react-icons";
 import * as icons from "react-icons/bs";
 import { Navigate } from "react-router-dom";
 import Category from "../components/Category.tsx";
-import CategoryContextMenu from "../components/contextMenus/CategoryContextMenu.tsx";
 import HomeContextMenu from "../components/contextMenus/HomeContextMenu.tsx";
 import EditCategoryModal from "../components/modals/EditCategoryModal.tsx";
 import EditSoundModal from "../components/modals/EditSoundModal.tsx";
@@ -64,7 +63,6 @@ function Home() {
             <EditSoundModal />
             <UploadModal />
             <MyInstantModal />
-            <CategoryContextMenu />
             <NewCategoryModal />
             <EditCategoryModal />
             <HomeContextMenu />
@@ -83,7 +81,6 @@ function Home() {
                 <PlaceholderCategory name="Default" icon="BsSoundwave" items={15} />
               </>
             )}
-            {/* <button className='flex items-center justify-center m-auto w-12 aspect-square rounded-full bg-stone-900 [&>*>svg]:text-[25px]' onClick={() => websocket.emit("stopSound")}><span><BsStopFill /></span></button> */}
           </main>
         )}
       </Dropzone>
