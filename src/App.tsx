@@ -23,7 +23,6 @@ import { ThemeProvider } from './components/theme-provider.tsx';
 import AppContext from './contexts/AppContext.tsx';
 import { ConfirmContextProvider } from './contexts/ConfirmContext.tsx';
 import useAudioPlayer from './hooks/useAudioPlayer.ts';
-import useAuth from './hooks/useAuth.ts';
 import { useCategoriesStore } from './hooks/useCategories.ts';
 import useConfig from './hooks/useConfig.ts';
 import useLog from './hooks/useLog.ts';
@@ -102,19 +101,18 @@ let appReady = false;
 let initialized = false;
 
 function App() {
-  const { websocket, status } = useWebsocket()
+  const { websocket, status, setStatus } = useWebsocket()
   const { config } = useConfig()
   const [sounds, setSounds] = useState<SoundEntry[]>([])
   const [keybind, setKeybind] = useState<string>()
   const [volume, setVolume] = useState<number>()
   const { loadConfig } = useConfig()
   const [selectedSound, setSelectedSound] = useState<string | null>(null)
-  const [cookies] = useCookies(["token", "user"]);
   const { isOpen } = useModal("settings")
   const { open: showSearchBar } = useModal("searchBar")
   const store = useCategoriesStore()
   const player = useAudioPlayer()
-  const { authenticate } = useAuth()
+  const [_, setCookie] = useCookies(["user"])
   const log = useLog()
 
   const registerAll = async () => {
@@ -158,7 +156,17 @@ function App() {
       })
     }
 
-    websocket.on("init_categories", (categories) => {
+    websocket.on("init", (data) => {
+      useWebsocket.setState({ data })
+    })
+
+    websocket.on("authenticated", ({ user, maxAge }: { user: any, maxAge: number }) => {
+      setStatus(SocketStatus.Connected)
+
+      setCookie("user", user, { maxAge })
+    })
+
+    websocket.on("init_categories", (categories) => {      
       if (appReady) return;
 
       store.setCategories(categories)
@@ -166,6 +174,8 @@ function App() {
     })
 
     websocket.on("deprecated_set_categories", (categories) => {
+      console.warn("Deprecated set_categories event received")
+
       store.setCategories(categories);
     })
 
@@ -228,6 +238,8 @@ function App() {
 
     initialized = true;
 
+    websocket.connect()
+
     hotkeys("ctrl+f", (event) => {
       event.preventDefault()
 
@@ -235,8 +247,6 @@ function App() {
     })
 
     loadConfig()
-
-    if (cookies.token) authenticate()
   }, [])
 
   const play = (sound: SoundEntry) => {

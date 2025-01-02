@@ -30,7 +30,8 @@ export const socket = io(url.origin, {
     token: getCookie("token")
   },
   transports: ["websocket"],
-  protocols: ["soundboard-v4"]
+  protocols: ["soundboard-v4"],
+  autoConnect: false
 })
 
 const store = create<WebsocketState>()((set, get) => ({
@@ -63,12 +64,6 @@ socket.io.on("close", () => {
   const { status } = store.getState()
 
   store.setState({ status: status == SocketStatus.NotAuthenticated ? SocketStatus.Disconnected : SocketStatus.Reconnecting })
-})
-
-socket.on("init", (data) => {
-  const state = store.getState()
-  state.data = data
-  store.setState(state)
 })
 
 function getCookie(cname: string) {

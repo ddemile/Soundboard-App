@@ -1,21 +1,14 @@
-import useWebsocket, { SocketStatus } from "@/hooks/useWebsocket.ts"
-import { useCookies } from "react-cookie"
+import useWebsocket from "@/hooks/useWebsocket.ts"
 import { toast } from "sonner"
 
 export default function useAuth() {
-    const { websocket, setStatus } = useWebsocket()
-    const [cookies, setCookie] = useCookies(["token", "user"])
+    const { websocket } = useWebsocket()
 
     return {
-        authenticate: async (token?: string) => {
-            const { error, data } = await websocket.emitWithAck("login", token ?? cookies.token)
+        authenticate: async (token: string) => {
+            const { error } = await websocket.emitWithAck("login", token)
 
             if (error) return toast.error("Failed to authenticate")
-
-            const { user, maxAge } = data as { user: any, maxAge: number }
-            
-            setCookie("user", user, { maxAge })
-            setStatus(SocketStatus.Connected)
         }
     }
 }

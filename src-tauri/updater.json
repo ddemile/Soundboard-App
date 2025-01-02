@@ -1,7 +1,7 @@
 {
-    "version": "v1.3.0",
-    "notes": "(MAJOR) Update to Tauri 2.0.0-rc.1",
-    "pub_date": "2024-08-19T08:41:52.576Z",
+    "version": "v1.4.0",
+    "notes": "(MAJOR) See changelog on GitHub or Discord for details",
+    "pub_date": "2025-01-02T08:38:01.981Z",
     "platforms": {
         "darwin-x86_64": {
             "signature": "Content of app.tar.gz.sig",
@@ -16,8 +16,8 @@
             "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-amd64.AppImage.tar.gz"
         },
         "windows-x86_64": {
-            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQYzVYRVFEMHpLQ0UwRDNIeWdmU0dZMFF2d0FBcXU5SENiZTdmMUdONENlL2U4cllwVjJYaytmT0pIbEhyZGh4enN5TENITUNOc0VzY21PbVpYOTVlNmdjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzI0MDU5MTQ5CWZpbGU6U291bmRib2FyZF8xLjMuMF94NjRfZW4tVVMubXNpLnppcApZZStuRVBFZWtDZEh6dTdPSEZqR1hYQXFrRXEvSjdZNXNFY1JnVndkRW5TT2R1ZDk1QUY5YTJCNEhMRGd1V3UxcGZWM3V0eUorSHk3SExRNzVXSnFDdz09Cg==",
-            "url": "https://github.com/ddemile/Soundboard-App/releases/download/1.3.0/Soundboard_1.3.0_x64.msi.zip"
+            "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUNTdsVHhnR0dQY3l2NjVSYWRzL3lHaHRiZDlCQTh6SjJzdDdkYnF3S2dSRm9Db0gvSlhndmhBRWZNeWlPVGNWMUJhS3BiTW9yV3BEWElDRzh4Z0xseG96QldLank5TUFvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzM1ODA2NzcyCWZpbGU6U291bmRib2FyZF8xLjQuMF94NjRfZW4tVVMubXNpCmZZY1VZRmRrQmt0WTBIN0ZJS1ZKOG5lbFVqd2ZWZlduY08rNTNZSDZXbVUwMUF5dzJwQ3liVGZKdzJ4NnZiZVIxNXliMkRBUzdwclVzdmhZMyt4UEFBPT0K",
+            "url": "https://github.com/ddemile/Soundboard-App/releases/download/1.4.0/Soundboard_1.4.0_x64.msi"
         }
     }
 }
