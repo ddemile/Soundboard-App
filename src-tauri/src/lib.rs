@@ -1,6 +1,10 @@
 // use std::ffi::c_void;
 
+use std::sync::OnceLock;
+
+use tauri::menu::MenuItem;
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
+use tauri::Wry;
 use tauri::{
     image::Image,
     menu::{MenuBuilder, MenuItemBuilder},
@@ -15,7 +19,9 @@ fn greet(name: &str) -> String {
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() {
+pub fn run() {  
+    static TOGGLE_WINDOW: OnceLock<MenuItem<Wry>> = OnceLock::new();
+
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
@@ -33,9 +39,17 @@ pub fn run() {
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_shell::init())
         .on_window_event(|window, event: &WindowEvent| {
+            let toggle_window = TOGGLE_WINDOW.get().unwrap();
+
             if let WindowEvent::CloseRequested { api, .. } = event {
                 window.hide().unwrap();
                 api.prevent_close();
+                let _ = toggle_window.set_text("Show window");
+            }
+            if let WindowEvent::Focused(focused) = event {
+                if *focused {
+                    let _ = toggle_window.set_text("Reduce to system tray");
+                }
             }
             // if let WindowEvent::Resized(_size) = event {
             //     let hwnd = window.hwnd().unwrap().0;
@@ -49,12 +63,24 @@ pub fn run() {
             // }
         })
         .setup(|app| {
+            let _ = TOGGLE_WINDOW.set(MenuItemBuilder::with_id("toggle_window", "Reduce to system tray").build(app)?);
             let quit = MenuItemBuilder::with_id("quit", "Quit").build(app)?;
-            let menu = MenuBuilder::new(app).items(&[&quit]).build()?;
+            let toggle_window = TOGGLE_WINDOW.get().unwrap();
+            let menu = MenuBuilder::new(app).items(&[TOGGLE_WINDOW.get().unwrap(), &quit]).build()?;
             let icon = Image::from_bytes(include_bytes!("../icons/icon.png")).unwrap(); // Load the icon
             let _tray = TrayIconBuilder::with_id("main")
                 .menu(&menu)
-                .on_menu_event(move |_app, event| match event.id().as_ref() {
+                .on_menu_event(move |app, event| match event.id().as_ref() {
+                    "toggle_window" => {
+                        if let Some(webview_window) = app.get_webview_window("main") {
+                            if webview_window.is_visible().unwrap() {
+                                toggle_window.set_text("Show window").unwrap();
+                                webview_window.hide().unwrap();
+                            } else {
+                                webview_window.show().unwrap();
+                            }
+                        }
+                    }
                     "quit" => {
                         std::process::exit(0);
                     }
@@ -77,6 +103,12 @@ pub fn run() {
                     }
                 })
                 .build(app)?;
+
+            #[cfg(any(windows, target_os = "linux"))]
+            {
+                use tauri_plugin_deep_link::DeepLinkExt;
+                app.deep_link().register_all()?;
+            }
 
             Ok(())
         })
