@@ -1,6 +1,6 @@
 import { Codes } from '@/pages/settings/Codes.tsx'
 import { useQueryClient } from '@tanstack/react-query'
-import { HTMLProps, PropsWithChildren, useState } from 'react'
+import React, { HTMLProps, PropsWithChildren, useState } from 'react'
 import useModal from '../../hooks/useModal.ts'
 import useWebsocket from '../../hooks/useWebsocket.ts'
 import Audio from '../../pages/settings/Audio.tsx'
@@ -29,7 +29,7 @@ export default function SettingsModal() {
   const queryClient = useQueryClient()
   const { websocket } = useWebsocket()
 
-  const Page: () => JSX.Element = pages[page]
+  const Page: () => React.JSX.Element = pages[page]
 
   const handleOpen = async () => {
     await queryClient.prefetchQuery({
