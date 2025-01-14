@@ -34,8 +34,9 @@ import Landing from './pages/Landing.tsx';
 import WorkInProgress from './pages/WorkInProgress.tsx';
 import { BASE_API_URL } from './utils/constants.ts';
 
-const update = await check();
-if (update) {
+check().then(async (update) => {
+  if (!update) return
+
   console.log(
     `found update ${update.version} from ${update.date} with notes ${update.body}`
   );
@@ -60,7 +61,7 @@ if (update) {
 
   console.log('update installed');
   await relaunch();
-}
+})
 
 if (window.location.hostname == "localhost" && await isEnabled()) disable()
 if (window.location.hostname != "localhost" && !await isEnabled()) enable()
