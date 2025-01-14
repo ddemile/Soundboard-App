@@ -30,7 +30,10 @@ export default defineConfig(async () => ({
     },
   },
   build: {
-    target: process.env.OS == 'Windows_NT' ? 'chrome105' : 'safari14',
+    target: (() => {
+      console.log(process.env.OS)
+      return process.env.OS == 'Windows_NT' ? 'chrome105' : 'safari15'
+    })(),
   },
   resolve: {
     alias: {
