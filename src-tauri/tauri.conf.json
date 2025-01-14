@@ -37,7 +37,7 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEJBQkFGRDA2RTQzMjA0ODgKUldTSUJETGtCdjI2dW5UUElWRzV0NktHZXgweExVSS9WTjN5M1hQZjlKNXo4TjRsZXNNb29XT3kK",
       "endpoints": [
-        "https://raw.githubusercontent.com/ddemile/Soundboard-App/main/src-tauri/updater.json"
+        "https://github.com/ddemile/Soundboard-App/releases/latest/download/latest.json"
       ]
     },
     "deep-link": {
