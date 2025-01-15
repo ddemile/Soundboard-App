@@ -26,7 +26,10 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
             println!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
-            let _ = show_window(app);
+            if let Some(webview_window) = app.get_webview_window("main") {
+                let _ = webview_window.show();
+                let _ = webview_window.set_focus();
+            }
         }))
         .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_fs::init())
@@ -78,6 +81,7 @@ pub fn run() {
                                 webview_window.hide().unwrap();
                             } else {
                                 webview_window.show().unwrap();
+                                webview_window.set_focus().unwrap();
                             }
                         }
                     }
@@ -120,14 +124,3 @@ pub fn run() {
 // fn pointer_to_isize(ptr: *mut c_void) -> isize {
 //     ptr as isize
 // }
-
-fn show_window(app: &AppHandle) {
-    let windows = app.webview_windows();
-
-    windows
-        .values()
-        .next()
-        .expect("Sorry, no window found")
-        .set_focus()
-        .expect("Can't Bring Window to Focus");
-}

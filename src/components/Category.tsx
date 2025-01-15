@@ -101,7 +101,7 @@ function SoundContextMenu({ children, category, sound }: PropsWithChildren<{ cat
             filters: [
                 {
                     name: "Soundboard audio file",
-                    extensions: ["mp3"]
+                    extensions: ["ogg"]
                 }
             ]
         })
