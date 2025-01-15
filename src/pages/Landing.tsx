@@ -1,11 +1,11 @@
 import Spinner from "@/components/Spinner.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import useAuth from "@/hooks/useAuth.ts";
+import useAuthStore from "@/hooks/useAuthStore.ts";
 import useWebsocket from '@/hooks/useWebsocket.ts';
 import { getCurrent, onOpenUrl } from "@tauri-apps/plugin-deep-link";
 import { open } from "@tauri-apps/plugin-shell";
 import { useState } from "react";
-import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -22,10 +22,10 @@ type LoginCallbackResponse = {
 
 export default function Landing() {
     const { websocket: socket } = useWebsocket()
-    const [_, setCookie] = useCookies(["token", "user"]);
     const { authenticate } = useAuth()
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
+    const authStore = useAuthStore()
 
     const handleClick = async () => {
         if (loading) return;
@@ -50,9 +50,7 @@ export default function Landing() {
 
             if (error) return toast.error("Failed to login")
 
-            setCookie("token", data!.token, {
-                maxAge: data!.maxAge
-            })
+            authStore.set("token", data!.token)
 
             await authenticate(data!.token)
 

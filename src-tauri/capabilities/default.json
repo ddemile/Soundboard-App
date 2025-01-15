@@ -29,6 +29,10 @@
       "allow": [{ "path": "$APPCONFIG/*" }, { "path": "$APPCONFIG" }]
     },
     "deep-link:allow-get-current",
-    "dialog:allow-save"
+    "dialog:allow-save",
+    "store:allow-load",
+    "store:allow-set",
+    "store:allow-get",
+    "store:allow-delete"
   ]
 }

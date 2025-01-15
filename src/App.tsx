@@ -1,11 +1,9 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { disable, enable, isEnabled } from "@tauri-apps/plugin-autostart";
 import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut';
 import { relaunch } from '@tauri-apps/plugin-process';
 import { check } from '@tauri-apps/plugin-updater';
 import hotkeys from "hotkeys-js";
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { useCookies } from 'react-cookie';
 import Modal from "react-modal";
 import {
   createBrowserRouter,
@@ -23,6 +21,7 @@ import { ThemeProvider } from './components/theme-provider.tsx';
 import AppContext from './contexts/AppContext.tsx';
 import { ConfirmContextProvider } from './contexts/ConfirmContext.tsx';
 import useAudioPlayer from './hooks/useAudioPlayer.ts';
+import useAuthStore from './hooks/useAuthStore.ts';
 import { useCategoriesStore } from './hooks/useCategories.ts';
 import useConfig from './hooks/useConfig.ts';
 import useLog from './hooks/useLog.ts';
@@ -34,8 +33,9 @@ import Landing from './pages/Landing.tsx';
 import WorkInProgress from './pages/WorkInProgress.tsx';
 import { BASE_API_URL } from './utils/constants.ts';
 
-const update = await check();
-if (update) {
+check().then(async (update) => {
+  if (!update) return
+
   console.log(
     `found update ${update.version} from ${update.date} with notes ${update.body}`
   );
@@ -60,7 +60,7 @@ if (update) {
 
   console.log('update installed');
   await relaunch();
-}
+})
 
 if (window.location.hostname == "localhost" && await isEnabled()) disable()
 if (window.location.hostname != "localhost" && !await isEnabled()) enable()
@@ -95,8 +95,6 @@ const router = createBrowserRouter([
   }
 ]);
 
-const queryClient = new QueryClient()
-
 let appReady = false;
 let initialized = false;
 
@@ -112,7 +110,7 @@ function App() {
   const { open: showSearchBar } = useModal("searchBar")
   const store = useCategoriesStore()
   const player = useAudioPlayer()
-  const [_, setCookie] = useCookies(["user"])
+  const authStore = useAuthStore()
   const log = useLog()
 
   const registerAll = async () => {
@@ -160,10 +158,10 @@ function App() {
       useWebsocket.setState({ data })
     })
 
-    websocket.on("authenticated", ({ user, maxAge }: { user: any, maxAge: number }) => {
+    websocket.on("authenticated", ({ user }: { user: any, maxAge: number }) => {
       setStatus(SocketStatus.Connected)
 
-      setCookie("user", user, { maxAge })
+      authStore.set("user", user)
     })
 
     websocket.on("init_categories", (categories) => {      
@@ -257,33 +255,31 @@ function App() {
 
   return (
     <ThemeProvider defaultTheme='system' storageKey="vite-ui-theme">
-      <QueryClientProvider client={queryClient}>
-        <AppContext.Provider value={{ keybind, setKeybind, volume, setVolume, selectedSound, setSelectedSound, sounds, setSounds, play }}>
-          <ConfirmContextProvider>
-            <div className='bg-white dark:bg-[#181818]'>
-              <Toaster richColors />
-              <SettingsModal />
-              <ImageViewerModal />
-              <GenerateCodeModal />
-              <SearchBarModal />
-              <div className='h-screen flex flex-col'>
-                <RouterProvider router={router} />
-              </div>
-              {status == SocketStatus.Reconnecting && (
-                <div className='absolute top-0 left-0 w-screen h-screen flex items-center justify-center bg-white dark:bg-[#181818]'>
-                  <div className='flex flex-col items-center'>
-                    <Spinner />                
-                    <div className='flex items-center gap-2 mt-2 text-xl'>
-                      <p>Connecting to server...</p>
-                    </div>
-                    <p className='text-lg text-gray-500 dark:text-gray-400'>Please wait while we connect to the server</p>
-                  </div>
-                </div>
-              )}
+      <AppContext.Provider value={{ keybind, setKeybind, volume, setVolume, selectedSound, setSelectedSound, sounds, setSounds, play }}>
+        <ConfirmContextProvider>
+          <div className='bg-white dark:bg-[#181818]'>
+            <Toaster richColors />
+            <SettingsModal />
+            <ImageViewerModal />
+            <GenerateCodeModal />
+            <SearchBarModal />
+            <div className='h-screen flex flex-col'>
+              <RouterProvider router={router} />
             </div>
-          </ConfirmContextProvider>
-        </AppContext.Provider>
-      </QueryClientProvider>
+            {status == SocketStatus.Reconnecting && (
+              <div className='absolute top-0 left-0 w-screen h-screen flex items-center justify-center bg-white dark:bg-[#181818]'>
+                <div className='flex flex-col items-center'>
+                  <Spinner />                
+                  <div className='flex items-center gap-2 mt-2 text-xl'>
+                    <p>Connecting to server...</p>
+                  </div>
+                  <p className='text-lg text-gray-500 dark:text-gray-400'>Please wait while we connect to the server</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </ConfirmContextProvider>
+      </AppContext.Provider>
     </ThemeProvider>
   )
 }
