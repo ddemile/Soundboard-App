@@ -5,7 +5,6 @@ import useWebsocket from '@/hooks/useWebsocket.ts';
 import { getCurrent, onOpenUrl } from "@tauri-apps/plugin-deep-link";
 import { open } from "@tauri-apps/plugin-shell";
 import { useState } from "react";
-import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -22,7 +21,6 @@ type LoginCallbackResponse = {
 
 export default function Landing() {
     const { websocket: socket } = useWebsocket()
-    const [_, setCookie] = useCookies(["token", "user"]);
     const { authenticate } = useAuth()
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
@@ -50,9 +48,7 @@ export default function Landing() {
 
             if (error) return toast.error("Failed to login")
 
-            setCookie("token", data!.token, {
-                maxAge: data!.maxAge
-            })
+            localStorage.setItem("token", data!.token)
 
             await authenticate(data!.token)
 

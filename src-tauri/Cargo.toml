@@ -8,25 +8,25 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-name = "tauri_frontend_beta_lib"
+name = "soundboard_app_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.0.3", features = [] }
+tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2.1.1", features = ["tray-icon", "image-png"] }
-tauri-plugin-shell = "2.0.2"
+tauri = { version = "2", features = ["tray-icon", "image-png", "devtools"] }
+tauri-plugin-shell = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-tauri-plugin-process = "2.0.1"
-tauri-plugin-fs = "2.0.3"
-tauri-plugin-deep-link = "2.0.1"
-tauri-plugin-dialog = "2.0.3"
+tauri-plugin-process = "2"
+tauri-plugin-fs = "2"
+tauri-plugin-deep-link = "2"
+tauri-plugin-dialog = "2"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
-tauri-plugin-autostart = "2.0.1"
-tauri-plugin-global-shortcut = "2.0.1"
-tauri-plugin-single-instance = { version = "2.0.0", features = ["deep-link"] }
-tauri-plugin-updater = "2.0.2"
+tauri-plugin-autostart = "2"
+tauri-plugin-global-shortcut = "2"
+tauri-plugin-single-instance = { version = "2", features = ["deep-link"] }
+tauri-plugin-updater = "2"
 

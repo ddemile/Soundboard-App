@@ -1,6 +1,5 @@
 import PlaceholderCategory from "@/components/PlaceholderCategory.tsx";
 import { useCallback } from "react";
-import { useCookies } from "react-cookie";
 import Dropzone from "react-dropzone";
 import { IconType } from "react-icons";
 import * as icons from "react-icons/bs";
@@ -37,7 +36,7 @@ export type CategoryData = {
 function Home() {
   const { open } = useModal("upload");
   const { categories, updateCategory } = useCategories();
-  const [cookies] = useCookies(["token"]);
+  const token = localStorage.getItem("token")
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     console.log("dopr");
@@ -47,7 +46,7 @@ function Home() {
     open({ files: acceptedFiles });
   }, []);
 
-  if (!cookies.token) return <Navigate to="/landing" />;
+  if (!token) return <Navigate to="/landing" />;
 
   return (
     <HomeContextMenu>

@@ -5,7 +5,6 @@ import { relaunch } from '@tauri-apps/plugin-process';
 import { check } from '@tauri-apps/plugin-updater';
 import hotkeys from "hotkeys-js";
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { useCookies } from 'react-cookie';
 import Modal from "react-modal";
 import {
   createBrowserRouter,
@@ -113,7 +112,6 @@ function App() {
   const { open: showSearchBar } = useModal("searchBar")
   const store = useCategoriesStore()
   const player = useAudioPlayer()
-  const [_, setCookie] = useCookies(["user"])
   const log = useLog()
 
   const registerAll = async () => {
@@ -161,10 +159,10 @@ function App() {
       useWebsocket.setState({ data })
     })
 
-    websocket.on("authenticated", ({ user, maxAge }: { user: any, maxAge: number }) => {
+    websocket.on("authenticated", ({ user }: { user: any, maxAge: number }) => {
       setStatus(SocketStatus.Connected)
 
-      setCookie("user", user, { maxAge })
+      localStorage.setItem("user", JSON.stringify(user))
     })
 
     websocket.on("init_categories", (categories) => {      

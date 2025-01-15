@@ -1,6 +1,6 @@
 import { Socket, io } from "socket.io-client";
 import { create } from "zustand";
-import { WEBSOCKET_URL } from "../utils/constants.ts";
+import { BASE_API_URL } from "../utils/constants.ts";
 
 interface WebsocketState {
   websocket: Socket,
@@ -22,12 +22,12 @@ export enum SocketStatus {
   NotAuthenticated
 }
 
-const url = new URL(WEBSOCKET_URL)
+const url = new URL(BASE_API_URL)
 
 export const socket = io(url.origin, {
   path: (url.pathname == "/" ? "" : url.pathname) + "/socket.io",
   auth: {
-    token: getCookie("token")
+    token: localStorage.getItem("token")
   },
   transports: ["websocket"],
   protocols: ["soundboard-v4"],
@@ -65,19 +65,3 @@ socket.io.on("close", () => {
 
   store.setState({ status: status == SocketStatus.NotAuthenticated ? SocketStatus.Disconnected : SocketStatus.Reconnecting })
 })
-
-function getCookie(cname: string) {
-  let name = cname + "=";
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
-}
