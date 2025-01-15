@@ -12,6 +12,12 @@ use tauri::{
 };
 use tauri_plugin_autostart::MacosLauncher;
 
+macro_rules! f_string {
+    ($($tokens:tt)*) => {
+        format!($($tokens)*)
+    };
+}
+
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -23,6 +29,7 @@ pub fn run() {
     static TOGGLE_WINDOW: OnceLock<MenuItem<Wry>> = OnceLock::new();
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
             println!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
@@ -112,6 +119,12 @@ pub fn run() {
             {
                 use tauri_plugin_deep_link::DeepLinkExt;
                 app.deep_link().register_all()?;
+            }
+
+            if let Some(webview_window) = app.get_webview_window("main") {
+                let title = webview_window.title().unwrap();
+                let version = app.package_info().version.to_string();
+                let _ = webview_window.set_title(f_string!("{title} (v{version})").as_str());
             }
 
             Ok(())

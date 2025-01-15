@@ -1,6 +1,7 @@
 import Spinner from "@/components/Spinner.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import useAuth from "@/hooks/useAuth.ts";
+import useAuthStore from "@/hooks/useAuthStore.ts";
 import useWebsocket from '@/hooks/useWebsocket.ts';
 import { getCurrent, onOpenUrl } from "@tauri-apps/plugin-deep-link";
 import { open } from "@tauri-apps/plugin-shell";
@@ -24,6 +25,7 @@ export default function Landing() {
     const { authenticate } = useAuth()
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
+    const authStore = useAuthStore()
 
     const handleClick = async () => {
         if (loading) return;
@@ -48,7 +50,7 @@ export default function Landing() {
 
             if (error) return toast.error("Failed to login")
 
-            localStorage.setItem("token", data!.token)
+            authStore.set("token", data!.token)
 
             await authenticate(data!.token)
 

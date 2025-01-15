@@ -1,6 +1,9 @@
+import { load } from "@tauri-apps/plugin-store";
 import { Socket, io } from "socket.io-client";
 import { create } from "zustand";
 import { BASE_API_URL } from "../utils/constants.ts";
+
+const authStore = await load('auth.json', { autoSave: true })
 
 interface WebsocketState {
   websocket: Socket,
@@ -27,7 +30,7 @@ const url = new URL(BASE_API_URL)
 export const socket = io(url.origin, {
   path: (url.pathname == "/" ? "" : url.pathname) + "/socket.io",
   auth: {
-    token: localStorage.getItem("token")
+    token: await authStore.get("token")
   },
   transports: ["websocket"],
   protocols: ["soundboard-v4"],

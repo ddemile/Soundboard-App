@@ -11,7 +11,7 @@
   "app": {
     "windows": [
       {
-        "title": "Soundboard Audio & Groove-Ready Output Module (v1.4.1)",
+        "title": "Soundboard Audio & Groove-Ready Output Module",
         "width": 800,
         "height": 600,
         "dragDropEnabled": false

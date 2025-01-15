@@ -1,4 +1,5 @@
 import PlaceholderCategory from "@/components/PlaceholderCategory.tsx";
+import useAuthStore from "@/hooks/useAuthStore.ts";
 import { useCallback } from "react";
 import Dropzone from "react-dropzone";
 import { IconType } from "react-icons";
@@ -36,17 +37,15 @@ export type CategoryData = {
 function Home() {
   const { open } = useModal("upload");
   const { categories, updateCategory } = useCategories();
-  const token = localStorage.getItem("token")
+  const { token, isTokenLoading } = useAuthStore()
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    console.log("dopr");
-
     if (acceptedFiles.length < 1) return;
 
     open({ files: acceptedFiles });
   }, []);
 
-  if (!token) return <Navigate to="/landing" />;
+  if (!isTokenLoading && !token) return <Navigate to="/landing" />;
 
   return (
     <HomeContextMenu>
