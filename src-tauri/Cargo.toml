@@ -1,6 +1,6 @@
 [package]
 name = "tauri-frontend"
-version = "1.4.2"
+version = "1.4.3"
 description = "Soundboard"
 authors = ["ddemile"]
 edition = "2021"
