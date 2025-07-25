@@ -1,5 +1,5 @@
 import { TbSettingsFilled } from "react-icons/tb"
-import { Link } from "react-router-dom"
+import { Link } from "react-router"
 import { twMerge } from "tailwind-merge"
 import logo from "../../src-tauri/icons/icon.png"
 import useModal from "../hooks/useModal.ts"

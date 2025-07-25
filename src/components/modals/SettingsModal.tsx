@@ -6,13 +6,15 @@ import useWebsocket from '../../hooks/useWebsocket.ts'
 import Audio from '../../pages/settings/Audio.tsx'
 import Keybinds from '../../pages/settings/Keybinds.tsx'
 import MyAccount from '../../pages/settings/MyAccount.tsx'
+import Overlay from '../../pages/settings/Overlay.tsx'
 import Modal from './Modal.tsx'
 
 const pages = {
   keybinds: Keybinds,
   myAccount: MyAccount,
   audio: Audio,
-  codes: Codes
+  codes: Codes,
+  overlay: Overlay
 }
 
 function TabButton({ children, onClick, disabled, tab, ...props }: PropsWithChildren<{ tab?: keyof typeof pages } & Omit<HTMLProps<HTMLLIElement>, "onClick"> & { onClick: (tab: keyof typeof pages) => void}>) {
@@ -52,7 +54,8 @@ export default function SettingsModal() {
           <TabButton tab='myAccount' onClick={setPage}>My account</TabButton>
           <TabButton tab='keybinds' onClick={setPage}>Keybinds</TabButton>
           <TabButton tab='audio' onClick={setPage}>Audio</TabButton>
-          <TabButton tab='codes' onClick={setPage}>Codes</TabButton>  
+          <TabButton tab='codes' onClick={setPage}>Codes</TabButton>
+          <TabButton tab='overlay' onClick={setPage}>Overlay</TabButton>  
         </ul>
       </nav>
       <main className='p-14 px-10 overflow-y-auto h-full inline-block w-full'>

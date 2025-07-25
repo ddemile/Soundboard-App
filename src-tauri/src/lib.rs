@@ -4,7 +4,8 @@ use std::sync::OnceLock;
 
 use tauri::menu::MenuItem;
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
-use tauri::Wry;
+use tauri::{WebviewWindow};
+use tauri::{Wry};
 use tauri::{
     image::Image,
     menu::{MenuBuilder, MenuItemBuilder},
@@ -12,16 +13,38 @@ use tauri::{
 };
 use tauri_plugin_autostart::MacosLauncher;
 
+mod utils;
+
 macro_rules! f_string {
     ($($tokens:tt)*) => {
         format!($($tokens)*)
     };
 }
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+fn store_focused_window() {
+    utils::focus::store_last_focused_window();
+}
+
+#[tauri::command]
+fn restore_focused_window() {
+    utils::focus::refocus_last_window();
+}
+
+#[cfg(windows)]
+fn disable_animations(window: &WebviewWindow) {
+    if let Ok(hwnd) = window.hwnd() {
+        unsafe {
+            use windows::{core::BOOL, Win32::{Foundation::HWND, Graphics::Dwm::{DwmSetWindowAttribute, DWMWA_TRANSITIONS_FORCEDISABLED}}};
+
+            let value: BOOL = BOOL(1); // 1 = true
+
+            let pv_attribute = &value as *const _ as *const _;
+            let cb_attribute = std::mem::size_of_val(&value) as u32;
+            
+            DwmSetWindowAttribute(HWND(hwnd.0 as _), DWMWA_TRANSITIONS_FORCEDISABLED, pv_attribute, cb_attribute).unwrap();
+        }
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -61,18 +84,15 @@ pub fn run() {
                     let _ = toggle_window.set_text("Reduce to system tray");
                 }
             }
-            // if let WindowEvent::Resized(_size) = event {
-            //     let hwnd = window.hwnd().unwrap().0;
-            //     let hwnd = windows::Win32::Foundation::HWND(pointer_to_isize(hwnd));
-            //     unsafe {
-            //         use windows::Win32::UI::WindowsAndMessaging::*;
-            //         let nindex = GWL_EXSTYLE;
-            //         let style: WINDOW_EX_STYLE = WS_EX_APPWINDOW| WS_EX_COMPOSITED | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOPMOST;
-            //         let _pre_val = SetWindowLongA(hwnd, nindex, style.0 as i32);
-            //     };
-            // }
         })
         .setup(|app| {
+            let window = app.get_webview_window("overlay").unwrap();
+
+            #[cfg(windows)]
+            {
+                disable_animations(&window);
+            }
+
             let _ = TOGGLE_WINDOW.set(MenuItemBuilder::with_id("toggle_window", "Reduce to system tray").build(app)?);
             let quit = MenuItemBuilder::with_id("quit", "Quit").build(app)?;
             let toggle_window = TOGGLE_WINDOW.get().unwrap();
@@ -129,7 +149,7 @@ pub fn run() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![store_focused_window, restore_focused_window])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

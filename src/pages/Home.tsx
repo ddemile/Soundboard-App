@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import Dropzone from "react-dropzone";
 import { IconType } from "react-icons";
 import * as icons from "react-icons/bs";
-import { Navigate } from "react-router-dom";
+import { Navigate } from "react-router";
 import Category from "../components/Category.tsx";
 import HomeContextMenu from "../components/contextMenus/HomeContextMenu.tsx";
 import EditCategoryModal from "../components/modals/EditCategoryModal.tsx";

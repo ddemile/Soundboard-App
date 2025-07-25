@@ -11,6 +11,10 @@ export const configSchema = z.object({
         previewVolume: z.number().min(0).max(100).catch(100),
         soundsVolume: z.number().min(0).max(100).catch(100)
     }).default({}),
+    overlay: z.object({
+        teleportMouseToCenter: z.boolean().catch(false),
+        closeOnRelease: z.boolean().catch(true)
+    }).default({}),
     stopKeybind: z.string().catch("")
 })
 

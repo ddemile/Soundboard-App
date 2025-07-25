@@ -6,7 +6,7 @@ import useWebsocket from '@/hooks/useWebsocket.ts';
 import { getCurrent, onOpenUrl } from "@tauri-apps/plugin-deep-link";
 import { open } from "@tauri-apps/plugin-shell";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
 type LoginCallbackResponse = {

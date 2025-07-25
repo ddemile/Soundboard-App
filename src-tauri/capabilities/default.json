@@ -3,7 +3,8 @@
   "identifier": "default",
   "description": "Capability for the main window",
   "windows": [
-    "main"
+    "main",
+    "overlay"
   ],
   "permissions": [
     "core:default",
@@ -13,6 +14,7 @@
     "autostart:allow-disable",
     "autostart:allow-enable",
     "autostart:allow-is-enabled",
+    "global-shortcut:default",
     "global-shortcut:allow-is-registered",
     "global-shortcut:allow-register",
     "global-shortcut:allow-register-all",
@@ -33,6 +35,16 @@
     "store:allow-load",
     "store:allow-set",
     "store:allow-get",
-    "store:allow-delete"
+    "store:allow-delete",
+    
+    "core:window:default",
+    "core:window:allow-cursor-position",
+    "core:window:allow-set-fullscreen",
+    "core:window:allow-hide",
+    "core:window:allow-show",
+    "core:window:allow-set-position",
+    "core:window:allow-set-focus",
+    "core:window:allow-set-cursor-position",
+    "core:window:allow-set-size"
   ]
 }

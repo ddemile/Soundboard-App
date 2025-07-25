@@ -1,14 +1,17 @@
+import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
+import { cursorPosition, getAllWindows, LogicalPosition, monitorFromPoint } from "@tauri-apps/api/window";
 import { disable, enable, isEnabled } from "@tauri-apps/plugin-autostart";
 import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut';
 import { relaunch } from '@tauri-apps/plugin-process';
 import { check } from '@tauri-apps/plugin-updater';
 import hotkeys from "hotkeys-js";
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Modal from "react-modal";
 import {
   createBrowserRouter,
   RouterProvider
-} from "react-router-dom";
+} from "react-router";
 import { toast, Toaster } from 'sonner';
 import './App.css';
 import GenerateCodeModal from './components/modals/GenerateCodeModal.tsx';
@@ -33,34 +36,39 @@ import Landing from './pages/Landing.tsx';
 import WorkInProgress from './pages/WorkInProgress.tsx';
 import { BASE_API_URL } from './utils/constants.ts';
 
-check().then(async (update) => {
-  if (!update) return
+console.log("Loading app file")
 
-  console.log(
-    `found update ${update.version} from ${update.date} with notes ${update.body}`
-  );
-  let downloaded = 0;
-  let contentLength = 0;
-  // alternatively we could also call update.download() and update.install() separately
-  await update.downloadAndInstall((event) => {
-    switch (event.event) {
-      case 'Started':
-        contentLength = event.data.contentLength!;
-        console.log(`started downloading ${event.data.contentLength} bytes`);
-        break;
-      case 'Progress':
-        downloaded += event.data.chunkLength;
-        console.log(`downloaded ${downloaded} from ${contentLength}`);
-        break;
-      case 'Finished':
-        console.log('download finished');
-        break;
-    }
-  });
+// TODO
+if (false && import.meta.env.PROD) {
+  check().then(async (update) => {
+    if (!update) return
 
-  console.log('update installed');
-  await relaunch();
-})
+    console.log(
+      `found update ${update.version} from ${update.date} with notes ${update.body}`
+    );
+    let downloaded = 0;
+    let contentLength = 0;
+    // alternatively we could also call update.download() and update.install() separately
+    await update.downloadAndInstall((event) => {
+      switch (event.event) {
+        case 'Started':
+          contentLength = event.data.contentLength!;
+          console.log(`started downloading ${event.data.contentLength} bytes`);
+          break;
+        case 'Progress':
+          downloaded += event.data.chunkLength;
+          console.log(`downloaded ${downloaded} from ${contentLength}`);
+          break;
+        case 'Finished':
+          console.log('download finished');
+          break;
+      }
+    });
+
+    console.log('update installed');
+    await relaunch();
+  })
+}
 
 if (window.location.hostname == "localhost" && await isEnabled()) disable()
 if (window.location.hostname != "localhost" && !await isEnabled()) enable()
@@ -98,6 +106,8 @@ const router = createBrowserRouter([
 let appReady = false;
 let initialized = false;
 
+const overlayWindow = (await getAllWindows()).find(window => window.label == "overlay")!;
+
 function App() {
   const { websocket, status, setStatus } = useWebsocket()
   const { config } = useConfig()
@@ -112,6 +122,20 @@ function App() {
   const player = useAudioPlayer()
   const authStore = useAuthStore()
   const log = useLog()
+  const hoveredSoundId = useRef<string>(null)
+
+  const handleClose = async () => {
+    overlayWindow.hide();
+    await invoke("restore_focused_window");
+
+    const favoriteCategory = store.categories.find(category => category.name == "Favorite");
+
+    if (favoriteCategory && hoveredSoundId.current != null) {
+      const sound = favoriteCategory.sounds.find(sound => sound.id == hoveredSoundId.current)!;
+      
+      play(sound)
+    }
+  }
 
   const registerAll = async () => {
     const { stopKeybind } = config;
@@ -130,9 +154,37 @@ function App() {
       })
     }
 
+    const handlePress = async () => {
+      const pos = await cursorPosition();
+
+      const monitor = await monitorFromPoint(pos.x, pos.y);
+
+      if (!monitor) return;
+
+      await overlayWindow.setPosition(monitor.position);
+      await overlayWindow.setSize(monitor.size);
+
+      if (config.overlay.teleportMouseToCenter) {
+        await overlayWindow.setCursorPosition(new LogicalPosition(monitor.size.width / 2, monitor.size.height / 2))
+      }
+    }
+
+    await register('CommandOrControl+Shift+C', async (event) => {
+      if (event.state === "Pressed") {
+        await handlePress()
+        overlayWindow.show();
+        await invoke("store_focused_window");
+        overlayWindow.setFocus();
+      } else if (event.state === "Released") {
+        if (await overlayWindow.isVisible() && config.overlay.closeOnRelease) {
+          handleClose()
+        }
+      }
+    });
+
     if (stopKeybind) {
       setKeybind(stopKeybind)
-      register(stopKeybind, () => {
+      await register(stopKeybind, () => {
         log("Stop sound")
         websocket.emit("stop_sound")
       })
@@ -228,6 +280,12 @@ function App() {
   }, [config.audio])
 
   useEffect(() => {
+    const favoriteCategory = store.categories.find(category => category.name == "Favorite");
+
+    if (favoriteCategory) {
+      overlayWindow.emit("overlay_data", favoriteCategory.sounds || [])
+    }
+
     registerAll()
   }, [store.categories, isOpen])
 
@@ -237,6 +295,13 @@ function App() {
     initialized = true;
 
     websocket.connect()
+
+    listen("sound_hovered", (event) => {
+      console.log(event.payload)
+      hoveredSoundId.current = event.payload as string
+    })
+
+    listen("close_overlay", () => handleClose())
 
     hotkeys("ctrl+f", (event) => {
       event.preventDefault()
