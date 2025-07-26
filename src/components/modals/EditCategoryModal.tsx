@@ -100,7 +100,7 @@ export default function EditSoundModal() {
     return <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)}>
         {iconSelectorProps.open && (
             <div ref={selectorRef} className="absolute z-30" style={{ top: iconSelectorProps.y, left: iconSelectorProps.x }}>
-                <IconSelector onIconClick={({ name }) => { console.log(initialProps, props); setProps({ ...props, icon: name }); setIconSelectorProps({ ...iconSelectorProps, open: false}) }} />
+                <IconSelector onIconClick={({ name }) => { setProps({ ...props, icon: name }); setIconSelectorProps({ ...iconSelectorProps, open: false}) }} />
             </div>
         )}
         <form onSubmit={handleSave}>

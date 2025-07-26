@@ -145,7 +145,7 @@ export const columns: ColumnDef<Code>[] = [
       const { open: displayImage } = useModal("imageViewer");
 
       const showQrCode = async () => {
-        const link = `https://soundboard.nano3.fr?code=${code.value}`;
+        const link = `https://soundboard.ddemile.fr?code=${code.value}`;
         navigator.clipboard.writeText(link);
         toast.success("Link copied");
         const codeUrl = await QRCode.toDataURL(link, {
@@ -218,10 +218,6 @@ export function Codes() {
     },
     initialData: [],
   });
-
-  React.useEffect(() => {
-    console.log(data);
-  }, []);
 
   const table = useReactTable({
     data,

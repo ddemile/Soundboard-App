@@ -133,7 +133,6 @@ export default function useCategories() {
         moveSound(soundId, categoryName) {
             store.moveSound(soundId, categoryName)
             socket.emit("move_sound", soundId, categoryName)
-            console.log("Emit move sound")
         }
     } satisfies Partial<CategoryStore>
 }

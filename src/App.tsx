@@ -20,7 +20,6 @@ import SearchBarModal from './components/modals/SearchBarModal.tsx';
 import SettingsModal from './components/modals/SettingsModal.tsx';
 import Navbar from './components/Navbar.tsx';
 import Spinner from './components/Spinner.tsx';
-import { ThemeProvider } from './components/theme-provider.tsx';
 import AppContext from './contexts/AppContext.tsx';
 import { ConfirmContextProvider } from './contexts/ConfirmContext.tsx';
 import useAudioPlayer from './hooks/useAudioPlayer.ts';
@@ -36,15 +35,12 @@ import Landing from './pages/Landing.tsx';
 import WorkInProgress from './pages/WorkInProgress.tsx';
 import { BASE_API_URL } from './utils/constants.ts';
 
-console.log("Loading app file")
-
-// TODO
-if (false && import.meta.env.PROD) {
+if (import.meta.env.PROD) {
   check().then(async (update) => {
     if (!update) return
 
     console.log(
-      `found update ${update.version} from ${update.date} with notes ${update.body}`
+      `Found update ${update.version} from ${update.date} with notes ${update.body}`
     );
     let downloaded = 0;
     let contentLength = 0;
@@ -53,19 +49,19 @@ if (false && import.meta.env.PROD) {
       switch (event.event) {
         case 'Started':
           contentLength = event.data.contentLength!;
-          console.log(`started downloading ${event.data.contentLength} bytes`);
+          console.log(`Started downloading ${event.data.contentLength} bytes`);
           break;
         case 'Progress':
           downloaded += event.data.chunkLength;
-          console.log(`downloaded ${downloaded} from ${contentLength}`);
+          console.log(`Downloaded ${downloaded} from ${contentLength}`);
           break;
         case 'Finished':
-          console.log('download finished');
+          console.log('Download finished');
           break;
       }
     });
 
-    console.log('update installed');
+    console.log('Update installed');
     await relaunch();
   })
 }
@@ -297,7 +293,6 @@ function App() {
     websocket.connect()
 
     listen("sound_hovered", (event) => {
-      console.log(event.payload)
       hoveredSoundId.current = event.payload as string
     })
 
@@ -319,33 +314,31 @@ function App() {
   }
 
   return (
-    <ThemeProvider defaultTheme='system' storageKey="vite-ui-theme">
-      <AppContext.Provider value={{ keybind, setKeybind, volume, setVolume, selectedSound, setSelectedSound, sounds, setSounds, play }}>
-        <ConfirmContextProvider>
-          <div className='bg-white dark:bg-[#181818]'>
-            <Toaster richColors />
-            <SettingsModal />
-            <ImageViewerModal />
-            <GenerateCodeModal />
-            <SearchBarModal />
-            <div className='h-screen flex flex-col'>
-              <RouterProvider router={router} />
-            </div>
-            {status == SocketStatus.Reconnecting && (
-              <div className='absolute top-0 left-0 w-screen h-screen flex items-center justify-center bg-white dark:bg-[#181818]'>
-                <div className='flex flex-col items-center'>
-                  <Spinner />                
-                  <div className='flex items-center gap-2 mt-2 text-xl'>
-                    <p>Connecting to server...</p>
-                  </div>
-                  <p className='text-lg text-gray-500 dark:text-gray-400'>Please wait while we connect to the server</p>
-                </div>
-              </div>
-            )}
+    <AppContext.Provider value={{ keybind, setKeybind, volume, setVolume, selectedSound, setSelectedSound, sounds, setSounds, play }}>
+      <ConfirmContextProvider>
+        <div className='bg-white dark:bg-[#181818]'>
+          <Toaster richColors />
+          <SettingsModal />
+          <ImageViewerModal />
+          <GenerateCodeModal />
+          <SearchBarModal />
+          <div className='h-screen flex flex-col'>
+            <RouterProvider router={router} />
           </div>
-        </ConfirmContextProvider>
-      </AppContext.Provider>
-    </ThemeProvider>
+          {status == SocketStatus.Reconnecting && (
+            <div className='absolute top-0 left-0 w-screen h-screen flex items-center justify-center bg-white dark:bg-[#181818]'>
+              <div className='flex flex-col items-center'>
+                <Spinner />                
+                <div className='flex items-center gap-2 mt-2 text-xl'>
+                  <p>Connecting to server...</p>
+                </div>
+                <p className='text-lg text-gray-500 dark:text-gray-400'>Please wait while we connect to the server</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </ConfirmContextProvider>
+    </AppContext.Provider>
   )
 }
 
