@@ -1,12 +1,11 @@
 import { listen } from "@tauri-apps/api/event";
-import { cursorPosition, getAllWindows, monitorFromPoint } from "@tauri-apps/api/window";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { currentMonitor, getAllWindows, LogicalPosition } from "@tauri-apps/api/window";
+import { MouseEventHandler, useCallback, useMemo, useRef, useState } from "react";
 import logo from "../src-tauri/icons/icon.png";
 import OverlayWheel from "./components/OverlayWheel";
 import useOverlayStore from "./hooks/useOverlayStore";
+import './Overlay.css';
 import type { SoundEntry } from "./pages/Home";
-import { getDistanceToCenter, getMonitorCenter } from "./utils/coordinates";
-import './Overlay.css'
 
 listen("overlay_data", (event) => {
     const data = event.payload as SoundEntry[];
@@ -33,28 +32,27 @@ function Overlay() {
         return sounds.map(sound => ({ icon: sound.emoji ?? "🎵" }))
     }, [sounds])
 
-    const requestRef = useRef<number>(null);
-
-    const animate = async () => {
-        const { sounds } = useOverlayStore.getState();
-
+    const mouseMoveHandler: MouseEventHandler = useCallback(async (event) => {
         const sections = sounds.length;
         const sectionSize = 360 / sections;
 
-        const pos = await cursorPosition();
-
-        const monitor = await monitorFromPoint(pos.x, pos.y);
-
+        const pos = new LogicalPosition(event.clientX, event.clientY);
+        
+        const monitor = await currentMonitor();
+        
         if (!monitor) return;
 
-        const { x: centerX, y: centerY } = getMonitorCenter(monitor)
+        const { x: centerX, y: centerY } = {
+            x: window.innerWidth / 2,
+            y: window.innerHeight / 2
+        }
 
         const adjacent = pos.x - centerX;
         const opposite = pos.y - centerY;
 
         const angle = (Math.atan2(opposite, adjacent) * (180 / Math.PI) + 360) % 360;
 
-        const distanceToCenter = await getDistanceToCenter(pos)
+        const distanceToCenter = Math.sqrt(Math.pow(adjacent, 2) + Math.pow(opposite, 2))
 
         setMiddleCirlceActive(distanceToCenter <= middleCircleRadius)
 
@@ -79,27 +77,10 @@ function Overlay() {
 
         activeSectionRef.current = activeSection;
         setActiveSection(activeSection);
-
-        requestRef.current = requestAnimationFrame(animate);
-    }
-
-    useEffect(() => {
-        requestRef.current = requestAnimationFrame(animate);
-        return () => cancelAnimationFrame(requestRef.current!);
-    }, []); // Make sure the effect runs only once!
-
-    useEffect(() => {
-        const listener = async () => mainWindow.emit("close_overlay")
-
-        document.addEventListener("click", listener)
-
-        return () => {
-            document.removeEventListener("click", listener)
-        }
     }, [sounds])
 
     return (
-        <main className="w-full h-screen flex items-center justify-center bg-black/50 text-white flex-col relative">
+        <main className="w-full h-screen flex items-center justify-center bg-black/50 text-white flex-col relative" onClick={() => mainWindow.emit("close_overlay")} onMouseMove={mouseMoveHandler}>
             <div className="absolute top-0 left-0 m-2 flex gap-2 items-center">
                 <img className="max-h-8" src={logo} />
                 <p className="text-xl ">Soundboard overlay</p>

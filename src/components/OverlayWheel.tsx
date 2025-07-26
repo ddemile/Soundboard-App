@@ -46,11 +46,8 @@ export default function OverlayWheel({
         const arcLength = sectionRadius * sectionAngle;
         const fontSize = Math.min(arcLength * 0.4, radius / 2);
 
-        const middleCrossSize = radius * middleCircleMultiplier
-        const middleCircleRadius = middleCrossSize * (middleCircleHovered ? activeMultiplier : 1)
-
         return (
-            <g key={i} className=" hover:cursor-pointer">
+            <g key={i} className="hover:cursor-pointer">
                 <path
                     d={`M${center},${center} L${x1},${y1} A${sectionRadius},${sectionRadius} 0 ${largeArcFlag},1 ${x2},${y2} Z`}
                     fill={activeSection === i ? "#2B2B2B" : "#222222"} // Different color for each section
@@ -78,14 +75,21 @@ export default function OverlayWheel({
                         {data[i].icon}
                     </text>
                 </g>
-                <circle className="transition-all" style={{ opacity: middleCircleHovered ? 0.96 : 1 }} r={middleCircleRadius} fill={middleCircleHovered ? "#2B2B2B" : "#222222"} cx={center} cy={center} stroke="#1c1c1c" strokeWidth={2} />
-                <svg className="transition-all origin-center" style={{ scale: middleCircleHovered ? activeMultiplier : 1 }} width={middleCircleRadius} height={middleCrossSize} x={center - middleCrossSize / 2} y={center - middleCrossSize / 2}>
-                    <line className="stroke-neutral-500" x1="0" y1="0" x2={middleCrossSize} y2={middleCrossSize} strokeWidth="2" />
-                    <line className="stroke-neutral-500" x1={middleCrossSize} y1="0" x2="0" y2={middleCrossSize} strokeWidth="2" />
-                </svg>
             </g>
         );
     });
 
-    return <svg className="select-none" width={center * 2} height={center * 2}>{elements}</svg>;
+    const middleCrossSize = radius * middleCircleMultiplier
+    const middleCircleRadius = middleCrossSize * (middleCircleHovered ? activeMultiplier : 1)
+
+    return (
+        <svg className="select-none" width={center * 2} height={center * 2}>
+            {elements}
+            <circle className="transition-all hover:cursor-pointer" style={{ opacity: middleCircleHovered ? 0.96 : 1 }} r={middleCircleRadius} fill={middleCircleHovered ? "#2B2B2B" : "#222222"} cx={center} cy={center} stroke="#1c1c1c" strokeWidth={2} />
+            <svg className="transition-all origin-center" style={{ scale: middleCircleHovered ? activeMultiplier : 1 }} width={middleCircleRadius} height={middleCrossSize} x={center - middleCrossSize / 2} y={center - middleCrossSize / 2}>
+                <line className="stroke-neutral-500" x1="0" y1="0" x2={middleCrossSize} y2={middleCrossSize} strokeWidth="2" />
+                <line className="stroke-neutral-500" x1={middleCrossSize} y1="0" x2="0" y2={middleCrossSize} strokeWidth="2" />
+            </svg>
+        </svg>
+    );
 }

@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { cursorPosition, getAllWindows, LogicalPosition, monitorFromPoint } from "@tauri-apps/api/window";
+import { currentMonitor, getAllWindows, LogicalPosition } from "@tauri-apps/api/window";
 import { disable, enable, isEnabled } from "@tauri-apps/plugin-autostart";
 import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut';
 import { relaunch } from '@tauri-apps/plugin-process';
@@ -125,10 +125,12 @@ function App() {
   const hoveredSoundId = useRef<string>(null)
 
   const handleClose = async () => {
+    const { categories } = useCategoriesStore.getState()
+
     overlayWindow.hide();
     await invoke("restore_focused_window");
 
-    const favoriteCategory = store.categories.find(category => category.name == "Favorite");
+    const favoriteCategory = categories.find(category => category.name == "Favorite");
 
     if (favoriteCategory && hoveredSoundId.current != null) {
       const sound = favoriteCategory.sounds.find(sound => sound.id == hoveredSoundId.current)!;
@@ -155,9 +157,7 @@ function App() {
     }
 
     const handlePress = async () => {
-      const pos = await cursorPosition();
-
-      const monitor = await monitorFromPoint(pos.x, pos.y);
+      const monitor = await currentMonitor();
 
       if (!monitor) return;
 
