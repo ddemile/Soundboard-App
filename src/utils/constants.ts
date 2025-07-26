@@ -1,1 +1,1 @@
-export const BASE_API_URL = import.meta.env.DEV ? "https://soundboard.ddemile.me/api" : "http://localhost:4444"
+export const BASE_API_URL = import.meta.env.PROD ? "https://soundboard.ddemile.me/api" : "http://localhost:4444"
