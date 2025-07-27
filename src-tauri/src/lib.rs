@@ -56,6 +56,7 @@ struct AppStorage {
 pub fn run() {
     static TOGGLE_WINDOW: OnceLock<MenuItem<Wry>> = OnceLock::new();
 
+    #[cfg_attr(not(target_os = "linux"), allow(unused_mut))]
     let mut linux_display_server: &str = "none";
 
     #[cfg(target_os = "linux")]
@@ -78,7 +79,7 @@ pub fn run() {
                 linux_display_server = "x11";
             }
             Err(_) => {
-                println!("x11 is not available, using default compositor");
+                println!("x11 is not available, using default display server");
             }
         }
     }
@@ -121,9 +122,19 @@ pub fn run() {
         .setup(|app| {
             let window = app.get_webview_window("overlay").unwrap();
 
-            app.manage(AppStorage {
+            app.manage(Mutex::new(AppStorage {
                 linux_display_server
-            });
+            }));
+
+            #[cfg(target_os = "linux")]
+            {
+                let state = app.state::<Mutex<AppStorage>>();
+                let storage = state.lock().unwrap();
+
+                if storage.linux_display_server == "x11" {
+                    window.set_fullscreen(true).unwrap();
+                }
+            }
 
             #[cfg(windows)]
             {

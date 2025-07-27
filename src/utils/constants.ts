@@ -14,4 +14,6 @@ export const BASE_API_URL = useProductionAPI ? "https://soundboard.ddemile.me/ap
 
 log(`Using ${useProductionAPI ? "production" : "development"} API`)
 
-export const LINUX_DISPLAY_SERVER = await invoke("get_linux_display_server");
+type LinuxDisplayServer = "none" | "x11" | "wayland" | "unknown"
+
+export const LINUX_DISPLAY_SERVER: LinuxDisplayServer = await invoke("get_linux_display_server");

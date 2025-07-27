@@ -33,8 +33,9 @@ import Discover from './pages/Discover.tsx';
 import Home, { SoundEntry } from './pages/Home.tsx';
 import Landing from './pages/Landing.tsx';
 import WorkInProgress from './pages/WorkInProgress.tsx';
-import { BASE_API_URL, LINUX_DISPLAY_SERVER } from './utils/constants.ts';
+import { BASE_API_URL } from './utils/constants.ts';
 import { createLogger } from "./utils/logging.ts";
+import { getActiveMonitor } from "./utils/monitors.ts";
 
 if (import.meta.env.PROD) {
   const log = createLogger({ name: "Updater", debugColor: "yellow" })
@@ -156,9 +157,7 @@ function App() {
     }
 
     const handlePress = async () => {
-      console.log(LINUX_DISPLAY_SERVER)
-
-      const monitor = await currentMonitor();
+      const monitor = await getActiveMonitor();
 
       if (!monitor) return;
 
