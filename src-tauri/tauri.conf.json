@@ -54,6 +54,16 @@
       "desktop": {
         "schemes": ["soundboard"]
       }
+    },
+    "cli": {
+      "args": [
+        {
+          "name": "api",
+          "description": "The API to connect to",
+          "takesValue": true,
+          "possibleValues": ["prod", "dev"]
+        }
+      ]
     }
   }
 }

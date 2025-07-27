@@ -86,7 +86,7 @@ function Overlay() {
                 <p className="text-xl ">Soundboard overlay</p>
             </div>
             <OverlayWheel data={data} radius={radius} activeSection={activeSection} activeMultiplier={activeMultiplier} middleCircleHovered={middleCircleActive} />
-            <p className="absolute text-xl" style={{ translate: `0 calc(50% + ${radius * activeMultiplier + 5}px)` }}>{activeSection != null ? sounds[activeSection].title : "No sound selected"}</p>
+            <p className="absolute text-xl" style={{ translate: `0 calc(50% + ${radius * activeMultiplier + 5}px)` }}>{activeSection != null ? sounds[activeSection].title : "Close"}</p>
         </main>
     );
 }

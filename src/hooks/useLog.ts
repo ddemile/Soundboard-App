@@ -1,5 +1,6 @@
-import chalk, { ForegroundColorName } from "chalk";
+import { createLogger } from "@/utils/logging";
+import { ForegroundColorName } from "chalk";
 
-export default function useLog({ debugColor = "magenta" }: { debugColor?: ForegroundColorName } = {}) {
-    return (...args: string[]) => console.log(`${chalk[debugColor]("[Debug]")} ${args.join(" ")}`)
+export default function useLog({ name = "Debug", debugColor = "magenta" }: { name?: string, debugColor?: ForegroundColorName } = {}) {
+    return createLogger({ name, debugColor })
 }

@@ -33,13 +33,16 @@ import Discover from './pages/Discover.tsx';
 import Home, { SoundEntry } from './pages/Home.tsx';
 import Landing from './pages/Landing.tsx';
 import WorkInProgress from './pages/WorkInProgress.tsx';
-import { BASE_API_URL } from './utils/constants.ts';
+import { BASE_API_URL, LINUX_DISPLAY_SERVER } from './utils/constants.ts';
+import { createLogger } from "./utils/logging.ts";
 
 if (import.meta.env.PROD) {
+  const log = createLogger({ name: "Updater", debugColor: "yellow" })
+
   check().then(async (update) => {
     if (!update) return
 
-    console.log(
+    log(
       `Found update ${update.version} from ${update.date} with notes ${update.body}`
     );
     let downloaded = 0;
@@ -49,19 +52,19 @@ if (import.meta.env.PROD) {
       switch (event.event) {
         case 'Started':
           contentLength = event.data.contentLength!;
-          console.log(`Started downloading ${event.data.contentLength} bytes`);
+          log(`Started downloading ${event.data.contentLength} bytes`);
           break;
         case 'Progress':
           downloaded += event.data.chunkLength;
-          console.log(`Downloaded ${downloaded} from ${contentLength}`);
+          log(`Downloaded ${downloaded} from ${contentLength}`);
           break;
         case 'Finished':
-          console.log('Download finished');
+          log('Download finished');
           break;
       }
     });
 
-    console.log('Update installed');
+    log('Update installed');
     await relaunch();
   })
 }
@@ -153,6 +156,8 @@ function App() {
     }
 
     const handlePress = async () => {
+      console.log(LINUX_DISPLAY_SERVER)
+
       const monitor = await currentMonitor();
 
       if (!monitor) return;

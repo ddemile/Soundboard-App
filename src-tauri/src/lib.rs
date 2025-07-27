@@ -1,15 +1,8 @@
 // use std::ffi::c_void;
 
-use std::sync::OnceLock;
-
-use tauri::menu::MenuItem;
-use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
-use tauri::{WebviewWindow};
-use tauri::{Wry};
+use std::sync::{Mutex, OnceLock};
 use tauri::{
-    image::Image,
-    menu::{MenuBuilder, MenuItemBuilder},
-    AppHandle, Manager, WindowEvent,
+    image::Image, menu::{MenuBuilder, MenuItem, MenuItemBuilder}, tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent}, AppHandle, Manager, State, WindowEvent, Wry
 };
 use tauri_plugin_autostart::MacosLauncher;
 
@@ -31,8 +24,15 @@ fn restore_focused_window() {
     utils::focus::refocus_last_window();
 }
 
+#[tauri::command]
+fn get_linux_display_server(state: State<'_, Mutex<AppStorage>>) -> &'static str {
+    let storage = state.lock().unwrap();
+
+    return storage.linux_display_server;
+}
+
 #[cfg(windows)]
-fn disable_animations(window: &WebviewWindow) {
+fn disable_animations(window: &tauri::WebviewWindow) {
     if let Ok(hwnd) = window.hwnd() {
         unsafe {
             use windows::{core::BOOL, Win32::{Foundation::HWND, Graphics::Dwm::{DwmSetWindowAttribute, DWMWA_TRANSITIONS_FORCEDISABLED}}};
@@ -47,9 +47,41 @@ fn disable_animations(window: &WebviewWindow) {
     }
 }
 
+struct AppStorage {
+    linux_display_server: &'static str,
+}
+
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     static TOGGLE_WINDOW: OnceLock<MenuItem<Wry>> = OnceLock::new();
+
+    let mut linux_display_server: &str = "none";
+
+    #[cfg(target_os = "linux")]
+    {
+        use x11rb::connect;
+        use std::env;
+
+        if std::env::var("WAYLAND_DISPLAY").is_ok() {
+            linux_display_server = "wayland";
+        } else if std::env::var("DISPLAY").is_ok() {
+            linux_display_server = "x11";
+        } else {
+            linux_display_server = "unknown";
+        }
+
+        // Check if x11 is available
+        match connect(None) {
+            Ok((_, _)) => {
+                env::set_var("GDK_BACKEND", "x11");
+                linux_display_server = "x11";
+            }
+            Err(_) => {
+                println!("x11 is not available, using default compositor");
+            }
+        }
+    }
 
     tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::new().build())
@@ -71,6 +103,7 @@ pub fn run() {
         ))
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_cli::init())
         .on_window_event(|window, event: &WindowEvent| {
             let toggle_window = TOGGLE_WINDOW.get().unwrap();
 
@@ -87,6 +120,10 @@ pub fn run() {
         })
         .setup(|app| {
             let window = app.get_webview_window("overlay").unwrap();
+
+            app.manage(AppStorage {
+                linux_display_server
+            });
 
             #[cfg(windows)]
             {
@@ -149,7 +186,7 @@ pub fn run() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![store_focused_window, restore_focused_window])
+        .invoke_handler(tauri::generate_handler![store_focused_window, restore_focused_window, get_linux_display_server])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
