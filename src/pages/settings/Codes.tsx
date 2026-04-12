@@ -145,12 +145,12 @@ export const columns: ColumnDef<Code>[] = [
       const { open: displayImage } = useModal("imageViewer");
 
       const showQrCode = async () => {
-        const link = `https://soundboard.ddemile.fr?code=${code.value}`;
+        const link = `https://soundboard.ddemile.me?code=${code.value}`;
         navigator.clipboard.writeText(link);
         toast.success("Link copied");
         const codeUrl = await QRCode.toDataURL(link, {
           margin: 1,
-          scale: 20,
+          scale: 1,
         });
         displayImage({
           src: codeUrl,

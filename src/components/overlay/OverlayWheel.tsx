@@ -54,6 +54,7 @@ export default function OverlayWheel({
                     className="transition-all"
                 />
                 <line
+                    className={`line`}
                     x1={center}
                     y1={center}
                     x2={center + radius * Math.cos(startAngle)}
@@ -85,11 +86,13 @@ export default function OverlayWheel({
     return (
         <svg className="select-none" width={center * 2} height={center * 2}>
             {elements}
-            <circle className="transition-all hover:cursor-pointer" style={{ opacity: middleCircleHovered ? 0.96 : 1 }} r={middleCircleRadius} fill={middleCircleHovered ? "#2B2B2B" : "#222222"} cx={center} cy={center} stroke="#1c1c1c" strokeWidth={2} />
-            <svg className="transition-all origin-center" style={{ scale: middleCircleHovered ? activeMultiplier : 1 }} width={middleCircleRadius} height={middleCrossSize} x={center - middleCrossSize / 2} y={center - middleCrossSize / 2}>
-                <line className="stroke-neutral-500" x1="0" y1="0" x2={middleCrossSize} y2={middleCrossSize} strokeWidth="2" />
-                <line className="stroke-neutral-500" x1={middleCrossSize} y1="0" x2="0" y2={middleCrossSize} strokeWidth="2" />
-            </svg>
+            <g className="[&>*]:transition-all hover:cursor-pointer">
+                <circle style={{ opacity: middleCircleHovered ? 0.96 : 1 }} r={middleCircleRadius} fill={middleCircleHovered ? "#2B2B2B" : "#222222"} cx={center} cy={center} stroke="#1c1c1c" strokeWidth={2} />
+                <svg className="origin-center" style={{ scale: middleCircleHovered ? activeMultiplier : 1 }} width={middleCircleRadius} height={middleCrossSize} x={center - middleCrossSize / 2} y={center - middleCrossSize / 2}>
+                    <line className="stroke-neutral-500" x1="0" y1="0" x2={middleCrossSize} y2={middleCrossSize} strokeWidth="2" />
+                    <line className="stroke-neutral-500" x1={middleCrossSize} y1="0" x2="0" y2={middleCrossSize} strokeWidth="2" />
+                </svg>
+            </g>
         </svg>
     );
 }

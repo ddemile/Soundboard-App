@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { currentMonitor, getAllWindows, LogicalPosition } from "@tauri-apps/api/window";
+import { getAllWindows, LogicalPosition } from "@tauri-apps/api/window";
 import { disable, enable, isEnabled } from "@tauri-apps/plugin-autostart";
 import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut';
 import { relaunch } from '@tauri-apps/plugin-process';

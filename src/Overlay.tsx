@@ -1,8 +1,8 @@
 import { listen } from "@tauri-apps/api/event";
 import { currentMonitor, getAllWindows, LogicalPosition } from "@tauri-apps/api/window";
-import { MouseEventHandler, useCallback, useMemo, useRef, useState } from "react";
+import { KeyboardEventHandler, MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import logo from "../src-tauri/icons/icon.png";
-import OverlayWheel from "./components/OverlayWheel";
+import OverlayWheel from "./components/overlay/OverlayWheel";
 import useOverlayStore from "./hooks/useOverlayStore";
 import './Overlay.css';
 import type { SoundEntry } from "./pages/Home";
@@ -25,6 +25,7 @@ const activeMultiplier = 1.2
 function Overlay() {
     const [activeSection, setActiveSection] = useState<number | null>(null);
     const [middleCircleActive, setMiddleCirlceActive] = useState<boolean>(false);
+    const [searchBarActive, setSearchBarActive] = useState<boolean>(false);
     const activeSectionRef = useRef(activeSection);
     const { sounds } = useOverlayStore();
 
@@ -73,11 +74,22 @@ function Overlay() {
 
         if (activeSection != activeSectionRef.current) {
             mainWindow.emit("sound_hovered", activeSection != null ? sounds[activeSection].id : null)
+            setSearchBarActive(false)
         }
 
         activeSectionRef.current = activeSection;
         setActiveSection(activeSection);
     }, [sounds])
+
+    useEffect(() => {
+        const listener = (event: KeyboardEvent) => {
+            setSearchBarActive(true)
+        }
+
+        document.addEventListener("keydown", listener);
+
+        return () => document.removeEventListener("keydown", listener)
+    }, [])
 
     return (
         <main className="w-full h-screen flex items-center justify-center bg-black/50 text-white flex-col relative" onClick={() => mainWindow.emit("close_overlay")} onMouseMove={mouseMoveHandler}>
@@ -87,6 +99,7 @@ function Overlay() {
             </div>
             <OverlayWheel data={data} radius={radius} activeSection={activeSection} activeMultiplier={activeMultiplier} middleCircleHovered={middleCircleActive} />
             <p className="absolute text-xl" style={{ translate: `0 calc(50% + ${radius * activeMultiplier + 5}px)` }}>{activeSection != null ? sounds[activeSection].title : "Close"}</p>
+            <p className="absolute text-xl" style={{ translate: `0 calc(50% + ${radius * activeMultiplier + 30}px)` }}>{searchBarActive ? "yes" : "no"}</p>
         </main>
     );
 }
